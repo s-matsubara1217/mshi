@@ -1,0 +1,126 @@
+@charset "utf-8";
+@import 'mixins';
+/* ============================================
+
+
+// base
+
+
+// ==========================================*/
+*,
+*:after,
+*:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+ul,
+li {
+  margin: 0;
+  list-style: none;
+}
+img {
+  vertical-align: bottom;
+}
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+li,
+dl,
+dt,
+dd,
+span,
+body,
+figcaption,
+figure {
+  margin: 0;
+  padding: 0;
+}
+a {
+  @include transition();
+}
+a img {
+  border: 0;
+}
+a:link,
+a:visited {
+  text-decoration: none;
+//	color: $primary-color;
+}
+@include mq-up(md) {
+	a:hover,
+	a:active {
+		opacity: 0.7;
+	}
+}
+@media (min-device-width: 834px) {
+  a[href*='tel:'] {
+    display: inline-block;
+    pointer-events: none;
+//		cursor: text;
+//		&:hover { opacity: 1; }
+  }
+}
+a:focus {
+  outline: none;
+}
+img:not(.object-fit-img) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+// Selected Text
+::-moz-selection {
+  background: $primary-color + #333;
+}
+::selection {
+  background: $primary-color + #333;
+}
+
+
+html {
+  overflow: auto;
+  font-size: 62.5%; //10px base
+}
+body {
+  position: relative;
+//	@include family(sans4);
+//	font-family: Lato, 'Noto Sans CJK JP Subset', 'Noto Sans', 'Noto Sans CJK JP', "Noto Sans JP", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "游ゴシック", "Yu Gothic", "游ゴシック体", "YuGothic", "Meiryo UI", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+	@include family(sans5);
+  font-size: 1.5rem;
+  line-height: 2;
+  letter-spacing: .075em;
+  color: $txt-color;
+  overflow: hidden;
+	opacity: 0;
+	min-width: 1024px;
+	
+	margin-bottom: 100px;
+	@include mq-down(md) {
+		margin-bottom: 80px;
+		min-width: 320px;
+		 line-height: 1.6;
+	}
+//  text-align: justify;
+//  text-justify: inter-ideograph;
+//  animation: load 1s ease-in 0.1s both;
+//  @media all and (-ms-high-contrast: none) {
+//    //google font 日本語の不具合対応
+//    transform: rotate(0.001deg);
+//  }
+}
+
+.object-fit-img{
+	object-fit: cover;
+	font-family:'object-fit: cover;';
+	width: 100%;
+	height: 100%;
+}

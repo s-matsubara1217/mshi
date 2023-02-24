@@ -1,0 +1,95 @@
+<div class="footer_search">
+    <div class="footer_search_item">
+        <p class="footer_search_title">勤務地</p>
+        <ul class="footer_search_content">
+            #if($kinmuchi_search == 3)## ドリル検索時
+                #foreach($a-code in $kinmuchi_array.area-codes)
+                    #foreach($p-code in $kinmuchi_array.pref-codes.get($a-code))
+            <li>
+                #if($a-code != '')
+                <a href="${menu_kyujin_l_url_reg.replace("all/","e${a-code}/p${p-code}/")}">$master_pc.get($p-code)</a>
+                #else
+                <a href="${menu_kyujin_url}&KCD_=${p-code}">$!{master_pc.get($p-code)}</a>
+                #end
+            </li>
+                    #end ## --- foreach($p-code in $kinmuchi_array.pref-codes.get($a-code))
+                #end ## --- foreach($a-code in $kinmuchi_array.area-codes)
+            #else
+                #set ($searchform_location_list = []) ## 格納配列
+                #foreach($a-code in $kinmuchi_array.area-codes)
+                    #foreach($p-code in $kinmuchi_array.pref-codes.get($a-code))
+                        #foreach($k-code in $kinmuchi_array.kcd-codes.get($p-code))
+                            #set ($dummy = $searchform_location_list.add({
+                                "a-key"     :"${a-code}",
+                                "p-key"     :"${p-code}",
+                                "k-key"     :"${k-code}",
+                                "name"      :"${master_kcd.get($k-code)}"
+                            }))
+                        #end ## --- foreach($k-code in $kinmuchi_array.kcd-codes.get($p-code))
+                    #end ## --- foreach($p-code in $kinmuchi_array.pref-codes.get($a-code))
+                #end ## --- foreach($a-code in $kinmuchi_array.area-codes)
+            #foreach($location_item in $searchform_location_list)
+            <li>
+                #if($location_item.a-key != '')
+                    #if ($location_item.k-key.length() == 5)## setting.htmで市区町村コードを設定した場合
+                <a href="${menu_kyujin_l_url_reg.replace("all/","e${location_item.a-key}/p${location_item.p-key}/k${location_item.k-key}/")}">$!{master_kcd.get($location_item.k-key)}</a>
+                    #elseif ($location_item.k-key.length() == 2)## setting.htmで都道府県コードを設定した場合
+                <a href="${menu_kyujin_l_url_reg.replace("all/","e${location_item.a-key}/p${location_item.p-key}/")}">$!{master_pc.get($location_item.p-key)}</a>
+                    #end
+                #else
+                <a href="${menu_kyujin_url}&KCD_=${location_item.k-key}">$!{location_item.name}</a>
+                #end
+            </li>
+            #end ## --- foreach($location_item in $searchform_location_list)
+            #end ## --- if($kinmuchi_search == 3)
+        </ul>
+    </div>
+    <div class="footer_search_item">
+        <p class="footer_search_title">雇用形態</p>
+        <ul class="footer_search_content">
+            #foreach ($kkcd in $kkcd_key_list)
+                #if ($kkcdMap.containsKey($kkcd))
+            <li>
+                #if ($kkcd.indexOf(':') != -1)
+                <a href="${menu_kyujin_url}&_KKCD_=${kkcd}">${kkcdMap.get($kkcd)}</a>            
+                #else
+                <a href="${menu_kyujin_l_url_reg.replace("all/","all/kk${kkcd}/")}">${kkcdMap.get($kkcd)}</a>
+                #end
+            </li>
+                #end ## --- if ($kkcdMap.containsKey($kkcd))
+            #end ## --- foreach ($kkcd in $kkcd_key_list)
+        </ul>
+    </div>
+    <div class="footer_search_item">
+        <p class="footer_search_title">職種</p>
+        <ul class="footer_search_content">
+            #foreach ($category_key in $category_key_list)
+                #foreach ($category in $category_list)
+                    #if ($category_key == $category.key)
+                        #set($categoryVal_reg = $cat_val.replaceAll('[a-zA-Z]',''))## アルファベット（大文字・小文字）を空白に変換
+            <li>
+                <a href="$menu_kyujin_l_url_reg.replace("all/","all/v${categoryVal_reg}${category.key}/")">$!{category.name}</a>
+            </li>
+                    #end ## --- if ($category_key == $category.key)
+                #end ## --- foreach ($category in $category_list)
+            #end ## --- foreach ($category_key in $category_key_list)
+        </ul>
+    </div>
+#* --- フリーval用
+    <div class="footer_search_item">
+        <p class="footer_search_title">xxx</p>
+        <ul class="footer_search_content">
+            #foreach ($xxx_key in $xxx_key_list)
+                #foreach ($xxx in $xxx_list)
+                    #if ($xxx_key == $xxx.key)
+                        #set($xxxVal_reg = $xxx_val.replaceAll('[a-zA-Z]',''))## アルファベット（大文字・小文字）を空白に変換
+            <li>
+                <a href="$menu_kyujin_l_url_reg.replace("all/","all/v${xxxVal_reg}${xxx.key}/")">$!{xxx.name}</a>
+            </li>
+                    #end ## --- 
+                #end ## --- 
+            #end ## --- 
+        </ul>
+    </div>
+--- *#
+</div>

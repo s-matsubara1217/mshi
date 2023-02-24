@@ -1,0 +1,796 @@
+@charset "utf-8";
+
+@import '../foundation/mixins';
+
+$useCode: false;
+@if $useCode {}
+@include mq-up(md) {}
+@include mq-down(xl) {}
+@include mq-down(lg) {}
+@include mq-down(md) {}
+@include mq-down(sm) {}
+//background: rgba(0,0,0,.1);
+
+.front-page {
+	.pageHeader {
+		@include mq-up(md) {
+			margin-bottom: -90px;
+		}
+	}
+	.joinus {
+		margin-top: 150px;
+		@include mq-down(md) {
+			margin-top: 30px;
+		}
+	}
+}
+
+/* ============================================
+// top news
+// ==========================================*/
+//background: rgba(0,0,0,.1);
+.top_news {
+	position: relative;
+	z-index: 3;
+	@include mq-down(md) {
+		margin-bottom: 10px;
+	}
+	&:before {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 140px;
+		left: 0;
+		width: 100%;
+		height: 300px;
+		background: #F5F5F5;
+	}
+	&_inner {
+		@include mq-up(md) {
+			display: flex;
+		}
+	}
+	&_block-1 {
+		position: relative;
+		display: flex;
+		align-items: center;
+		flex: 0 0 340px;
+		padding-top: 60px;
+		padding-bottom: 60px;
+		@include mq-up(md) {
+			min-height: 250px;
+			margin-right: -80px;
+		}
+		@include mq-down(md) {
+			padding-top: 30px;
+			padding-bottom: 0;
+		}
+		&:before {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 3000px;
+			height: 100%;
+			background: $secondary-color;
+			border-top-right-radius: 75px;
+			@include mq-down(md) {
+				height: 210px;
+				border-top-right-radius: 30px;
+				border-bottom-right-radius: 30px;
+			}
+		}
+	}
+	&_block-2 {
+		flex: 0 1 100%;
+		position: relative;
+		@include mq-up(md) {
+			display: flex;
+			align-items: center;
+		}
+	}
+	&_ttl {
+		position: relative;
+		z-index: 3;
+		color: #fff;
+	}
+	&_btn {
+		a {
+			color: #fff;
+		}
+	}
+	.top_newsList_slider {
+		position: relative;
+		&_inner {
+			@include mq-up(md) {
+				overflow: hidden;
+			}
+		}
+	}
+	.newsList {
+		&_item {
+			position: relative;
+			background: #fff;
+			box-shadow: 0 0 20px rgba(0,0,0,0.1);
+			border-radius: 10px;
+			a {
+				display: block;
+				padding: 20px 30px;
+				color: $txt-color;
+			}
+			&_ttl {
+				position: relative;
+				font-size: 18px;
+				font-weight: bold;
+				@include mq-down(md) {
+					font-size: 16px;
+				}
+				&:before {
+					content: "";
+					display: block;
+					position: absolute;
+					top: 0;
+					left: -30px;
+					width: 5px;
+					height: 100%;
+					background: $primary-color;
+				}
+			}
+			&_date ,
+			&_time {
+				padding-right: 100px;
+			}
+			&_date {
+				position: relative;
+				display: flex;
+				align-items: center;
+				@include mq-down(md) {
+					font-size: 13px;
+					font-weight: bold;
+				}
+				&:before {
+					content: "";
+					display: block;
+					width: 1.2em;
+					height: 1.2em;
+					background: url(../img/ico_calender.svg) no-repeat center center / contain;
+					margin-right: 0.6em;
+					color: #666;
+				}
+			}
+			&_time {
+				position: relative;
+				display: flex;
+				align-items: center;
+				@include mq-down(md) {
+					font-size: 13px;
+					font-weight: bold;
+				}
+				&:before {
+					content: "";
+					display: block;
+					width: 1.2em;
+					height: 1.2em;
+					background: url(../img/ico_clock.svg) no-repeat center center / contain;
+					margin-right: 0.6em;
+					color: #666;
+				}
+			}
+			&_btn {
+				position: absolute;
+				bottom: 20px;
+				right: 25px;
+				.o-btn {
+					padding: 0.3em 15px;
+				}
+			}
+		}
+	}
+	.newsList_swiper_nav {
+		position: absolute;
+		//right: 0;
+		left: 57vw;
+		bottom: 100%;
+		margin-bottom: 50px;
+		width: 100px;
+		@include mq-down(md) {
+			left: auto;
+			right: 20px;
+			margin-bottom: 30px;
+			transform: scale(0.8);
+			transform-origin: right bottom;
+		}
+		.swiper-button-next,
+		.swiper-button-prev {
+			@include mq-down(md) {
+				background: #fff;
+				&:before {
+					border-color: $secondary-color;
+				}
+			}
+			
+		}
+	}
+	.swiper-container {
+		//overflow: visible;
+		padding-top: 20px;
+		padding-bottom: 20px;
+		@include mq-up(md) {
+			margin-left: calc(-100% + 310px);
+		}
+		@include mq-down(md) {
+			overflow: visible;
+		}
+	}
+	.swiper-wrapper {
+		@include mq-up(md) {
+			width: 1000%;
+			backface-visibility: hidden;
+		//overflow: hidden;
+		}
+	}
+	.swiper-slide {
+		width: 280px;
+		margin-right: 30px;
+		@include mq-down(md) {
+			margin-right: 15px;
+		}
+	}
+}
+
+/* ============================================
+// top company
+// ==========================================*/
+//background: rgba(0,0,0,.1);
+.top_company {
+	position: relative;
+	z-index: 5;
+	&_inner {
+		min-height: 400px;
+		position: relative;
+		padding-top: 100px;
+		padding-bottom: 100px;
+		@include mq-down(md) {
+			padding-top: 50px;
+			padding-bottom: 50px;
+		}
+	}
+	&_ttl {
+		position: relative;
+		z-index: 3;
+	}
+	&_text {
+		position: relative;
+		z-index: 3;
+		margin-top: 40px;
+		@include mq-up(md) {
+			display: flex;
+		}
+		@include mq-down(md) {
+			margin-top: 20px;
+		}
+		&_block-1 {
+			flex: 1 1 45%;
+			@include mq-up(md) {
+				margin-right: 40px;
+			}
+		}
+		&_block-2 {
+			flex: 1 1 55%;
+		}
+	}
+	.copy {
+		font-size: 30px;
+		font-weight: bold;
+		@include noto-serif;
+		@include mq-down(md) {
+			font-size: 20px;
+		}
+	}
+	.read {
+		@include mq-down(md) {
+			margin-top: 20px;
+		}
+	}
+	&_btn {
+		margin-top: 40px;
+		@include mq-down(md) {
+			margin-top: 20px;
+		}
+	}
+	
+	&_obj {
+		position: absolute;
+		z-index: 2;
+		&-1 {
+			max-width: 1000px;
+			width: 100%;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-50%);
+			margin-top: -40px;
+			@include mq-down(lg) {
+				max-width: 80%;
+			}
+			@include mq-down(md) {
+				top: 20px;
+				transform: translate(-50%, 0);
+				margin-top: 0;
+			}
+		}
+		&-2 {
+			z-index: 1;
+			bottom: 0;
+			left: 0;
+			@include mq-down(md) {
+				left: 50%;
+			}
+			.entity {
+				width: 490px;
+				height: 204px;
+				background: url(../img/bg-dot-orange.png) repeat 0 0;
+				@include mq-down(md) {
+					width: 490px *0.7;
+					height: 204px *0.7;
+					background-size: 410px *.7;
+				}
+			}
+		}
+		&-3 {
+			bottom: -60px;
+   			right: -140px;
+			@include mq-down(lg) {
+				right: 0;
+			}
+			@include mq-down(md) {
+				bottom: -50px;
+			 	right: -10px;
+			}
+			.entity {
+				width: 627px *0.5;
+				@include mq-down(md) {
+					width: 627px *0.5 *0.5;
+				}
+			}
+		}
+	}
+}
+
+/* ============================================
+// top career
+// ==========================================*/
+//background: rgba(0,0,0,.1);
+.top_career {
+	$this: '.top_career';
+	position: relative;
+	z-index: 5;
+	//margin-top: 150px;
+	@include mq-down(md) {
+		//margin-top: 120px;
+	}
+	&_inner {
+		position: relative;
+		//max-width: 1420px + 100px;
+		padding-top: 100px;
+		@include mq-down(md) {
+			padding-top: 50px;
+		}
+		&:before {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 5000px;
+			height: 100%;
+			background: #fff;
+			@include mq-up(md) {
+				border-top-right-radius: 30px;
+			}
+		}
+	}
+	&_body {
+		margin-top: 60px;
+		@include mq-up(md) {
+			display: flex;
+			justify-content: center;
+		}
+		@include mq-down(md) {
+			margin-top: 30px;
+		}
+	}
+	&_block-1 {}
+	&_block-2 {
+		width: 100%;
+		@include mq-up(md) {
+			flex: 0 1 61.5%;
+			max-width: 600px;
+		}
+		#{$this}_img {
+			overflow: hidden;
+			border-radius: 20px;
+			width: 100%;
+			@include mq-down(md) {
+				border-radius: 10px 10px 0 0;
+			}
+			.img {
+				&:before {
+					padding-top: 70%;
+				}
+			}
+		}
+	}
+	&_block-3 {
+		@include mq-up(md) {
+	//		flex: 0 1 640px;
+			flex: 0 1 38.5%;
+			max-width: 640px;
+			width: 100%;
+	//		margin-left: 80px;
+			margin-left: 7%;
+		}
+		#{$this}_img {
+			display: flex;
+			overflow: hidden;
+			border-radius: 20px;
+			@include mq-up(md) {
+				margin-right: -80px;
+			}
+			@include mq-down(md) {
+				border-radius: 0 0 10px 10px;
+			}
+			.img {
+				flex: 0 1 50%;
+				width: 100%;
+			}
+		}
+	}
+	&_img {
+		position: relative;
+		z-index: 3;
+		.img {
+			position: relative;
+			&:before {
+				content: "";
+				display: block;
+				padding-top: 62%;
+			}
+		}
+		img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+	}
+	.read {
+		margin-top: 30px;
+		@include mq-up(md) {
+			padding-right: 120px;
+		}
+		@include mq-down(md) {
+			margin-top: 20px;
+		}
+	}
+	&_btn {
+		margin-top: 30px;
+		@include mq-down(md) {
+			margin-top: 20px;
+		}
+	}
+	&_obj {
+		position: absolute;
+		z-index: 0;
+		&-1 {
+			top: -40px;
+    		left: -190px;
+			@include mq-down(md) {
+				top: 50px;
+    			left: -110px;
+			}
+			.entity {
+				width: 375px;
+				height: 375px;
+				border-radius: 50%;
+				background: rgba($secondary-color, 0.15);
+				animation-direction: alternate-reverse;
+				@include mq-down(md) {
+					width: 375px *.7 *.7;
+					height: 375px *.7 *.7;
+				}
+			}
+		}
+		&-2 {
+			bottom: -30px;
+			left: 15px;
+			@include mq-down(md) {
+				bottom: -10%;
+				left: auto;
+				right: -10px;
+			}
+			.entity {
+				width: 150px;
+				height: 150px;
+				border-radius: 10px;
+				border: 2px solid #F36178;
+				@include mq-down(md) {
+					width: 80px;
+					height: 80px;
+					border-radius: 10px *.7;
+				}
+			}
+		}
+		&-3 {
+			top: 370px;
+    		right: -30px;
+			@include mq-down(md) {
+				top: 10%;
+			}
+			.entity {
+				width: 160px;
+				height: 220px;
+				background: url(../img/bg-dot-pink.png) repeat 0 0;
+				animation-delay: 0.3s;
+				@include mq-down(md) {
+					width: 160px;
+					height: 220px *0.7;
+					background-size: 410px *.7;
+				}
+			}
+		}
+	}
+}
+
+
+/* ============================================
+// top interview
+// ==========================================*/
+//background: rgba(0,0,0,.1);
+.top_interview {
+	$this: '.top_interview';
+	margin-top: 230px;
+	margin-bottom: 200px;
+	@include mq-down(md) {
+//		margin-top: 150px;
+		margin-top: 60px;
+		margin-bottom: 100px;
+	}
+	&_inner {
+		max-width: 100%;
+		@include mq-up(md) {
+			padding-left: 0;
+			padding-right: 0;
+			display: flex;
+			align-items: center;
+			flex-direction: row-reverse;
+		}
+	}
+	&_text {
+		position: relative;
+		width: 100%;
+		z-index: 10;
+		@include mq-up(md) {
+			top: -30px;
+			padding-right: 50px;
+			margin: 0 auto 0 80px;
+			max-width: 360px;
+		}
+	}
+	&_slider {
+		position: relative;
+		width: 62vw;
+		@include mq-down(md) {
+			width: 100%;
+			margin-top: 40px;
+		}
+		&_inner {
+			@include mq-up(md) {
+				overflow: hidden;
+			}
+		}
+	}
+	.swiper-container {
+		@include mq-up(md) {
+			margin-right: calc(-100% + 360px);
+		}
+		@include mq-down(md) {
+			overflow: visible;
+		}
+	}
+	.swiper-wrapper {
+		@include mq-up(md) {
+			backface-visibility: hidden;
+    		overflow: hidden;
+			width: 1000%;
+		}
+	}
+	.swiper-slide {
+		max-width: 360px;
+		transition: transform 0.3s , opacity 0.3s;
+		transform: scale(0.8);
+		@include mq-down(md) {
+			max-width: 260px;
+		}
+		&-active {
+			transform: scale(1);
+			.o-staff_item_ttl ,
+			.o-staff_item_body {
+				opacity: 1;
+				transform: none;
+			}
+		}
+		&-prev {
+			opacity: 0.5;
+		}
+		&:hover {
+			@include mq-up(md) {
+				.o-staff_item_ttl ,
+				.o-staff_item_body {
+					opacity: 1;
+					transform: none;
+				}
+			}
+		}
+	}
+	.o-staff_item_ttl {
+		width: 100%;
+//		display: flex;
+//		justify-content: flex-start;
+		text-align: left;
+//		direction: initial !important;
+		direction: ltr !important;
+		//anim
+		transition: 0.3s 0.1s;
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	.o-staff_item_body {
+//		flex-direction: row-reverse;
+//		text-align: left;
+		direction: ltr !important;
+		//anim
+		transition: 0.3s 0.15s;
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	
+	.staff_swiper_nav {
+		@include mq-up(md) {
+			position: absolute;
+			bottom: 100%;
+			right: 100px;
+			margin-bottom: 30px;
+			width: 170px;
+			height: 48px;
+		}
+		.swiper-button-next,
+		.swiper-button-prev {
+			@include mq-down(md) {
+				top: 50%;
+				transform: translateY(-50%) scale(0.8);
+				margin-top: -7%;
+			}
+		}
+		.swiper-button-next {
+			@include mq-down(md) {
+				transform-origin: right center;
+			}
+		}
+		.swiper-button-prev {
+			@include mq-down(md) {
+				transform-origin: left center;
+			}
+		}
+		.swiper-pagination-fraction {
+			@include mq-down(md) {
+				bottom: 100%;
+				width: 60px;
+				height: 60px;
+				background: $secondary-color;
+				border-radius: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin: 0px 0px -30px 0px;
+				left: auto;
+				right: 0;
+				color: #fff;
+				font-size: 14px;
+				.swiper-pagination-current {
+					font-size: 20px;
+				}
+				.swiper-pagination-total {
+					color: #fff;
+				}
+			}
+		}
+	}
+	.read {
+		margin-top: 30px;
+		@include mq-down(md) {
+			margin-top: 20px;
+		}
+	}
+	&_btn {
+		margin-top: 30px;
+		@include mq-down(md) {
+			margin-top: 20px;
+		}
+	}
+	&_obj {
+		position: absolute;
+		z-index: 0;
+		&-1 {
+			bottom: -200px;
+    		right: 0;
+			@include mq-down(md) {
+				bottom: -50px;
+    			right: -20%;
+			}
+			.entity {
+				width: 375px;
+				height: 375px;
+				border-radius: 50%;
+				background: rgba($primary-color, 0.10);
+				animation-direction: alternate-reverse;
+				@include mq-down(md) {
+					width: 375px *0.7;
+					height: 375px *0.7;
+				}
+			}
+		}
+		&-2 {
+			top: -30px;
+			right: 15px;
+			@include mq-down(md) {
+				right: 30px;
+			}
+			.entity {
+				width: 120px;
+				height: 120px;
+				border-radius: 10px;
+				border: 2px solid $primary-color;
+				@include mq-down(md) {
+					width: 120px *0.7;
+					height: 120px *0.7;
+					border-radius: 10px *0.7;
+				}
+			}
+		}
+		&-3 {
+			top: -100px;
+    		left: 0;
+			@include mq-down(md) {
+				transform: translateX(-25%);
+			}
+			.entity {
+				width: 400px;
+				height: 250px;
+				background: url(../img/bg-dot-orange.png) repeat 0 0;
+				animation-direction: alternate-reverse;
+				animation-delay: 0.3s;
+				@include mq-down(md) {
+					width: 400px *0.7;
+					height: 120px;
+					background-size: 410px *0.7;
+				}
+			}
+		}
+		&-4 {
+//			bottom: -190px;
+			bottom: -120px;
+    		left: 0;
+			@include mq-down(md) {
+				bottom: -100px;
+			}
+			.entity {
+				width: 621px *0.5;
+				@include mq-down(md) {
+					width: 621px *0.5 *0.5;
+				}
+			}
+		}
+	}
+}

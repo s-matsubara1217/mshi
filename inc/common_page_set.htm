@@ -1,0 +1,105 @@
+##
+## common_page_set.htm
+## created:Kimura
+## Ver:19.11.14
+## Ver:20.02.10
+## Ver:20.06.11
+##
+#########################################################################################
+##
+##      ■共通読み込みデータ設定
+##
+##      URLからhtm名を取得して共通データを設定します。
+##      ※setting.htm の最後にこのファイルを読み込んでください。
+##
+##      ※fw_index.htmなどfowardする場合、setting.htmの[$menu_list]内の各ページMAPに["fw_url"]を設定してください。
+##      ※例）
+##      #set($menu_list = [
+##      {"num"      :"00",
+##      "type"      :"$menu_index_type",
+##      "id"        :"$menu_index_type",
+##      "parent_id" :"",
+##      "name"      :"$menu_index_string",
+##      "en"        :"$menu_index_string_eng",
+##      "url"       :"$menu_index_url",
+##      "fw_url"    :"$forward_url"
+##      }]
+##
+#########################################################################################
+
+## 現ページ情報
+#set ($page_type	= '')
+#set ($page_id		= '')
+#set ($page_string	= '')
+#set ($page_en      = '')
+#set ($page_url	    = '')
+#set ($page_dataMap = {}) ## [$menu_list]内の該当MAPデータ格納用
+
+## 親ページ情報
+#set ($parent_id	= '')
+#set ($parent_title	= '')
+#set ($parent_url	= '')
+
+## URL取得
+#set ($get_siteUrl = $request.getRequestedUrl())
+#set ($get_siteUrl_arr = $get_siteUrl.split("/"))
+
+## htm名を取得
+#foreach ($get_siteUrl_item in $get_siteUrl_arr)
+#if ($get_siteUrl_item.indexOf('.htm') > -1)
+#set ($get_htmUrl = $get_siteUrl_item)
+#break
+#end
+#end
+
+#set ($get_htmUrl_arr = $get_htmUrl.split(".htm"))
+#set ($get_htm_name = $get_htmUrl_arr.get(0) + ' ')##「business 」「business_d 」
+## 現ページ共通データ取得
+#if ($get_siteUrl.indexOf('.htm') > -1)
+
+    ## [$menu_list]の[url]または[fw_url]に設定されたURLと比較 / 該当データを設定
+    #foreach ($menu in $menu_list)
+	#set ($menu_id = $menu.id + ' ')
+	#if (($menu.id && $get_htm_name.indexOf($menu_id) > -1) || ($menu.fw_url && $menu.fw_url.indexOf($get_htm_name) > -1))
+        #set ($page_type	= $menu.type)
+        #set ($page_id		= $menu.id)
+        #set ($page_string	= $menu.name)
+        #set ($page_en      = $menu.en)
+        #set ($page_url	    = $menu.url)
+        #set ($parent_id	= $menu.parent_id)
+        #set ($page_dataMap = $menu)
+        #break
+    #end
+    #end
+
+#else
+    ## [.htm]がない場合は、TOPのデータを取得
+    #foreach ($menu in $menu_list)
+    #if ($menu.id == $menu_index_type)
+        #set ($page_type	= $menu.type)
+        #set ($page_id		= $menu.id)
+        #set ($page_string	= $menu.name)
+        #set ($page_en      = $menu.en)
+        #set ($page_url	    = $menu.url)
+        #set ($parent_id	= $menu.parent_id)
+        #set ($page_dataMap = $menu)
+        #break
+    #end
+    #end
+
+#end
+
+## 親ページ情報取得
+#foreach ($menu in $menu_list)
+#if ($menu.id == $parent_id)
+	#set ($parent_title = $menu.name)
+	#set ($parent_url	= $menu.url)
+#end
+#end
+
+## $from_param
+#set ($from_param = '')
+#if ($page_id == 'index' || $page_id == 'whatsnew')
+#set ($from_param = '&from=' + $page_id)
+#end
+

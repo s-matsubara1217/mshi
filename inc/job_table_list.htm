@@ -1,0 +1,150 @@
+## job_table_list.htm
+## created:Tsujino
+## Ver:2018.07
+## ※URL追加
+## ※例追加
+## ※雇用形態削除
+## ※アピールポイント追加
+## ※電話jsなしに対応
+
+#*
+求人タイトル　kyuujin_title
+掲載社名　company_name
+お仕事管理ID　oshigoto_id
+キャッチコピー　val34
+画像URL　img01_https_url
+画像コメント　img01_comment
+掲載開始日　show_date_from
+掲載終了日　show_date_to
+更新日　update_date
+*#
+
+## 求人一覧の表示項目及び並び順
+#set ($job_table_KeyList_list = ["10","04"])
+## 求人詳細の表示項目及び並び順
+#set ($job_table_KeyList_detail_A = ["02","03","04","10","13","25","05","33","06","53"])## 募集要項項目
+#set ($job_table_KeyList_detail_B = ["20","12","17","19"])## 応募方法項目
+
+#set ($job_table_list = [
+{"key":"02","item":"職種","anken":$anken.val02,"result":$result.val02,"lmt_txt":$syokusyu},
+{"key":"03","item":"仕事内容","anken":$anken.val03,"result":$result.val03,"lmt_txt":$shigoto},
+{"key":"04","item":"給与","anken":$anken.val04,"result":$result.val04,"lmt_txt":$kyuyo},
+{"key":"10","item":"勤務地","anken":$anken.val10,"result":$result.val10,"lmt_txt":$kinmuchi},
+{"key":"13","item":"交通アクセス","anken":$result.val13,"result":$result.val13,"lmt_txt":$traffic_access},
+{"key":"25","item":"勤務時間・曜日","anken":$anken.val25,"result":$result.val25,"lmt_txt":$jikan},
+{"key":"05","item":"資格・経験","anken":$anken.val05,"result":$result.val05},
+{"key":"33","item":"休日・休暇","anken":$anken.val33,"result":$result.val33},
+{"key":"06","item":"待遇","anken":$anken.val06,"result":$result.val06},
+{"key":"53","item":"備考","anken":$anken.val53,"result":$result.val53},
+{"key":"20","item":"応募方法","anken":$anken.val20,"result":$result.val20},
+{"key":"12","item":"連絡先住所","anken":$anken.val12,"result":$result.val12},
+{"key":"17","item":"連絡先TEL","anken":$anken.val17,"result":$result.val17},
+{"key":"19","item":"担当者","anken":$anken.val19,"result":$result.val19},
+{"key":"44","item":"URL","anken":$anken.val44,"result":$result.val44}
+])
+
+#set ($appeal_list = [
+{"ttl":$result.img03_comment,"dtl":$result.val35,"img":$result.img03_https_url},
+{"ttl":$result.img04_comment,"dtl":$result.val36,"img":$result.img04_https_url},
+{"ttl":$result.img05_comment,"dtl":$result.val37,"img":$result.img05_https_url},
+{"ttl":$result.img06_comment,"dtl":$result.val38,"img":$result.img06_https_url},
+{"ttl":$result.img07_comment,"dtl":$result.val39,"img":$result.img07_https_url},
+{"ttl":$result.img08_comment,"dtl":$result.val45,"img":$result.img08_https_url}
+])
+
+
+#* （例）
+<table>
+    #foreach ($job_table in $job_table_listA)
+    #if ($job_table.result != '')
+    <tr#if ($job_table.item == '給与' || $job_table.item == '交通アクセス' || $job_table.item == '仕事内容') class="is_pc"#end>
+        <th>$!{job_table.item}</th>
+        <td>$!{job_table.result}
+            #if ($job_table.item == '勤務地')##地図表示
+            #if ($result.val92 != '')
+            #set ($map_url = $result.val92)
+            #else
+            #set ($map_url = 'https://maps.google.co.jp/maps?q=' + $job_table.result.replace('<br>',' ').replace('&nbsp;',' '))
+            #end
+            <span class="btn_map">（<a href="${map_url}" target="_blank"><i class="fas fa-map-marker-alt"></i>Google Map</a>）</span>
+            #end
+        </td>
+        </tr>
+    #end
+    #end
+</table>
+*#
+
+##テーブルすべてをループさせる場合（多重配列）
+#set ($job_table_all_list = [$job_table_listA,$job_table_listB])
+
+#*
+<table>
+#foreach ($job_table_all in $job_table_all_list)
+#foreach ($job_table in $job_table_all)
+#if ($job_table.result != '')
+ここに内容（例）
+<tr>
+    <th>$!{job_table.item}</th>
+    <td>
+        #if ($job_table.item == '連絡先TEL' && $job_table.result.length() > 4)
+        <a href="tel:$!{job_table.result}">$!{job_table.result}</a>#if($job_table.result.substring(0,4) == "0066")<span style="display: inline-block">（通話無料の応募専用ダイヤルです）</span>#end
+        #elseif ($job_table.item == 'URL')
+        <a href="$!{job_table.result}" target="_blank">$!{job_table.result}</a>
+        #else
+        $!{job_table.result}
+        #end
+    </td>
+</tr>
+#end
+#end
+#end
+</table>
+*#
+
+#*
+## --- アピールあるか判別
+#set ($appeal_flg = 0)
+#foreach ($appeal in $appeal_list)
+#if ($appeal.ttl != '' || $appeal.dtl != '')
+#set ($appeal_flg = 1)
+#break
+#end
+#end
+
+#if ($appeal_flg == 1)
+<div class="appeal job_body_block">
+<h2 class="appeal_ttl">アピールポイント</h2>
+<ul class="appeal_list">
+#set ($i = 0)
+#foreach ($appeal in $appeal_list)
+#if ($appeal.ttl != '' || $appeal.dtl != '')
+    #set ($i = $i + 1)
+    #set ($appeal_ttl = 'POINT ' + $i)
+    #if ($appeal.ttl != '')
+        #set ($appeal_ttl = $appeal.ttl)
+    #end
+<li class="appeal_list_item">
+    <div class="appeal_list_item_head">
+        ${appeal_ttl}
+        <span class="toggle-ico"><span></span></span>
+    </div>
+    <div class="appeal_list_item_detail">
+        #if ($appeal.img != '')
+        <figure class="appeal_list_item_detail_img">
+            <img src="${appeal.img}" alt="$!{appeal_ttl}" class="object-fit-img">
+        </figure>
+        #end
+        #if ($appeal.dtl != '')
+        <p class="appeal_list_item_detail_txt">
+            ${appeal.dtl}
+        </p>
+        #end
+    </div>
+</li>
+#end ## --- if ($appeal.ttl != '' || $appeal.dtl != '')
+#end ## --- foreach ($appeal in $appeal_list)
+</ul>
+#end
+
+*#

@@ -1,0 +1,107 @@
+/* notfound - 共通 */
+.notfound{
+    text-align: center;
+	p{
+		font-size: 1.6rem;
+		font-weight: bold;
+	}
+}
+.notfound_p_tb{
+	padding: 6em 0;
+}
+.notfound_p_t{
+	padding: 6em 0 0;
+}
+.notfound_p_b{
+	padding: 0 0 6em;
+}
+
+@media only screen and (max-width: 768px){
+	.notfound{
+		p{
+			font-size: 1.4rem;
+		}
+	}
+    .notfound_p_tb{
+		padding: 3em 0;
+	}
+}
+
+//21.04.27 kimura
+/* 説明会 */
+.lower-briefing{
+    .locationList_item,
+    .locationList_item:nth-child(even){
+        .list_item_btn{
+            .o-btn-close{
+                pointer-events: none;
+                background: #969696;
+            }
+        }
+    } 
+}
+/* TOP説明会 */
+.front-page .top_news{
+    a.btn-close{
+        pointer-events: none;
+    }
+    .o-btn-close{
+        background: #969696;
+    }
+}
+
+// 21.06.14 add ue
+/* logo 変更 */
+.o-site_id {
+	max-width: none;
+	a {
+		display: flex;
+		align-items: center;
+		line-height: 1;
+	}
+	.image {
+		max-width: 250px;
+		@media (max-width: 834px) {
+			max-width: 180px;
+		}
+	}
+	.text {
+		margin-left: 15px;
+		color: #333;
+		font-size: 12px;
+		font-weight: bold;
+		border: 1px solid;
+		padding: 6px 8px;
+		@media (max-width: 834px) {
+			font-size: 10px;
+			margin-left: 8px;
+			padding: 3px 5px;
+		}
+	}
+}
+.footer_logo {
+	.o-site_id {
+		max-width: none !important;
+	}
+}
+
+.header {
+	.o-g_navi_list {
+		white-space: nowrap;
+		a {
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+	}
+}
+
+// 21.07.16 add onishi
+@media print{
+	body{
+		height: auto !important;
+	}
+	#luxy{
+		position: static !important;
+		transform: none !important;
+	}
+}

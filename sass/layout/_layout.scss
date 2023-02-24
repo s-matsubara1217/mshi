@@ -1,0 +1,79 @@
+@charset "utf-8";
+@import	'../foundation/mixins';
+
+/* ============================================
+// block width control
+// ==========================================*/
+.l-blockWidth {
+  &-xs {
+    max-width: 200px;
+  }
+  &-s {
+    max-width: 240px;
+  }
+  &-m {
+    max-width: 300px;
+  }
+  &-l {
+    max-width: 700px;
+  }
+  &-xl {
+    max-width: 800px;
+  }
+  &-right {
+    margin-left: auto;
+  }
+  &-center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+
+/* ============================================
+// container base (layout)
+// ==========================================*/
+// content width control (liquid)
+.l-container {
+  $padding: 50px;
+  
+  position: relative;
+  max-width: 1200px + $padding*2;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: $padding;
+  padding-right: $padding;
+  @include mq-down(md) {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+  &-xs {
+    max-width: 800px + $padding*2;
+  }
+//  &-s {
+//    max-width: 1000px + $padding*2;
+//  }
+	 &-s {
+    max-width: 1024px + $padding*2;
+  }
+  &-m {
+    max-width: 1200px + $padding*2;
+  }
+  &-l {
+    max-width: 1300px + $padding*2;
+  }
+  &-xl {
+    max-width: 1500px + $padding*2;
+  }
+}
+
+
+
+/* ============================================
+// main (layout)
+// ==========================================*/
+.l-main {
+	position: relative;
+//	z-index: 2;
+}

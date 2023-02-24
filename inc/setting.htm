@@ -1,0 +1,645 @@
+#########################################################################################
+##
+##		◆ Jobギア採促　設定ファイル
+##
+##		- Create:  2020/11/04 K. Tsuda
+##      - Update:  3.0.0 (2020/11/27) アイデム独自ログ対応
+##
+#set ($set_version              = '3.0.0')##    - 最新バージョンを記述
+##
+#set ($client_name_jap		= '滋賀MK株式会社')## - 顧客名（全角日本語）
+#set ($customer_id = 'C0000181426')
+#set ($stg_id = 'JAW18003107')
+##
+#########################################################################################
+## --------------------------------------------------------------------------------------
+## ドメイン設定
+## --------------------------------------------------------------------------------------
+#set ($domain          = '.net')## '.jp''.net'の指定
+#set ($own_domain      = 'www.shigamk-recruit.jp')## 独自ドメインを使用する場合はここに定義(「http://」と「最後の/」は抜く) (例:www.e-aidem.com)
+#set ($protocol_type   = 'https:')## 'http:'or'https:'
+## *★*――― ドメイン毎の切り替え処理
+#set($seturl = $request.getRequestedUrl())
+##ジョブギアステージング環境分岐
+#if($seturl.indexOf('stg.job-gear.jp') > 0 || $seturl.indexOf('stg.job-gear.net') > 0 || $seturl.indexOf('stgwww.job-gear.jp') > 0 || $seturl.indexOf('stgwww.job-gear.net') > 0)
+#set ($debug_mode = 1)
+##ジョブギア本番環境分岐
+#elseif($seturl.indexOf('job-gear.jp') > 0 || $seturl.indexOf('job-gear.net') > 0 || $seturl.indexOf('www.e-aidem.com') > 0 || $seturl.indexOf($own_domain) > 0)
+#set ($debug_mode = 0)
+#end
+## --------------------------------------------------------------------------------------
+## 各種機能使用設定
+## --------------------------------------------------------------------------------------
+## *★*――― Jobposting
+#set ($jobposting_flag      = 1)## 0:使用しない, 1:使用する
+## *★*――― お気に入り機能
+#set ($favorite_flag        = 0)## 0:使用しない, 1:使用する
+## *★*――― 最近見た求人
+#set ($loadlist_flag        = 0)## 0:使用しない, 1:使用する
+## *★*――― 関連求人
+#set ($related_post_use_flg = 0)## 0:使用しない, 1:使用する
+## --------------------------------------------------------------------------------------
+## 基本設定
+## --------------------------------------------------------------------------------------
+#set ($pre_release_mode		= 0)## 正式リリース時は「0」、本番環境テスト時は「1」
+#set ($display_oubo_flag	= 0)## 応募ボタン使用フラグ、正式リリース時は「0」、本番環境テスト時は「1」
+#set ($client_name_eng		= 'mkshiga')## 顧客名（半角アルファベット小文字）
+#set ($client_name_eng2		= $client_name_eng + '2')## 顧客名（半角アルファベット小文字）※求人用ドメイン
+#set ($base_url				= '/' + $client_name_eng.substring(0,1) + '/' + $client_name_eng.substring(0,2) + '/' + $client_name_eng + '/')
+#set ($list-type            = 'M')## 媒体モード「M」、採促モード「C」
+## *★*――― Meta
+#set ($site_name			= '採用サイト')## サイト名
+#set ($site_title			= $client_name_jap + ' ' + $site_name)## タイトルタグ表示用
+#set ($add_word				= '[採用・求人情報]')## タイトルタグに追加用
+#set ($site_keyword_title	= '')
+#set ($title_keyword		= $site_keyword_title + $site_title + $add_word)## - サイトタイトル（タイトルタグ用）
+#set ($meta_keyword			= $client_name_jap + ',滋賀エムケイ株式会社,MKタクシー,エムケイタクシー,ドライバー,滋賀,正社員,採用,求人')
+#set ($meta_description		= '全国で選ばれるMKタクシー。滋賀MKは「MK流のおもてなし」で特別なひとときを提供しています。ドライバー積極採用中！あなたも一流を目指しませんか？')
+## *★*――― Img
+#set ($img_folder = 'img' + '/')
+#set ($social_img = $img_folder + 'social.png')
+#set ($favicon_img = $img_folder + 'favicon.ico')
+#set ($webclip_img = $img_folder + 'apple-touch-icon.png')
+#set ($no_img = $img_folder + 'noimage.jpg')
+## *★*――― Footer
+#set ($copyright_string		= '&copy; 滋賀エムケイ株式会社')
+#set ($corporate_url = 'https://www.mk-group.co.jp/shiga/')
+#set ($corporate_txt = 'コーポレートサイトへ')
+## *★*――― Googleアナリティクスの利用について
+#set ($google_analytics_about_url = 'https://job-gear.net/csd/doc/privacy/googleanalytics_terms.pdf')
+#set ($google_analytics_about_txt = 'Googleアナリティクスの利用について')
+## *★*――― 求人一覧・詳細googleマップ表示用VAL
+#set($googlemap_val = 'val92')## 一覧：$anken.get($googlemap_val) 詳細：$result.get($googlemap_val)
+## *★*――― 求人詳細用URL正規化フラグ
+#set ($detail-url-normalized-mode = true)## 求人詳細URL正規化「true」、非正規化「false」
+## --------------------------------------------------------------------------------------
+## 媒体設定
+## --------------------------------------------------------------------------------------
+#set ($baitai_cd_kyujin		    = 'uTE')## 求人情報
+#set ($baitai_cd_interview	    = 'QnX')## スタッフの声
+#set ($baitai_cd_briefing_01    = 'QyC')## 説明会:概要・会場
+#set ($baitai_cd_briefing_02    = 'QrA')## 説明会:日程
+#set ($baitai_cd_career		    = 'QnY')## 滋賀MKでの働き方
+#set ($baitai_cd_company	    = 'QnZ')## 会社紹介
+#set ($baitai_cd_blog		= '')## ブログ
+#set ($baitai_cd_contact	= '')## お問い合わせ
+## --------------------------------------------------------------------------------------
+## String／PageType設定
+## --------------------------------------------------------------------------------------		
+## --->> $menu_xxx_string - メニュー表記（日本語）用
+## --->> $menu_xxx_string_eng - メニュー表記（英語）用
+## --->> $menu_xxx_type - ページタイプ
+## --->> $xxx_l_type - ページID（一覧用）※詳細のあるページのみ
+## --->> $xxx_d_type - ページID（詳細用）※詳細のあるページのみ
+
+## *★*――― index
+#set ($menu_index_string			= 'ホーム')
+#set ($menu_index_string_eng		= 'HOME')
+#set ($menu_index_type				= 'index')
+## *★*――― kyujin
+#set ($menu_kyujin_string			= '求人情報')
+#set ($menu_kyujin_string_eng		= 'RECRUIT')
+#set ($menu_kyujin_type				= 'kyujin')
+#set ($kyujin_l_type				= 'kyujin_l')
+#set ($kyujin_d_type				= 'kyujin_d')
+#set ($kyujin_headImg				= 'img/lower_main_recruit.jpg')
+## *★*――― keeplist
+#set ($menu_keeplist_string			= 'お気に入り')
+#set ($menu_keeplist_string_eng		= 'FAVORITE')
+#set ($menu_keeplist_type			= 'keeplist')
+## *★*――― interview
+#set ($menu_interview_string		= 'スタッフの声')
+#set ($menu_interview_string_eng	= 'INTERVIEW')
+#set ($menu_interview_type			= 'interview')
+#set ($interview_l_type				= 'interview_l')
+#set ($interview_d_type				= 'interview_d')
+#set ($interview_headImg			= 'img/lower_main_interview.jpg')
+## *★*――― briefing
+#set ($menu_briefing_string			= '説明会を予約')
+#set ($menu_briefing_string_eng		= 'BRIEFING')
+#set ($menu_briefing_type			= 'briefing')
+#set ($briefing_headImg				= 'img/lower_main_briefing.jpg')
+## *★*――― career
+#set ($menu_career_string			= '滋賀MKでの働き方')
+#set ($menu_career_string_eng		= 'CAREER')
+#set ($menu_career_type				= 'career')
+#set ($career_headImg				= 'img/lower_main_career.jpg')
+## *★*――― company
+#set ($menu_company_string			= '会社紹介')
+#set ($menu_company_string_eng		= 'COMPANY')
+#set ($menu_company_type			= 'company')
+#set ($company_headImg				= 'img/lower_main_company.jpg')
+## *★*――― blog
+#set ($menu_blog_string				= 'ブログ')
+#set ($menu_blog_string_eng			= 'BLOG')
+#set ($menu_blog_type				= 'blog')
+#set ($blog_l_type			       	= 'blog_l')
+#set ($blog_d_type			       	= 'blog_d')
+## *★*――― whatsnew
+#set ($menu_whatsnew_string			= '新着情報')
+#set ($menu_whatsnew_string_eng	    = 'NEW JOB')
+#set ($menu_whatsnew_type		    = 'whatsnew')
+## --------------------------------------------------------------------------------------
+## URL設定
+## --------------------------------------------------------------------------------------
+## *★*――― url_header
+#if($seturl.indexOf('stg.job-gear.jp') > 0 || $seturl.indexOf('stg.job-gear.net') > 0)
+#set ($url_header =$protocol_type + '//stg.job-gear' + $domain)
+#elseif($seturl.indexOf($own_domain) > 0)
+#set ($url_header = $protocol_type + '//' + $own_domain)
+#else
+#set ($url_header =$protocol_type + '//job-gear' + $domain)
+#end
+#set ($base_url00			= '/' + $client_name_eng + '/')
+#set ($base_url01			= '/' + $client_name_eng2 + '/')
+
+## *★*――― リニューアルテスト用 ※ドメインの一つ下の階層にテスト用のフォルダを作る
+#set ($test_folder_add	= 't_')## --- 差し替え前のフォルダ接頭語
+#if ($seturl.indexOf("/${test_folder_add}") > 0)
+	#set ($base_url = $base_url + $test_folder_add + $client_name_eng + '/')
+	#set ($base_url00 = '/' + $client_name_eng + '/' + $test_folder_add + $client_name_eng + '/')
+	#set ($base_url01 = '/' + $client_name_eng2 + '/' + $test_folder_add + $client_name_eng2 + '/')
+	#set ($site_title = 'test ' + $site_title)
+    #set ($title_keyword = 'test ' + $title_keyword)
+#end
+## *★*――― リニューアルテスト用ここまで※不要な場合はこの部分コメントアウトまたは削除
+
+## *★*――― root_url ※imges、css、jsなど、ルートからのパスに使用
+#set ($root_url				= $base_url)
+## *★*――― URL base
+#set ($menu_url_base00		= $url_header + $base_url00)## コンテンツ用
+#set ($menu_url_base01		= $url_header + $base_url01)## 求人情報用
+## *★*――― 昇順／降順
+#set ($order_SA = 'SA')## SA（昇順）
+#set ($order_SD = 'SD')## SD（降順）
+## *★*――― ソート
+## ■--- 更新順
+#set ($sort_UD = $util.urlEncode($util.urlDecode('UD,ID')))
+## ■--- OID順
+#set ($sort_OID = $util.urlEncode($util.urlDecode('OID,ID')))
+## ■--- 掲載開始日ランダム
+#set ($sort_SDATE = $util.urlEncode($util.urlDecode('SDATE,RUCD')))
+## ■--- 新着/おすすめ優先順
+#set ($new_val = '')##新着/おすすめ優先valを設定（チェックあれば値「1」）
+#set ($sort_new = '_' + $new_val + $sort_UD)## - 新着/おすすめ優先順
+## *★*――― 昇順／降順 & ソート ※正規化用
+## ■--- 降順 + 更新順 （求人用・1件表示コンテンツ用）
+#set ($orderSD_sortUD = $order_SD.substring(1,2) + $sort_UD)
+## ■--- 降順 + OID順 （ブログ用※日付の最新順）
+#set ($orderSD_sortOID = $order_SD.substring(1,2) + $sort_OID)
+## ■--- 昇順 + OID順 （他、複数表示コンテンツ用※OIDで並び順制御）
+#set ($orderSA_sortOID = $order_SA.substring(1,2) + $sort_OID)
+
+## --- 説明会用
+#set ($sortBriefing = $util.urlEncode($util.urlDecode('VAL96,OID,ID')))
+#set ($orderSA_sortBriefing = $order_SA.substring(1,2) + $sortBriefing)
+
+
+## *★*――― NOI
+## ■--- 求人
+#set ($kyujin_noi       = 10)## - 求人
+#set ($whatsnew_top_noi = 6)## - 新着TOP
+#set ($whatsnew_noi     = 10)## - 新着一覧
+#set ($keeplist_noi     = 20)## - お気に入り
+#set ($loadlist_noi     = 6)## - 最近見た求人読込件数
+## ■--- コンテンツ
+#set ($interview_noi     = 1000)## - スタッフの声
+#set ($interview_top_noi = 1000)## - TOPAjax
+#set ($interview_d_noi   = 1000)## - 詳細Ajax
+#set ($briefing_noi      = 1000)## - 説明会
+#set ($briefing_top_noi  = 7)## - TOP説明会(日程データ数＋概要データ数→実際には6件の日程が表示される)
+#set ($career_noi        = 1)## - 滋賀MKでの働き方
+#set ($company_noi       = 1)## - 会社紹介
+#set ($blog_noi          = 1)## - 
+#set ($contact_noi       = 1)## - 
+## ↑↑↑↑↑ ないやつは増やす
+## *★*――― index
+#set ($menu_index_url		= $menu_url_base00)
+## *★*――― Forward(説明会読み込み)
+#set ($forward_url          = $base_url00 + 'fw_index.htm?L=BCSList&BCD=' + $baitai_cd_briefing_01 + '&BCD=' + $baitai_cd_briefing_02 + '&NOI=' + $briefing_top_noi + '&SF=1&' + $order_SD + '=' + $sort_OID)
+## *★*――― kyujin
+## ■--- 求人一覧※非正規用
+#set ($menu_kyujin_url          = $menu_url_base01 + 'kyujin_l.htm?L=BMSList&BCD=' + $baitai_cd_kyujin + '&NOI=' + $kyujin_noi + '&SF=1&' + $order_SD + '=' + $sort_UD)
+## ■--- 求人一覧※正規化用
+#set ($menu_kyujin_l_url_reg    = $menu_url_base01 + 'all/' + $baitai_cd_kyujin + '_1_' + $kyujin_noi + '_' + $orderSD_sortUD + '/MLkyujin_l.htm')
+## ■--- 求人詳細
+#if ($detail-url-normalized-mode == true)## 正規化
+	#set ($menu_kyujin_d_url	= $menu_url_base01 + '{{job_offer_id}}/MDkyujin_d.htm')
+#else## 非正規
+	#set ($menu_kyujin_d_url	= $menu_url_base01 + 'kyujin_d.htm?L=BMSDetail')
+#end
+## ■--- お気に入り一覧
+#set ($menu_keeplist_url     = $menu_url_base01 + 'keeplist.htm?L=ExaminationList&BCD=' + $baitai_cd_kyujin + '&SF=1&NOI=' + $keeplist_noi)
+## ■--- 最近見た求人
+#set ($loadlist_kyujin_d_url = $menu_url_base01 + 'loadlist_kyujin_d.htm?L=BrowsingHistory')
+#set ($loadlist_index_url    = $menu_url_base01 + 'loadlist_index.htm?L=BrowsingHistory')
+## ■--- お気に入りカウント
+#set ($listcounter_url       = $menu_url_base01 + 'listcounter.htm')
+## *★*――― search
+#set ($search_url            = $menu_url_base01 + 'kyujin_l.htm')
+## ■--- 市区町村ドリル
+#set ($search_city_url = $url_header + $base_url01 + 'search_city.htm?L=BMSList&BCD=' + $baitai_cd_kyujin + '&SF=1&' + $order_SA + '=KCD&NOI=3000')
+## *★*――― whatsnew
+#set ($menu_whatsnew_url	= $menu_url_base01 + 'all/' + $baitai_cd_kyujin + '_1_' + $whatsnew_noi + '_' + $orderSD_sortUD + '/MLwhatsnew.htm')
+## *★*――― contents list
+#set ($menu_interview_url   = $menu_url_base00 + 'all/' + $baitai_cd_interview + '_1_' + $interview_noi + '_' + $orderSA_sortOID + '/CLinterview_l.htm')
+## #set ($menu_briefing_url    = $menu_url_base00 + 'all/' + $baitai_cd_briefing + '_1_' + $briefing_noi + '_' + $orderSA_sortBriefing + '/CLbriefing.htm')
+#set ($menu_briefing_url    = $menu_url_base00 + 'briefing.htm?L=BCSList&BCD=' + $baitai_cd_briefing_01 + '&BCD=' + $baitai_cd_briefing_02 + '&NOI=' + $briefing_noi + '&SF=1&' + $order_SA + '=' + $sort_OID)
+#set ($menu_career_url      = $menu_url_base00 + 'all/' + $baitai_cd_career + '_1_' + $career_noi + '_' + $orderSA_sortOID + '/CLcareer.htm')
+#set ($menu_company_url     = $menu_url_base00 + 'all/' + $baitai_cd_company + '_1_' + $company_noi + '_' + $orderSD_sortUD + '/CLcompany.htm')
+#set ($menu_blog_url        = $menu_url_base00 + 'all/' + $baitai_cd_blog + '_1_' + $blog_noi + '_' + $orderSD_sortOID + '/CLblog_l.htm')
+#set ($menu_contact_url     = $menu_url_base00 + 'all/' + $baitai_cd_contact + '_1_' + $contact_noi + '_' + $orderSD_sortUD + '/CLcontact.htm')
+## ■--- ブログカテゴリーorアーカイブ絞込用
+#set ($menu_blog_search_url = $menu_url_base00 + 'blog_l.htm?L=BCSList&BCD=' + $baitai_cd_blog + '&NOI=' + $blog_noi + '&SF=1&' + $order_SD + '=' + $sort_OID)
+## *★*――― contents detail
+## 求人以外で詳細がある場合はURLを下記に追加
+#set ($menu_interview_d_url = $menu_url_base00 + '{{job_offer_id}}' + '/CDinterview_d.htm')## インタビュー
+#set ($menu_blog_d_url      = $menu_url_base00 + '{{job_offer_id}}' + '/CDblog_d.htm')## ニュース・更新情報・ブログ
+## *★*――― Ajax
+## ■--- インタビューTOP※TOPに表示
+#set ($interview_index_url  = $menu_url_base00 + 'top_interview.htm?L=BCSList&BCD=' + $baitai_cd_interview + '&NOI=' + $interview_top_noi + '&SF=1&' + $order_SA + '=' + $sort_OID)
+## ■--- インタビューページャー※インタビュー詳細に表示
+#set ($ajax_interview_pager_url	= $menu_url_base00 + 'load_nextStaff.htm?L=BCSList&BCD=' + $baitai_cd_interview + '&NOI=' + $interview_d_noi + '&SF=1&' + $order_SA + '=' + $sort_OID)
+## ■--- ブログサイドメニュー
+#set ($ajax_blog_menu_url    	= $menu_url_base00 + 'blog_category_menu.htm?L=BCSList&BCD=' + $baitai_cd_blog + '&NOI=1000&SF=1&' + $order_SD + '=' + $sort_OID)
+## ■--- ブログページャー
+#set ($ajax_blog_prevnext_url   = $menu_url_base00 + 'blog_prevnext.htm?L=BCSList&BCD=' + $baitai_cd_blog + '&NOI=1000&SF=1&' + $order_SD + '=' + $sort_OID)
+## *★*――― 関連求人
+#set ($related_post_noi = 3000)## -　関連求人※全件読み込む必要があるため多めに設定
+#set ($related_post_display_num = 5)## -　実際に表示する件数
+#set ($related_post_url		= $menu_url_base01 + 'related_post.htm?L=BMSList&BCD=' + $baitai_cd_kyujin + '&NOI=' + $related_post_noi + '&' + $order_SD + '=' + $sort_UD + '&JID=')
+#set ($related_class = '.load-related-post')## - Ajaxファイル読み込みclass
+## --------------------------------------------------------------------------------------
+## Menu設定 ※header／footerのメニュー設定
+## --------------------------------------------------------------------------------------
+## --->> "num"       - ページキー。メニューの並び順などで使用
+## --->> "type"      - ページタイプ。ページごとの条件分岐などで使用
+## --->> "id"        - ページID。一覧／詳細の条件分岐などで使用
+## --->> "parent_id" - 親ページID。※詳細のみ設定
+## --->> "name"      - ページ名（日本語）。メニュー表示などで使用
+## --->> "en"        - ページ名（英語）メニュー表示などで使用
+## --->> "url"       - ページURL。URL設定などで使用
+## --->> "fw_url"    - foward用URL。fw_index.htmなどfowardする場合設定。共通データ設定時に使用
+##		
+## --->> 詳細ページは"num"の末尾を「1」にして作成
+## --->> 求人は一覧を「10」詳細を「11」で作成
+## --->> "id"には詳細/一覧がある場合はそれぞれのページIDを、
+## --->> 一覧のみの場合はページタイプを設定
+
+## *★*――― base
+#set($menu_list = [
+{"num"      :"00",
+"type"      :"$menu_index_type",
+"id"        :"$menu_index_type",
+"parent_id" :"",
+"name"      :"$menu_index_string",
+"en"        :"$menu_index_string_eng",
+"url"       :"$menu_index_url",
+"fw_url"    :"$forward_url"
+},
+{"num"      :"10",
+"type"      :"$menu_kyujin_type",
+"id"        :"$kyujin_l_type",
+"parent_id" :"",
+"name"      :"$menu_kyujin_string",
+"en"        :"$menu_kyujin_string_eng",
+"url"       :"$menu_kyujin_l_url_reg",
+"headImg"   :"$kyujin_headImg"
+},
+{"num"      :"11",
+"type"      :"$menu_kyujin_type",
+"id"        :"$kyujin_d_type",
+"parent_id" :"$kyujin_l_type",
+"name"      :"$menu_kyujin_string",
+"en"        :"$menu_kyujin_string_eng",
+"url"       :"$menu_kyujin_d_url"
+},
+{"num"      :"12",
+"type"      :"$menu_keeplist_type",
+"id"        :"$menu_keeplist_type",
+"parent_id" :"",
+"name"      :"$menu_keeplist_string",
+"en"        :"$menu_keeplist_string_eng",
+"url"       :"$menu_keeplist_url"
+},
+{"num"      :"20",
+"type"      :"$menu_interview_type",
+"id"        :"$interview_l_type",
+"parent_id" :"",
+"name"      :"$menu_interview_string",
+"en"        :"$menu_interview_string_eng",
+"url"       :"$menu_interview_url",
+"headImg"   :"$interview_headImg"
+},
+{"num"      :"21",
+"type"      :"$menu_interview_type",
+"id"        :"$interview_d_type",
+"parent_id" :"$interview_l_type",
+"name"      :"$menu_interview_string",
+"en"        :"$menu_interview_string_eng",
+"url"       :"$menu_interview_d_url"
+},
+{"num"      :"30",
+"type"      :"$menu_briefing_type",
+"id"        :"$menu_briefing_type",
+"parent_id" :"",
+"name"      :"$menu_briefing_string",
+"en"        :"$menu_briefing_string_eng",
+"url"       :"$menu_briefing_url",
+"headImg"   :"$briefing_headImg"
+},
+{"num"      :"40",
+"type"      :"$menu_career_type",
+"id"        :"$menu_career_type",
+"parent_id" :"",
+"name"      :"$menu_career_string",
+"en"        :"$menu_career_string_eng",
+"url"       :"$menu_career_url",
+"headImg"   :"$career_headImg"
+},
+{"num"      :"50",
+"type"      :"$menu_company_type",
+"id"        :"$menu_company_type",
+"parent_id" :"",
+"name"      :"$menu_company_string",
+"en"        :"$menu_company_string_eng",
+"url"       :"$menu_company_url",
+"headImg"   :"$company_headImg"
+},
+{"num"      :"60",
+"type"      :"$menu_whatsnew_type",
+"id"        :"$menu_whatsnew_type",
+"parent_id" :"",
+"name"      :"$menu_whatsnew_string",
+"en"        :"$menu_whatsnew_string_eng",
+"url"       :"$menu_whatsnew_url"
+},
+{"num"      :"70",
+"type"      :"$menu_blog_type",
+"id"        :"$blog_l_type",
+"parent_id" :"",
+"name"      :"$menu_blog_string",
+"en"        :"$menu_blog_string_eng",
+"url"       :"$menu_blog_url"
+},
+{"num"      :"71",
+"type"      :"$menu_blog_type",
+"id"        :"$blog_d_type",
+"parent_id" :"$blog_l_type",
+"name"      :"$menu_blog_string",
+"en"        :"$menu_blog_string_eng",
+"url"       :"$menu_blog_d_url"
+}
+])
+
+## 20.11.04 add kimura
+## *★*――― base [num]でMap型作成
+## --- データ取得例 ----------------------
+## $!{menu_list_map.get('20').name}
+## -------------------------------------
+#set ($menu_list_map = {})
+#foreach ($menu in $menu_list)
+    #set ($dummy = $menu_list_map.put("$menu.num",$menu))
+#end
+
+## *★*――― header nav ※header用
+#set ($h_menu_key_list = ["40","20","50"])
+#set ($h_menu_key_list_02 = ["30","10"])
+## *★*――― footer nav ※footer用
+#set ($f_menu_key_list = ["40","20","50","30","10"])
+## *★*――― drawer nav ※drawer用
+#set ($d_menu_key_list = ["40","20","50","30","10"])
+## --------------------------------------------------------------------------------------
+## 応募フォーム設定
+## --------------------------------------------------------------------------------------
+## *★*――― フォーム固定化
+#set ($oboform_fixed_mode = 0)## - 応募フォームを固定するかどうか。1---固定 0---固定しない（応募フォームキーワードそのままが入る）
+#set ($oboform_type_value = '')## - 応募フォーム固定の場合の固定する応募フォームの値を指定（空にすると指定なし）
+## *★*――― Entry URL
+#if ($debug_mode == 1)
+	#set ($entry_base_url 			= 'http://stgss.job-gear.jp/jobgear/f/q.do?')
+#else
+	#set ($entry_base_url			= 'https://ss.job-gear.jp/jobgear/f/q.do?')
+#end
+## *★*――― 求人以外でフォームを使用する場合
+##id・・・page_id（複数ページで使用する場合は、別名IDを設定してください）
+##key・・・（半角英数6文字以内）
+##name・・・（10文字以内）
+#set ($form_key_list = [
+{"id":"contact",
+"key":"CONTAC",
+"name":"お問い合わせ"
+},
+{"id":"entry",
+"key":"ENTRY",
+"name":"新卒エントリー"
+},
+{"id":"reserve",
+"key":"YOYAKU",
+"name":"説明会予約"
+}
+])
+## *★*――― 万が一INPUT登録がなかった場合
+#if ($debug_mode == 0)
+#set ($oubosaki_company_id = $customer_id)
+#else
+#set ($oubosaki_company_id = $stg_id)
+#end
+## --------------------------------------------------------------------------------------
+## SEO対策 ※スタート処理時設定用
+## --------------------------------------------------------------------------------------
+## *★*――― Google Analytics
+#set ($google_analytics_use_flag = 1)## 0:使用しない,1:使用する
+#set ($google_analytics_code = 'UA-116039855-18')
+## *★*――― Search Console
+#set ($google_web_master_tool_code = '8CZIk68DdJ7MQUgiO4xu7D305Va2Nu9w4zV9qrjLwYE')## Search Console用
+## --------------------------------------------------------------------------------------
+## NEWアイコン設定
+## --------------------------------------------------------------------------------------
+#set ($new_icon_display_day = -7)## 求人などで「New」が表示される日数（登録日時との比較）
+## --------------------------------------------------------------------------------------
+## 社名表示設定 ※求人詳細metaタイトル／パンくず用
+## --------------------------------------------------------------------------------------
+#set ($company_name_display_flg = 0)## 1:表示 0:非表示
+#set ($title_add_word = '採用情報')## 追加ワード／$company_name_display_flgを「1」にした場合のみ表示 ex:「●●の採用情報」
+## --------------------------------------------------------------------------------------
+## notfound設定 ※件数0件のときの表示文言
+## --------------------------------------------------------------------------------------
+#set($notfound_w          = '現在新着情報はございません。')## 新着
+#set($notfound_l          = '現在求人情報はございません。')## 求人一覧
+#set($notfound_blog       = '現在記事はございません。')## ブログ、お知らせ、更新情報etc
+#set($notfound_search     = 'お探しの求人情報はございません。')## 求人検索
+#set($notfound_store      = 'お探しの店舗情報はございません。')## 店舗情報
+#set($notfound_searchBlog = 'お探しの記事はございません。')## 記事検索
+#set($notfound_d          = 'この求人の募集は終了しています。')## 求人詳細
+#set($notfound_ready      = '現在準備中です。もうしばらくお待ちください。')## コンテンツ一覧
+#set($notfound_end        = 'このコンテンツは掲載を終了しています。')## コンテンツ詳細
+#set($notfound_briefing   = '現在開催中の説明会はございません。')## 説明会
+## --------------------------------------------------------------------------------------
+## list／detail判別設定
+## --------------------------------------------------------------------------------------
+#if ($url.indexOf('L=BMSList') > 0 || $url.indexOf('L=BCSList') > 0 || $url.indexOf('L=ExaminationList') > 0 || $url.indexOf('L=BrowsingHistory') > 0)
+#set ($page_style = 'list')
+#elseif ($url.indexOf('L=BMSDetail') >0 || $url.indexOf('L=BCSDetail') > 0 || $url.indexOf('MDkyujin') > 0)
+#set ($page_style = 'detail')
+#end
+## --------------------------------------------------------------------------------------
+## 件数／ページパラメータ設定
+## --------------------------------------------------------------------------------------
+#set($int   = 0)
+#set($noi   = 5)
+#set($pl    = 5)
+#set($pagepar = '')## --- ページパラメータ変数初期値
+## *★*――― 件数
+#if ($request.NOI != '')
+	#set($noi = $int.parseInt($request.NOI))
+#end
+## *★*――― ページング番号最大数
+#if ($request.PL != '')
+	#set($pl = $int.parseInt($request.PL))
+#end
+## *★*――― ページ数
+#if ($request.P != '')
+    #set($page_no = $int.parseInt($request.P))
+#else
+    #set($page_no = 1)
+#end
+#set($currentNo = $page_no)## 現在のページ数
+#set($prevNo = $page_no - 1)## 前のページ数
+#set($nextNo = $page_no + 1)## 次のページ数
+#if ($request.P != '')
+    #set($pagepar = '&P=' + $page_no)
+#end
+## *★*――― 1ページ目の場合はページパラメータ非表示
+#if ($prevNo == 1)
+#set ($prev_param = '')
+#else
+#set ($prev_param = '&P=' + $prevNo)
+#end
+#set ($next_param = '&P=' + $nextNo)
+## --------------------------------------------------------------------------------------
+## 検索設定
+## --------------------------------------------------------------------------------------
+## *★*――― 検索使用フラグ
+#set ($kinmuchi_search = 2)## 勤務地 0:使用しない, 1:プルダウン, 2:チェックボックス, 3:ドリル検索
+#set ($koyou_search    = 2)## 雇用形態 0:使用しない, 1:プルダウン, 2:チェックボックス
+#set ($freeword_search = 1)## フリーワード 0:使用しない, 1:使用する
+## *★*――― 勤務地
+## ■--- エリアグループ表示用フラグ：ドリル検索用
+#set ($area_search_display_flg = 0)## 1:使用する 0:使用しない
+## ■--- エリアグループ／都道府県グループ表示用フラグ：通常検索用
+#set ($group_search_display_flg = 0)## 1:エリアグループ 2:都道府県グループ 0:使用しない
+## ■--- マスタ読み込み
+#parse ('/__common_config__/master/master.htm')
+#* --- エリアコード※コメントアウト外さない
+#set($master_ecd = {
+    '00':'全国',
+    '01':'関東',
+    '02':'関西',
+    '03':'東海',
+    '04':'北海道・東北',
+    '05':'北陸・甲信越',
+    '06':'中国・四国',
+    '07':'九州・沖縄'
+})
+--- *#
+## ■--- エリアコードと県コードのひもづけ※正規化URLのエリア表示用
+#set($ecdList = ['01','02','03','04','05','06','07'])
+#set($prefMap = {
+    "01":['13','14','12','11','08','09','10'],
+    "02":['27','28','26','25','29','30'],
+    "03":['23','22','21','24'],
+    "04":['01','02','03','04','05','06','07'],
+    "05":['15','16','17','18','19','20'],
+    "06":['31','32','33','34','35','38','36','37','39'],
+    "07":['40','41','42','43','44','45','46','47']
+})
+## ■--- 勤務地設定
+## --->> "area-codes":エリアCD　"pref-codes":都道府県CD　"kcd-codes":市区町村CD（都道府県CDも設定可）
+## --->> ドリル検索使用時："pref-codes"で都道府県CDを設定。"kcd-codes"は設定不要。設定しても何も起こりません。
+## --->> 通常検索使用時："pref-codes"と"kcd-codes"で設定。サイトに表示される勤務地は"kcd-codes"で設定したもの。
+## --->> 並びの優先順位は"area-codes"→"pref-codes"→"kcd-codes"の順
+#set ($kinmuchi_array = {
+    "area-codes" : ['02'],
+    "pref-codes" : {
+        "01" : [],
+        "02" : ['25'],
+        "03" : [],
+        "04" : [],
+        "05" : [],
+        "06" : [],
+        "07" : []
+    },
+    "kcd-codes" : {
+        "25" : ['25201','25208']
+    }
+})
+
+## *★*――― 雇用形態
+#set($kkcd_key_list					= ["01"])
+#set($kkcdMap	= {
+	"01":"正社員",
+	"03":"アルバイト",
+	"04":"パート",
+	"03:04":"アルバイト・パート",
+	"05":"契約社員",
+	"06":"嘱託",
+	"08":"派遣",
+	"09":"職業紹介",
+	"11":"他",
+	"12":"紹介予定派遣",
+	"13":"業務委託",
+	"14":"独立開業"
+})
+## *★*――― フリーval
+## --->> カスタム検索時（独自マスタ使用時）に設定
+## --->> 職種（独自マスタ）以外はコメントアウトの中身をコピペして必要箇所設定
+## --->> フリーval設定で使用val（変数）を設定
+
+## ■--- 職種
+#set ($syokusyu_search = 2)## 0:使用しない, 1:プルダウン, 2:チェックボックス
+#set ($cat_val = 'val91_')## 「val」は小文字必須
+#set ($category_key_list = ["11"])
+#set ($category_list = [
+{"key":"11","name":"ドライバー"}
+])
+
+#* --- ↓ここからコピペ
+## ■--- XXXXX
+#set ($xxx_val = '')## 「val」は小文字必須
+#set ($xxx_key_list	= ["",""])
+#set ($xxx_list = [
+{"key":"","name":""},
+{"key":"","name":""}
+])
+--- *#
+
+## ■--- フリーval設定 ※list-pageURL.htmの$regPrm設定用。使用valが増えたら下記$freevalに追加
+#set($freeval = [$cat_val])## ここに使用valを追加※職種はフリーval扱いなので使用する場合はここにも追加
+## --------------------------------------------------------------------------------------
+## TOPメイン画像スライダ ※スライダ画像枚数設定
+## --------------------------------------------------------------------------------------
+#set ($top_visual_key_list = ["01","02"])
+#set($top_visual_list = [
+{"key":"01","img":"xxx.jpg","alt":"xxxxx"},
+{"key":"02","img":"xxx.jpg","alt":"xxxxx"}
+])
+## --------------------------------------------------------------------------------------
+## 共通ファイル読み込み
+## --------------------------------------------------------------------------------------
+## *★*――― 検索結果表示
+##----- search_result -----##
+#set ($parse_url = $base_url + 'inc/search_result.htm')
+#parse ($parse_url)
+## *★*――― ページ情報取得
+##----- common_page_set -----##
+#set ($parse_url = $base_url + 'inc/common_page_set.htm')
+#parse ($parse_url)
+## *★*――― 共通読み込み記述
+##----- common_define -----##
+#set ($parse_url = $base_url + 'inc/common_define.htm')
+#parse ($parse_url)
+## *★*――― 正規化URLのベースを作成
+##----- list-pageURL -----##
+#set ($parse_url = $base_url + 'inc/list-pageURL.htm')
+#parse ($parse_url)

@@ -1,0 +1,28 @@
+#set($sitemap_list_type = $list-type)
+#set($sitemap_detail_filename = 'kyujin_d.htm')
+#set($sitemap_protocol_type = $protocol_type)
+##
+#if($sitemap_detail_filename != '' && $sitemap_list_type != '')
+##
+## 仕事詳細XML出力
+## URL 切り出し
+#set($intReturnValue = 0)
+#set($intReturnValue = $request.getRequestedUrl().indexOf("sitemap") )
+#set($sitemap_url = $request.getRequestedUrl().substring(0,$intReturnValue) )
+#if($sitemap_protocol_type != '')
+#set($sitemap_url = $sitemap_url.replace('http:',$sitemap_protocol_type))
+#end
+## ★main roop
+#foreach ( $bean in $result )
+#set($lastmod = $bean.update_date.replace("/","-") )
+#set($lastmod = $lastmod.replace("&nbsp;","T") )
+#set ($sitemap_detail_url = $sitemap_url + $bean.job_offer_id + '/' + $sitemap_list_type + 'D' + $sitemap_detail_filename)
+#if ($detail-url-normalized-mode != true)
+    #set ($sitemap_detail_url = $sitemap_url + $sitemap_detail_filename + '?L=B' + $sitemap_list_type + 'SDetail&ID=' + $bean.job_offer_id)
+#end
+ <url>
+  <loc>$!{sitemap_detail_url}</loc>
+  <lastmod>${lastmod}+09:00</lastmod>
+ </url>
+#end ## --- foreach ( $bean in $result )
+#end ## --- if($sitemap_detail_filename != '' && $sitemap_list_type != '')

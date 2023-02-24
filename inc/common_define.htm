@@ -1,0 +1,354 @@
+##
+## common_define.htm
+## created:Kimura
+## Ver:19.09.25
+## Ver:19.11.14
+## Ver:19.11.25
+##
+#########################################################################################
+##
+##      共通読み込み記述、ファイル設定
+##
+#########################################################################################
+## ------------------------------------------------------ ##
+## フッター共通読み込み
+## ------------------------------------------------------ ##
+#define ($common_footer_read)
+    #if ($debug_mode == 0 && $pre_release_mode == 0 && $google_analytics_use_flag == 1 && $request.I != 'input')
+    #set($parse_url = $base_url + 'inc/analytics.htm')
+    #parse($parse_url)
+    #end
+    #if ($page_id == 'kyujin_d' && $request.get("I") == 'input') ## 求人詳細のみ
+    <p class="preview" style="text-align:center; position: absolute; z-index: 1000; background: #eee; width: 100%; bottom: 0;">
+    <a href="https://job-gear.jp/baito/preview/preview.htm?GMC=E08:M15:M02&amp;L=BMSDetail&amp;ID=${result.job_offer_id}&amp;I=input" target="_blank">イーアイデム切り替え<span>→</span></a>
+    </p>
+    #end
+#end
+##
+
+## ------------------------------------------------------ ##
+## スクリプト　-- 市区町村ドリルマニュアル（区を表示）
+## created:Tsujino
+## Ver:2018.07.09
+## ラジオボタン・チェックボックスの場合 or セレクトボックスの場合 or 都道府県セレクト＋市区町村チェックの場合　のいずれかを選択
+## 以下は都道府県セレクト＋市区町村チェックの場合
+## ------------------------------------------------------ ##
+
+#define ($common_drill_script)
+
+#set ($pref_param = '')
+#set ($city_param = '')
+#if ($request.KCD != '' || $request.KCD_ != '')
+    #if ($request.KCD != '')
+        #set ($kcd_array = $request.gets('KCD'))
+    #elseif ($request.KCD_ != '')
+        #set ($kcd_array = $request.gets('KCD_'))
+    #end
+    #if ($kcd_array.size() > 0)
+        #set ($p = 0)
+        #foreach ($kcd in $kcd_array)
+            #if ($kcd.length() >= 2)
+                #set ($pref_key = $kcd.substring(0,2))
+                #if ($check_key != $pref_key)
+                    #set ($pref_param = $pref_param + '&KCD=' + $pref_key)
+                    #set ($check_key = $pref_key)
+                    #set ($p = $p + 1)##都道府県の数
+                #end
+            #end
+            #if ($kcd.length() == 5)
+                #set ($city_param = $city_param + '&CITY=' + $kcd)
+            #end
+        #end
+    #end
+#end
+
+
+##都道府県セレクト＋市区町村チェックの場合
+<script>
+	function prefChange(load_city_url){
+		jQuery.ajax({
+			type: 'GET',
+			url: load_city_url + '&time=' + (new Date).getTime(),
+			success: function(data) {
+				if(location.href.indexOf('${url_header}') == -1) {
+					var data = data.responseText;
+				}
+				//                console.log(data);
+				$('#search_city').html(data);
+				$('#search_city > *').hide().fadeIn();
+			}
+		});
+	}
+
+	$(function(){
+		var base_data = $('#search_city').html();//元のデータ
+
+		var check_pref = $('#search_pref').val();//セレクトの場合
+		//チェックがあればそれを優先
+		if (check_pref != '') {
+			//                console.log(check_pref);
+			var city_url = '${search_city_url}$!{city_param}&KCD_=' + check_pref;
+			prefChange(city_url);
+		} 
+		else if ('${pref_param}' != '') {
+			//                console.log('${pref_param}');
+			var city_url = '${search_city_url}$!{city_param}$!{pref_param}';
+			prefChange(city_url);
+		} 
+
+
+		$('#search_pref').on('change',function() {
+			$(this).parents('form').find('.no_offer').remove();
+			var check_pref = $('#search_pref').val();//セレクトの場合
+			var city_url = '${search_city_url}&KCD_=' + check_pref;
+			if (check_pref == ''){
+				$('#search_city').html(base_data);
+				$('#search_city > *').hide().fadeIn();
+			} else {
+				prefChange(city_url);
+				$('#search_city option').attr('selected',false);
+			}
+		});
+		
+		$('#search_city').on('click',function(){
+			var check_pref = $('#search_pref').val();//セレクトの場合
+			if (check_pref == ''){
+				$(this).html('<div class="no_pref">都道府県を選択</div>')
+				$('#search_city .no_pref').hide().fadeIn();
+				return false;
+			}
+		});
+		$('.submit_btn').on('click',function(){
+			var check_no_city = $('#search_city .no_city').length;
+			var check_city = $('#search_city :checked').val();
+			var check_pref = $('#search_pref').val();
+			var pref_name = $('#search_pref :selected').text();
+			var pref_name = pref_name.replace(/\s+/g, '');
+
+			if (check_pref != '' && check_no_city > 0){
+				$(this).parents('form').find('.no_offer').remove();
+				//デザインにより選択
+				//$(this).closest('div').prepend('<div class="no_offer">' + pref_name + 'の募集は現在ありません。</div>');
+				$(this).parents('form').append('<div class="no_offer">' + pref_name + 'の募集は現在ありません。</div>');
+				$(this).parents('form').find('.no_offer').hide().fadeIn();
+				return false;
+			}
+			if (check_city && check_city != ''){
+				$('#search_pref').attr('name','PC');
+			}
+
+		});
+	});
+
+</script>
+##----都道府県セレクト＋市区町村チェックの場合
+
+#end
+
+
+##
+## ------------------------------------------------------ ##
+## スクリプト：お気に入り専用（共通読み込み）
+## ------------------------------------------------------ ##
+#define ($common_favorite_script)
+<script>
+	var exam_name = 'ExaminationList' + '${client_name_eng2}';
+	var history_name = 'ExaminationList' + '${client_name_eng2}';
+	var originUrl = "$!{seturl}";
+	var originParam = "$!{seturl.replaceAll('^.*?(\?.*?)$','$1')}";
+	var listcounter_url = "$!{listcounter_url}";
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="${root_url}js/favorite.js"></script>
+#end
+
+##
+## ------------------------------------------------------ ##
+## ヘッダー：お気に入りカウント・ページリンクボタン（共通読み込み）
+## ------------------------------------------------------ ##
+#define ($common_favoriteHeader)
+<!-- お気に入りボタンはこちらをご利用ください -->
+<!-- お気に入り追加時は「.is-active」を付与 -->
+<div id="favorite" class="favorite">
+    <a href="$!{menu_keeplist_url}" class="favorite_inner">
+        <span class="favorite_block-1">
+            <span class="favorite_ico">
+                <svg viewBox="0 0 512 455" xmlns="http://www.w3.org/2000/svg" class="favorite_svg"><path d="m471.382812 44.578125c-26.503906-28.746094-62.871093-44.578125-102.410156-44.578125-29.554687 0-56.621094 9.34375-80.449218 27.769531-12.023438 9.300781-22.917969 20.679688-32.523438 33.960938-9.601562-13.277344-20.5-24.660157-32.527344-33.960938-23.824218-18.425781-50.890625-27.769531-80.445312-27.769531-39.539063 0-75.910156 15.832031-102.414063 44.578125-26.1875 28.410156-40.613281 67.222656-40.613281 109.292969 0 43.300781 16.136719 82.9375 50.78125 124.742187 30.992188 37.394531 75.535156 75.355469 127.117188 119.3125 17.613281 15.011719 37.578124 32.027344 58.308593 50.152344 5.476563 4.796875 12.503907 7.4375 19.792969 7.4375 7.285156 0 14.316406-2.640625 19.785156-7.429687 20.730469-18.128907 40.707032-35.152344 58.328125-50.171876 51.574219-43.949218 96.117188-81.90625 127.109375-119.304687 34.644532-41.800781 50.777344-81.4375 50.777344-124.742187 0-42.066407-14.425781-80.878907-40.617188-109.289063zm0 0"/></svg>
+            </span>
+            <span class="favorite_num favorite_count">0</span>
+        </span>
+        <span class="favorite_block-2">
+            <span class="favorite_text">お気に入り</span>
+        </span>
+    </a>
+</div>
+<!-- お気に入りボタンはこちらをご利用ください -->
+#end
+##
+## ------------------------------------------------------ ##
+## お気に入りボタン（求人一覧・詳細・新着）
+## ------------------------------------------------------ ##
+
+#define ($common_favoriteBtn)
+
+#if ($page_style == 'detail')
+#set ($favorite_id = $result.job_offer_id)
+#else
+#set ($favorite_id = $anken.job_offer_id)
+#end
+
+<div class="favoriteBtn btn-add" data-favoid="${favorite_id}" data-click="btn-keep">
+    <div class="favoriteBtn_inner">
+        <span class="favoriteBtn_block-1">
+            <span class="favoriteBtn_ico">
+                <svg viewBox="0 0 512 455" xmlns="http://www.w3.org/2000/svg" class="favoriteBtn_svg"><path d="m471.382812 44.578125c-26.503906-28.746094-62.871093-44.578125-102.410156-44.578125-29.554687 0-56.621094 9.34375-80.449218 27.769531-12.023438 9.300781-22.917969 20.679688-32.523438 33.960938-9.601562-13.277344-20.5-24.660157-32.527344-33.960938-23.824218-18.425781-50.890625-27.769531-80.445312-27.769531-39.539063 0-75.910156 15.832031-102.414063 44.578125-26.1875 28.410156-40.613281 67.222656-40.613281 109.292969 0 43.300781 16.136719 82.9375 50.78125 124.742187 30.992188 37.394531 75.535156 75.355469 127.117188 119.3125 17.613281 15.011719 37.578124 32.027344 58.308593 50.152344 5.476563 4.796875 12.503907 7.4375 19.792969 7.4375 7.285156 0 14.316406-2.640625 19.785156-7.429687 20.730469-18.128907 40.707032-35.152344 58.328125-50.171876 51.574219-43.949218 96.117188-81.90625 127.109375-119.304687 34.644532-41.800781 50.777344-81.4375 50.777344-124.742187 0-42.066407-14.425781-80.878907-40.617188-109.289063zm0 0"/></svg>
+            </span>
+        </span>
+        <span class="favoriteBtn_block-2">
+            <span class="favoriteBtn_text">お気に入りに追加</span>
+        </span>
+    </div>
+</div>
+#end
+
+## ------------------------------------------------------ ##
+## お気に入り削除ボタン（お気に入りページ用）
+## ------------------------------------------------------ ##
+
+#define ($common_favoriteDelBtn)
+<div class="garbageCan modal-open" data-target="box-delExam" data-num="${anken.job_offer_id}">
+	<div class="garbageCan_inner">
+		<span class="garbageCan_block-1">
+			<span class="garbageCan_ico">
+				<svg viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg" class="garbageCan_svg">
+					<path d="M321.785,38h-83.384V0H125.169v38H41.785v60h280V38z M155.169,30h53.232v8h-53.232V30z" /><path d="M295.142,214.31l5.66-86.31H62.769l19.016,290h114.172c-14.861-21.067-23.602-46.746-23.602-74.43 C172.355,274.43,226.849,217.779,295.142,214.31z" /><path d="M301.785,244.141c-54.826,0-99.43,44.604-99.43,99.429S246.959,443,301.785,443s99.43-44.604,99.43-99.43S356.611,244.141,301.785,244.141z M355.961,376.533l-21.213,21.213l-32.963-32.963l-32.963,32.963l-21.213-21.213l32.963-32.963l-32.963-32.963l21.213-21.213l32.963,32.963l32.963-32.963l21.213,21.213l-32.963,32.963L355.961,376.533z" />
+				</svg>
+			</span>
+		</span>
+		<span class="garbageCan_block-2">
+			<span class="garbageCan_text">お気に入りから削除</span>
+		</span>
+	</div>
+</div>
+#end
+
+##
+## ------------------------------------------------------ ##
+## フローティング：お気に入り追加結果バー（求人一覧・詳細・新着）
+## ------------------------------------------------------ ##
+#define ($common_favoriteFloat)
+##<!-- 20.03add  お気に入り機能を使用する場合は読み込ませる - favorite add or delete float parts -->
+<div class="favoriteFloat">
+    <div class="favoriteFloat_inner">
+
+        <p class="favoriteFloat_text">
+			<span class="text">お気に入りに"1件追加"</span>
+        </p>
+        <div class="favoriteFloat_icon">
+            <span class="favoriteFloat_ico">
+                <svg viewBox="0 0 512 455" xmlns="http://www.w3.org/2000/svg" class="favoriteFloat_svg"><path d="m471.382812 44.578125c-26.503906-28.746094-62.871093-44.578125-102.410156-44.578125-29.554687 0-56.621094 9.34375-80.449218 27.769531-12.023438 9.300781-22.917969 20.679688-32.523438 33.960938-9.601562-13.277344-20.5-24.660157-32.527344-33.960938-23.824218-18.425781-50.890625-27.769531-80.445312-27.769531-39.539063 0-75.910156 15.832031-102.414063 44.578125-26.1875 28.410156-40.613281 67.222656-40.613281 109.292969 0 43.300781 16.136719 82.9375 50.78125 124.742187 30.992188 37.394531 75.535156 75.355469 127.117188 119.3125 17.613281 15.011719 37.578124 32.027344 58.308593 50.152344 5.476563 4.796875 12.503907 7.4375 19.792969 7.4375 7.285156 0 14.316406-2.640625 19.785156-7.429687 20.730469-18.128907 40.707032-35.152344 58.328125-50.171876 51.574219-43.949218 96.117188-81.90625 127.109375-119.304687 34.644532-41.800781 50.777344-81.4375 50.777344-124.742187 0-42.066407-14.425781-80.878907-40.617188-109.289063zm0 0"/></svg>
+            </span>
+            <span class="favoriteFloat_num favorite_count">0</span>
+        </div>
+
+    </div>
+</div>
+##<!-- 20.03add  お気に入り機能を使用する場合は読み込ませる - favorite add or delete float parts -->
+#end
+##
+
+
+## ------------------------------------------------------ ##
+## モーダル：「お気に入り」の保存上限（求人一覧・詳細・新着）
+## ------------------------------------------------------ ##
+#define ($common_favoriteLimit)
+<div class="modal-content" id="box-keep20">
+	<div class="modal-content-box">
+		<div class="modal-content-inner">
+			<p class="modal-content-txt">「お気に入り」の保存上限を超えました。<br>新たに保存する場合、古い保存情報から削除されます。<br>保存しますか？</p>
+			<ul class="modal-content-btn">
+				<li class="modal-cancel-btn"><a class="modal-cancel">キャンセル</a></li>
+				<li class="modal-ok-btn"><a class="btn-del btn-keep20">O&nbsp;K</a></li>
+			</ul>
+		</div>
+		<a class="modal-close modal-close-btn"></a>
+	</div>
+</div><!--//.modal-content-->
+#end
+
+
+## ------------------------------------------------------ ##
+## モーダル：お気に入りページ専用
+## ------------------------------------------------------ ##
+#define ($common_keeplist_modal)
+##<!--  20.03add modal-content all -->
+
+<div class="modal-content" id="box-delExam">
+	<div class="modal-content-box">
+		<div class="modal-content-inner">
+			<p class="modal-content-txt">お気に入りから削除しますか？</p>
+			<ul class="modal-content-btn">
+				<li class="modal-cancel-btn">
+					<a class="modal-cancel">キャンセル</a>
+				</li>
+				<li class="modal-ok-btn">
+					<a class="btn-del btn-delExam">O&nbsp;K</a>
+				</li>
+			</ul>
+		</div>
+		<a class="modal-close modal-close-btn"></a>
+	</div>
+</div>
+<!-- 各リストの「お気に入りから削除」をクリック時 -->
+
+
+<div class="modal-content" id="box-noSelect">
+	<div class="modal-content-box">
+		<div class="modal-content-inner">
+			<p class="modal-content-txt">削除する求人情報を選択してください</p>
+		</div>
+		<a class="modal-close modal-close-btn"></a>
+	</div>
+</div>
+<!-- 「選択してお気に入りから削除する」をクリック時（チェックボックスを一つも選んでない状態） -->
+
+
+<div class="modal-content" id="box-delSelect">
+	<div class="modal-content-box">
+		<div class="modal-content-inner">
+			<p class="modal-content-txt">選択した求人情報を削除しますか？</p>
+			<ul class="modal-content-btn">
+				<li class="modal-cancel-btn">
+					<a class="modal-cancel">キャンセル</a>
+				</li>
+				<li class="modal-ok-btn">
+					<a class="btn-del btn-delSelect">O&nbsp;K</a>
+				</li>
+			</ul>
+		</div>
+		<a class="modal-close modal-close-btn"></a>
+	</div>
+</div>
+<!-- 「選択してお気に入りから削除する」をクリック時（チェックした求人一括削除） -->
+
+
+<div class="modal-content" id="box-delExamAll">
+	<div class="modal-content-box">
+		<div class="modal-content-inner">
+			<p class="modal-content-txt">すべての求人情報をお気に入りから削除しますか？</p>
+			<ul class="modal-content-btn">
+				<li class="modal-cancel-btn">
+					<a class="modal-cancel">キャンセル</a>
+				</li>
+				<li class="modal-ok-btn">
+					<a class="btn-del btn-delExamAll">O&nbsp;K</a>
+				</li>
+			</ul>
+		</div>
+		<a class="modal-close modal-close-btn"></a>
+	</div>
+</div>
+<!-- 「お気に入りの求人を空にする」をクリック時 -->
+
+##<!--  20.03add modal-content all -->
+#end

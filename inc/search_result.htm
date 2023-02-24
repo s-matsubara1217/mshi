@@ -1,0 +1,402 @@
+##
+## search_result.htm
+## Ver:20.03.23 kimura
+##
+#########################################################################################
+##
+##      共通変数
+##
+#########################################################################################
+
+## --- セパレータ
+#set ($item_separation = ' / ')    ## 検索カテゴリ内セパレータ
+#set ($group_separation = ' | ')   ## 検索カテゴリ別セパレータ
+
+## --- 格納先
+#set ($search_result = '') ## --- 検索結果表示用
+#set ($pankuzu_str = '') ## --- パンくず用
+#set ($parameter = '') ## --- URLパラメータ用
+#set ($item_array = []) ## --- 検索アイテム格納先
+
+## --- 格納用一時変数
+#set ($add_result_txt = '') ## 検索結果挿入変数用
+
+#########################################################################################
+##
+##      共通処理
+##
+#########################################################################################
+## ------------------------------------------------------------------------------------------------------------ ##
+## 共通検索結果表示用変数に結果テキストを挿入
+## * [$add_result_txt]に挿入する検索結果を挿入して実行してください
+## ------------------------------------------------------------------------------------------------------------ ##
+#define ($add_searchResultTxt)
+    #if ($search_result != '')
+        #set ($search_result = $search_result + $group_separation)
+    #end
+    #set ($search_result = $search_result + $add_result_txt)
+#end
+
+#########################################################################################
+##
+##      各項目検索結果　個別取得処理
+##
+#########################################################################################
+## ------------------------------------------------------------------------------------------------------------ ##
+## 勤務地検索
+## ------------------------------------------------------------------------------------------------------------ ##
+#define ($kcd_result_part)
+
+    #set ($kcd_result = '') ## --- output用
+
+    ## パンくずのエリア一覧（関西・関東など）の時だけエリア名を表示する。（勤務地検索のときはエリア名出さない）
+    #if ($request.get("ECD") != '' && $request.get("PC") == '' && $request.get("KCD_") == '' && $request.get("KCD") == '')
+        #set ($ecd_key = $request.get("ECD"))
+        #if ($master_ecd.containsKey($ecd_key))
+            #set ($ecd_result = $master_ecd.get($ecd_key))
+        #end
+        ## --- 検索結果挿入 ----------------------
+        #set ($add_result_txt = '')
+        #set ($add_result_txt = $ecd_result)
+        ${add_searchResultTxt}
+        ## -------------------------------------
+    #end
+
+    #if ($request.get("KCD_") != '' || $request.get("KCD") != '')
+        #set($kcd_array = [])
+        #if($request.get("KCD_") != '')
+            #set ($kcd_array = $request.gets("KCD_"))
+        #elseif($request.get("KCD") != '')
+            #set ($kcd_array = $request.gets("KCD"))
+        #end
+        #if($kcd_array.size() > 0)
+            #foreach($kcd_key in $kcd_array)
+                #if($velocityHasNext)
+                    #set ($separation = ' / ')
+                #else
+                    #set ($separation = '')
+                #end
+
+                #set ($areaKey = '')##エリアキー
+                #foreach($a-code in $kinmuchi_array.area-codes)
+                    #set ($area_kcd = '')
+                    #set ($PrefName = '')
+                    #foreach($p-code in $kinmuchi_array.pref-codes.get($a-code))
+                        #set ($areaKey = $a-code)
+                        #if ($area_kcd != '')
+                            #set ($area_kcd = $area_kcd + ':')
+                        #end
+                        #set ($area_kcd = $area_kcd + $p-code)
+                        #if ($PrefName != '')
+                            #set ($PrefName = $PrefName + '・')
+                        #end
+                        #set ($PrefName = $PrefName + $master_pc.get($p-code))
+                    #end ## --- foreach($p-code in $kinmuchi_array.pref-codes.get($a-code))
+                    #if ($kcd_key == $area_kcd)
+                        #set ($kcd_result = $kcd_result + $master_ecd.get($areaKey) + '（' + $PrefName + '）' + $separation)
+                        #set ($parameter = $parameter + '&KCD_=' + $kcd_key)
+                        #set ($dummy = $item_array.add($master_ecd.get($areaKey)))
+                    #end
+                #end ## --- foreach($a-code in $kinmuchi_array.area-codes)
+
+                #if ($master_pc.containsKey($kcd_key))## --- 都道府県で検索
+                    #set ($kcd_result = $master_pc.get($kcd_key) + $separation)
+                    #set ($parameter = $parameter + '&KCD_=' + $kcd_key)
+                    #set ($dummy = $item_array.add($master_pc.get($kcd_key)))
+                #end
+                #if ($master_kcd.containsKey($kcd_key))## --- 市区町村で検索
+                    ## 都道府県も表示
+                    #set ($todofuken_kcd_key = $kcd_key.substring(0,2))
+                    #if ($master_pc.containsKey($todofuken_kcd_key))
+                        #set ($kcd_result = $kcd_result + $master_pc.get($todofuken_kcd_key))
+                    #end
+                    #set ($kcd_result = $kcd_result + $master_kcd.get($kcd_key) + $separation)
+                    #set ($parameter = $parameter + '&KCD_=' + $kcd_key)
+                    #set ($dummy = $item_array.add($master_kcd.get($kcd_key)))
+                #end
+            #end ## ---- foreach($kcd_key in $kcd_array)
+            ## --- 検索結果挿入 ----------------------
+            #set ($add_result_txt = '')
+            #set ($add_result_txt = $kcd_result)
+            ${add_searchResultTxt}
+            ## -------------------------------------
+        #end ## --- if($kcd_array.size() > 0)
+    #end ## --- if ($request.get("KCD_") != '' || $request.get("KCD") != '')
+#end ## --- define ($kcd_result_part)
+
+## ------------------------------------------------------------------------------------------------------------ ##
+## 職種検索
+## ------------------------------------------------------------------------------------------------------------ ##
+#define ($cat_result_part)
+
+    #set ($scd_result = '') ## --- output用
+    #if ($request.get("${cat_val}") != '')
+        #set($scd_array = [])
+        #set($scd_array = $request.gets("${cat_val}"))
+        #if($scd_array.size() > 0)
+            #foreach($scd_key in $scd_array)
+                #if ($scd_result != '')
+                    #set ($scd_result = $scd_result + $item_separation)
+                #end
+                #foreach($category in $category_list)
+                    #if ($scd_key == $category.key)
+                        #set ($scd_result = $scd_result + $category.name)
+                        #set ($parameter = $parameter + '&' + $cat_val + '=' + $category.key)
+                        #set ($dummy = $item_array.add($category.name))
+                    #end
+                #end
+            #end ## ---- #foreach($category_key in $category_array)
+            ## --- 検索結果挿入 ----------------------
+            #set ($add_result_txt = '')
+            #set ($add_result_txt = $scd_result)
+            ${add_searchResultTxt}
+            ## -------------------------------------
+        #end ## --- if($scd_array.size() > 0)
+    #end ## --- if ($request.get("${cat_val}") != '')
+
+#end ## --- #define ($cat_result_part)
+
+## ------------------------------------------------------------------------------------------------------------ ##
+## 雇用形態検索
+## ------------------------------------------------------------------------------------------------------------ ##
+#define ($kkcd_result_part)
+
+    #set ($kkcd_result = '') ## --- output用
+    #if ($request.get("_KKCD_") != '')
+        #set ($kkcd_array = [])
+        #set ($kkcdSet_array = [])
+        #set ($kkcd_array = $request.gets('_KKCD_'))
+        #set ($kkcdSet_array = $request.gets('SET'))
+
+        #if ($kkcdSet_array.size() > 0) ## --- 複数検索用
+            #foreach ($kkcd_key in $kkcd_key_list)
+            #if ($kkcdMap.containsKey($kkcd_key))
+            #if ($kkcd_array.contains($kkcd_key) || $kkcdSet_array.contains($kkcd_key))
+                #if($kkcd_result != '')
+                    #set ($kkcd_result = $kkcd_result + $item_separation)
+                #end
+                #set ($kkcd_result = $kkcd_result + $kkcdMap.get($kkcd_key))
+                #set ($parameter = $parameter + '&_KKCD_=' + $kkcd_key)
+                #set ($dummy = $item_array.add($kkcdMap.get($kkcd_key)))
+            #end
+            #end
+            #end
+
+        #elseif($kkcd_array.size() > 0) ## --- 単一検索用
+            #foreach($kkcd in $kkcd_array)
+                #if($kkcd_result != '')
+                    #set ($kkcd_result = $kkcd_result + $item_separation)
+                #end
+                #set ($kkcd_result = $kkcd_result + $kkcdMap.get($kkcd))
+                #set ($parameter = $parameter + '&_KKCD_=' + $kkcd)
+                #set ($dummy = $item_array.add($kkcdMap.get($kkcd)))
+            #end ## ---- #foreach($kkcd in $kkcd_array)
+
+        #end ## --- if ($kkcdSet_array.size() > 0)
+
+        ## --- 検索結果挿入 ----------------------
+        #set ($add_result_txt = '')
+        #set ($add_result_txt = $kkcd_result)
+        ${add_searchResultTxt}
+        ## -------------------------------------
+
+    #end ## --- if ($request.get("_KKCD_") != '')
+
+#end ## --- define ($kkcd_result_part)
+
+
+## ------------------------------------------------------------------------------------------------------------ ##
+## フリーワード検索
+## ------------------------------------------------------------------------------------------------------------ ##
+#define ($freeword_result_part)
+
+    #set ($fts_result = '') ## --- output用
+    #if ($request.get("FTS") != '')
+        #set ($fts_result = $util.htmlEscape($request.get("FTS")))
+        #set ($parameter = $parameter + '&FTS=' + $util.urlEncode($fts_result))
+        #set ($dummy = $item_array.add($fts_result))
+        ## --- 検索結果挿入 ----------------------
+        #set ($add_result_txt = '')
+        #set ($add_result_txt = $fts_result)
+        ${add_searchResultTxt}
+        ## -------------------------------------
+    #end ## --- if ($request.get("FTS") != '')
+
+#end ## --- define ($freeword_result_part)
+
+## ------------------------------------------------------------------------------------------------------------ ##
+## 店舗検索
+## ------------------------------------------------------------------------------------------------------------ ##
+#define ($store_result_part)
+
+    #set ($oid_result = '') ## --- output用
+    #if ($request.OID != '')
+        #set ($oid = $util.htmlEscape($request.OID))
+        #set ($company_name = '')
+        #if ($page_style == 'list')
+            #foreach ($anken in $result)
+                #set ($company_name = $anken.company_name.replace("　","").replace(" ",""))
+                #break
+            #end
+        #elseif ($page_style == 'detail')
+            #set ($company_name = $result.company_name.replace("　","").replace(" ",""))
+        #end
+
+        #if ($company_name != '')
+            #set ($oid_result = '"' + $company_name + '"')
+            #set ($parameter = $parameter + '&OID=' + $oid)
+            #set ($dummy = $item_array.add($company_name))
+
+        #else
+            #set ($oid_result = '店舗の募集情報')
+            
+        #end
+        ## --- 検索結果挿入 ----------------------
+        #set ($add_result_txt = '')
+        #set ($add_result_txt = $oid_result)
+        ${add_searchResultTxt}
+        ## -------------------------------------
+    #end ## --- if ($request.OID != '')
+
+#end ## --- define ($store_result_part)
+
+## ------------------------------------------------------------------------------------------------------------ ##
+## お知らせ検索（ブログなど）
+## * カテゴリ検索VAL    :CN
+## * アーカイブ検索VAL  :OID_
+## * ※必要に応じて[VAL名]を変更・追加して使用してください。
+## ------------------------------------------------------------------------------------------------------------ ##
+#define ($info_result_part)
+
+    #set ($info_search_val_list = ["CN","OID_"])
+    #set ($info_item_result = '') ## --- output用
+
+    #foreach($temp_val in $info_search_val_list)
+    #if ($request.get("${temp_val.toUpperCase()}") != '')
+        #set ($temp_item_result = $util.htmlEscape($request.get("${temp_val}")))
+        #set ($parameter = $parameter + '&' + $temp_val.toUpperCase() + '=' + $util.urlEncode($temp_item_result))
+        #set ($dummy = $item_array.add($temp_item_result))
+        ## --- 検索結果挿入 ----------------------
+        #set ($add_result_txt = '')
+        #set ($add_result_txt = $temp_item_result)
+        ${add_searchResultTxt}
+        ## -------------------------------------
+    #end ## --- if ($request.get("${temp_val.toUpperCase()}") != '')
+    #end ## --- foreach($temp_val in $info_search_val_list)
+
+    ## -------------------- 更新情報検索用 end ------------------------------ #
+#end ## --- define ($blog_result_part)
+
+## ------------------------------------------------------------------------------------------------------------ ##
+## 汎用マスタ検索
+## * ※下記変数に該当するデータを挿入して実行してください
+## * [$general_val] : 汎用項目VAL
+## * [$general_list]: 汎用項目リスト
+## ------------------------------------------------------------------------------------------------------------ ##
+#define ($general_result_part)
+
+    #set ($temp_item_result = '') ## --- output用
+    #set ($temp_val = $general_val)
+    #set ($temp_list = $general_list)
+
+    #if ($request.get("${temp_val}") != '')
+        #set($temp_array = [])
+        #set($temp_array = $request.gets("${temp_val}"))
+        #if($temp_array.size() > 0)
+            #foreach($temp_item_key in $temp_array)
+                #if($velocityHasNext)
+                    #set ($separation = ' / ')
+                #else
+                    #set ($separation = '')
+                #end
+                #foreach($temp in $temp_list)
+                    #if ($temp_item_key == $temp.key)
+                        #set ($dummy = $item_array.add($temp.name))
+                        #set ($temp_item_result = $temp_item_result + $temp.name + $separation)
+                        #set ($parameter = $parameter + '&' + $temp_val + '=' + $temp.key)
+                    #end
+                #end
+            #end ## ---- #foreach($temp_key in $temp_array)
+            ## --- 検索結果挿入 ----------------------
+            #set ($add_result_txt = '')
+            #set ($add_result_txt = $temp_item_result)
+            ${add_searchResultTxt}
+            ## -------------------------------------
+        #end ## --- if($temp_array.size() > 0)
+    #end ## --- if ($request.get("${temp_val}") != '')
+
+#end ## --- define ($general_result_part)
+
+## ------------------------------------------------------------------------------------------------------------ ##
+## 汎用フラグ検索 ※データを「ON/OFF」フラグで切り分ける場合（中途、オープニング、など）
+## * ※下記変数に該当するデータを挿入して実行してください
+## * [$flag_val] : 汎用項目VAL
+## * [$flag_name]: 汎用項目名
+## * [$flag_key]: 汎用項目のフラグの値
+## ------------------------------------------------------------------------------------------------------------ ##
+#define ($flag_result_part)
+
+    #set ($temp_item_result = '') ## --- output用
+    #set ($temp_val = $flag_val)
+    #set ($temp_title = $flag_name)
+
+	#if ($request.get("${temp_val}") == $flag_key)
+       
+		#set ($dummy = $item_array.add($temp.name))
+		#set ($temp_item_result = $flag_name)
+		#set ($parameter = $parameter + '&' + $temp_val + '=' + $request.get("${temp_val}"))
+
+		## --- 検索結果挿入 ----------------------
+		#set ($add_result_txt = '')
+		#set ($add_result_txt = $temp_item_result)
+		${add_searchResultTxt}
+		## -------------------------------------
+
+    #end ## --- if ($request.get("${temp_val}") != '')
+
+#end ## --- define ($flag_result_part)
+
+#########################################################################################
+##
+##      検索結果取得実行
+##
+##      *取得する検索項目の処理を実行してください
+##
+#########################################################################################
+
+## ---------------- ↓ この範囲に該当の処理実行メソッドを順番に記載してください ---------------- ##
+## --- 勤務地検索
+${kcd_result_part}
+##
+## --- 職種検索
+${cat_result_part}
+##
+## --- 雇用形態検索
+${kkcd_result_part}
+##
+## --- フリーワード検索
+${freeword_result_part}
+##
+
+#### --- 店舗検索
+##${store_result_part}
+##
+#### --- お知らせ検索
+##${info_result_part}
+##
+
+#### --- 汎用マスタ検索
+#### * ※複数汎用検索がある場合は、以下一式をコピーして使用してください。
+###set ($general_val = $XXXXX_val)    ## ← 該当VALを挿入してください
+###set ($general_list = $XXXXX_list)  ## ← 該当リストを挿入してください
+##${general_result_part}
+##
+
+#### --- 汎用フラグ検索
+#### * ※複数汎用検索がある場合は、以下一式をコピーして使用してください。
+###set ($flag_val = $XXXX_val)    ## ← 該当VALを挿入してください
+###set ($flag_name = $XXXX_name)  ## ← 該当項目名を挿入してください
+###set ($flag_key = '1')  ## ← 値が1以外の場合は変更してください
+##${flag_result_part}
+##
+## ---------------- ↑ この範囲に該当の処理実行メソッドを順番に記載してください ---------------- ##

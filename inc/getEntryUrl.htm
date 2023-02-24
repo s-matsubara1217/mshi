@@ -1,0 +1,129 @@
+## === 応募フォームURL生成 ======================================================================================= ##
+
+## ==== ページ型（list型 or detail型）判別
+#if ($url.indexOf('L=BMSList') > 0 || $url.indexOf('L=BCSList') > 0)
+#if ($request.get('from') != 'ef')
+#set ($page_style = 'list')
+#else
+#set ($page_style = 'detail')
+#end
+#elseif ($url.indexOf('L=BMSDetail') >0 || $url.indexOf('L=BCSDetail') > 0)
+#set ($page_style = 'detail')
+#end
+
+## ==== anken or resultの値を固定変数化
+#if ($page_style == 'list')
+#set ($company_id = $anken.oubosaki_company_id)
+#set ($job_offer_id   = $anken.job_offer_id)
+#set ($company_name   = $anken.company_name)
+#set ($kyuujin_title   = $anken.kyuujin_title.replace('<br>',''))
+#set ($entry_form_keyword   = $anken.entry_form_keyword)
+#elseif ($page_style == 'detail')
+#set ($company_id = $result.oubosaki_company_id)
+#set ($job_offer_id   = $result.job_offer_id)
+#set ($company_name   = $result.company_name)
+#set ($kyuujin_title   = $result.kyuujin_title.replace('<br>',''))
+#set ($entry_form_keyword   = $result.entry_form_keyword)
+#end
+
+##予約用
+#if ($form_title && $form_title != '')
+#set ($company_name = $form_title)
+#end
+
+## ==== 求人以外でフォームを使用する場合
+#* --- settingに以下の設定を追加例
+#set ($form_key_list = [
+{"id":"",
+"key":"キーワード（半角英数6文字以内）",
+"name":"タイトル（10文字以内）"
+},
+{"id":"",
+"key":"キーワード（半角英数6文字以内）",
+"name":"タイトル（10文字以内）"
+}
+])
+--- 設定を追加 ここまで *#
+
+#set ($svid = '')
+#if ($entry_form_keyword != '')
+	#foreach ($form in $form_key_list)
+		#if ($entry_form_keyword == $form.key)## - キーワード
+			#set ($svid = $form.name)## - svid（タイトル）
+			#break
+		#end
+	#end
+#end
+
+#if($svid == '')
+#set ($svid = '採用ホームページ')
+#elseif ($svid.length() > 10)
+#set ($svid = $svid.substring(0,10))
+#end
+
+## ==== 求人以外でフォームを使用する場合 ここまで
+
+#if ($company_name == '')
+#set ($company_name   = $client_name_jap)
+#end
+
+## ==== ベース
+#set ($entryUrl = $entry_base_url + 'id=' + $company_id)
+
+## ==== 仕事管理ID
+#set ($gid   = $job_offer_id)
+#set ($entryUrl = $entryUrl + '&gid=' + $gid)
+
+## ==== サイトタイトル
+## #set ($svid   = $util.urlEncode("採用ホームページ", "UTF-8"))
+#set ($svid   = $util.urlEncode($svid, "UTF-8"))
+#set ($entryUrl = $entryUrl + '&svid=' + $svid)
+
+## ==== 掲載社名
+#if ($company_name.length() > 50)
+#set ($kcn = $company_name.substring(0,50))
+#else
+#set ($kcn = $company_name)
+#end
+#set ($kcn = $util.urlEncode($kcn.replace('&nbsp;', ' '), 'UTF-8'))
+#set ($entryUrl = $entryUrl + '&kcn=' + $kcn)
+
+## ==== 求人タイトル
+#if ($kyuujin_title != '')
+#if ($kyuujin_title.length() > 20)
+#set ($job_ti = $util.urlEncode($kyuujin_title.substring(0,20), 'UTF-8'))
+#else
+#set ($job_ti = $util.urlEncode($kyuujin_title, 'UTF-8'))
+#end
+#set ($entryUrl = $entryUrl + '&job_ti=' + $job_ti)
+#end
+
+
+## ==== キーワード
+#if($svid == $util.urlEncode("採用ホームページ", "UTF-8"))
+#if($oboform_fixed_mode == 1)
+#set ($oboform_key = $oboform_type_value)
+#else
+#set ($oboform_key = $entry_form_keyword)
+#end
+#set ($entryUrl = $entryUrl + '&af=' + $oboform_key)
+#else
+#set ($entryUrl = $entryUrl + '&af=' + $entry_form_keyword)
+#end
+
+#*
+## ==== キーワード
+#if($entry_form_keyword != '')
+#if($oboform_fixed_mode == 1)
+#set ($oboform_key = $oboform_type_value)
+#else
+#set ($oboform_key = $entry_form_keyword)
+#end
+#set ($entryUrl = $entryUrl + '&af=' + $oboform_key)
+#end
+*#
+
+## ==== 最終URL
+#set ($entryUrl = $entryUrl + '&t=f')
+
+## === 応募フォームURL生成 ここまで ============================================================================== ##

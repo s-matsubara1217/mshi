@@ -1,0 +1,214 @@
+//2022.07.15 add onishi 改修対応
+
+//TOPに動画枠追加
+.top_movie{
+  position: relative;
+  z-index: 3;
+  &::before{
+    content: '';
+    position: absolute;
+    right: -100px;
+    top: 60px;
+    z-index: 1;
+    width: 375px;
+    height: 375px;
+    border-radius: 50%;
+    background: rgba(239, 175, 56, 0.1);
+    animation: bound 3s ease infinite alternate;
+    animation-direction: alternate-reverse;
+    pointer-events: none;
+    @media screen and (max-width: 834px){
+      right: -110px;
+      top: 30px;
+      width: 183.75px;
+      height: 183.75px;
+    }
+  }
+  &_inner{
+    position: relative;
+    padding-top: 100px;
+    @media screen and (max-width: 834px){
+      padding-top: 50px;
+    }
+    &::before{
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 5000px;
+      height: 100%;
+      background: #fff;
+      @media screen and (min-width: 835px){
+        border-top-right-radius: 30px;
+      }
+    }
+  }
+  &_body{
+    position: relative;
+    z-index: 1;
+    margin-top: 60px;
+    @media screen and (max-width: 834px){
+      margin-top: 30px;
+    }
+    .movie{
+      position: relative;
+      z-index: 1;
+      width: 800px;
+      margin: 0 auto;
+      @media screen and (max-width: 834px){
+        width: 100%;
+        max-width: 640px;
+      }
+      &::before{
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: -1;
+        width: 400px;
+        height: 200px;
+        background: url(../img/bg-dot-orange.png) no-repeat 0 0;
+        transform: translate(-50%,-50%);
+        pointer-events: none;
+        @media screen and (max-width: 834px){
+          width: 160px;
+          height: 154px;
+          background-size: 287px;
+          transform: translate(-70%,-40%);
+        }
+      }
+      &::after{
+        content: '';
+        display: block;
+        width: 100%;
+        padding-top: 56.25%;
+      }
+      iframe{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+
+//滋賀MKでの働き方 動画追加
+.career_path_block3{
+  position: relative;
+  margin-top: 50px;
+  @media screen and (max-width: 834px){
+    margin-top: 30px;
+  }
+}
+.career_path{
+  .movieList{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    @media screen and (max-width: 834px){
+      display: block;
+    }
+    &_item{
+      flex: 0 0 48%;
+      max-width: 48%;
+      counter-increment: movieCounter;
+      @media screen and (max-width: 834px){
+        max-width: inherit;
+        margin-bottom: 30px;
+        &:last-child{
+          margin-bottom: 0;
+        }
+      }
+      .hd{
+        text-align: center;
+        font-family: 'Noto Serif JP', 'Noto Serif CJK JP', 'Noto Serif CJK JP Subset', serif;
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 1.5;
+        @media screen and (max-width: 834px){
+          font-size: 18px;
+          line-height: 1.6;
+        }
+        &::before{
+          content: 'Movie ' counter(movieCounter,decimal-leading-zero);
+          display: block;
+          text-align: center;
+          font-family: 'Martel', serif;
+          font-size: 14px;
+          font-weight: bold;
+          color: #F36178;
+          margin-bottom: 8px;
+          @media screen and (max-width: 834px){
+            font-size: 12px;
+            margin-bottom: 4px;
+          }
+        }
+      }
+      .movie{
+        position: relative;
+        z-index: 1;
+        margin-top: 24px;
+        @media screen and (max-width: 834px){
+          margin-top: 16px;
+        }
+        &::before{
+          content: '';
+          display: block;
+          width: 100%;
+          padding-top: 56.25%;
+        }
+        iframe{
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+}
+
+//求人詳細 動画追加
+.kyujin_movie{
+  margin-top: 30px;
+  @media screen and (max-width: 834px){
+    margin: 30px 0;
+    margin-left: calc(~'-7% + 5px');
+    margin-right: calc(~'-7% + 5px');
+  }
+  .movie{
+    position: relative;
+    z-index: 1;
+    &::before{
+      content: '';
+      display: block;
+      width: 100%;
+      padding-top: 56.25%;
+    }
+    iframe{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+//cookieバナーの調整
+@media screen and (max-width: 834px){
+  .lower-kyujin_d{
+    #ot-sdk-btn-floating.ot-floating-button{
+      bottom: 72.39px;
+    }
+  }
+  .lower-career{
+    #ot-sdk-btn-floating.ot-floating-button{
+      bottom: 82.8px;
+    }
+  }
+}

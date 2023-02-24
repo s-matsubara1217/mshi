@@ -1,0 +1,311 @@
+## テンプレートVersion
+<!--cus_res Version $!{set_version}-->
+
+## --------------------------------------------------
+## 独自ドメイン リダイレクト 設定
+## --------------------------------------------------
+## ---- 独自ドメイン使用でjob-gearドメインにアクセスした場合、独自ドメインにリダイレクトさせる
+#if ($own_domain != '' && $seturl.indexOf('stg.job-gear') == -1 && $seturl.indexOf($own_domain) == -1 && $request.I != 'input')
+    ## 独自ドメインを使用、URLにSTGが含まれていない、URLに独自ドメインが含まれていない場合、プレビューではない場合
+    ## ----------  redirect  ---------- ##
+	#set($newUrl = 'https://' + $own_domain + '/')
+	#if($page_type == 'index')## TOPは301リダイレクト
+		$request.redirect301($newUrl)
+	#else
+		$request.redirect($newUrl)
+	#end
+    ## --------  end redirect  -------- ##
+#end
+## --------------------------------------------------
+## ページごとmeta情報 設定
+## --------------------------------------------------
+## --- meta-page-set
+#set ($parse_url = $base_url + 'inc/meta-page-set.htm')
+#parse ($parse_url)
+## --------------------------------------------------
+## INPUTmeta情報 設定 ※求人詳細のみ
+## --------------------------------------------------
+## --- INPUTで設定されたmeta情報（タイトル・キーワード・ページ説明）を表示する
+#if ($page_id == $kyujin_d_type)
+	#if ($result.val94 != '')## INPUTでタイトルが入力されていた場合
+		#set ($page_title	= $result.val94)
+	#end ## --- if ($result.val94 != '')
+	#if ($result.val96 != '')## INPUTでディスクリプションが入力されていた場合
+		#set ($meta_description	= $result.val96)
+	#end ## --- if ($result.val96 != '')
+	#if ($result.val95 != '')## INPUTでキーワードが入力されていた場合
+		#set ($meta_keyword	= $result.val95)
+	#end ## --- if ($result.val95 != '')
+#end ## --- if ($page_id == $kyujin_d_type)
+## --------------------------------------------------
+## meta title/description/keywords 設定
+## --------------------------------------------------
+<meta charset="utf-8">
+<meta name="viewport" content="">
+<script>
+    var metalist = document.getElementsByTagName('meta');
+    var ua = navigator.userAgent;
+    for (var i = 0; i < metalist.length; i++) {
+        var name = metalist[i].getAttribute('name');
+        if (name && name.toLowerCase() === 'viewport') {
+            if (ua.indexOf('iPhone') > 0 || ua.indexOf('Android') > 0 && ua.indexOf('Mobile') > 0) {
+                metalist[i].setAttribute('content', 'width=device-width');
+                break;
+            };
+        }
+    }
+</script>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="format-detection" content="telephone=no">
+#if ($debug_mode == 1)
+<title>【STG】${page_title}</title>
+#else
+<title>${page_title}</title>
+#end
+<meta name="description" content="$!{meta_description}" />
+<meta name="keywords" content="$!{meta_keyword}" />
+<meta name="author" content="$!{client_name_jap}" />
+#if ($debug_mode == 0 && $pre_release_mode == 0 && $google_web_master_tool_code != '')
+<meta name="google-site-verification" content="$!{google_web_master_tool_code}">
+#end
+#if ($debug_mode != 0 || $pre_release_mode != 0 || $request.I == 'input')
+<meta name="robots" content="noindex">
+<meta name="robots" content="nofollow">
+<meta name="robots" content="noarchive">
+#end
+## --------------------------------------------------
+## canonical 設定
+## --------------------------------------------------
+#if ($page_type == $menu_index_type)
+	#set ($canonical-URL = $menu_index_url)
+#elseif ($page_id == $kyujin_l_type && $canonicalURL != '')## 求人一覧
+    #set($canonical-URL = $canonicalURL.replace("{{pPrm}}","${pagenum}"))
+#elseif ($page_style == 'list' && $page_id != $kyujin_l_type && $page_id != $menu_whatsnew_type)## 求人・新着以外の一覧ページ
+    #set($canonical-URL = $canonicalURL.replace("{{pPrm}}","${pagenum}") + $parameter.replace("&","?"))
+#elseif ($page_id == $kyujin_d_type)## 求人詳細
+	#if ($detail-url-normalized-mode == true)## 正規化
+		#set ($canonical-URL = $menu_kyujin_d_url.replace("{{job_offer_id}}",$result.job_offer_id))
+	#else## 非正規
+		#set ($canonical-URL = $menu_kyujin_d_url + '&ID=' + $result.job_offer_id)
+	#end
+#elseif ($page_style == 'detail')## 求人以外の詳細ページ
+    #foreach($menu in $menu_list)
+        #if ($page_id == $menu.id)
+            #set ($canonical-URL = $menu.url.replace("{{job_offer_id}}",$result.job_offer_id))
+        #end ## --- if ($page_id == $menu.id)
+    #end ## --- foreach($menu in $menu_list)
+#else## 上記以外
+    #set($canonical-URL = $canonicalURL.replace("{{pPrm}}","${pagenum}"))
+#end
+#set($canonical-URL = $util.htmlEscape($canonical-URL))
+<link rel="canonical" href="$!{canonical-URL}">
+## --------------------------------------------------
+## meta OGP 設定
+## --------------------------------------------------
+#set ($og_title = $page_title)
+#if($page_type == $menu_index_type)
+    #set ($og_title = $site_title)
+#end
+#set ($og_type = 'object')
+#if($page_type == $menu_index_type)
+    #set ($og_type = 'website')
+#elseif ($page_style == 'detail')
+    #set ($og_type = 'article')
+#end
+<meta property="og:site_name" content="$!{site_title}" />
+<meta property="og:title" content="$!{og_title}">
+<meta property="og:type" content="$!{og_type}">
+<meta property="og:url" content="$!{canonical-URL}">
+<meta property="og:description" content="$!{meta_description}">
+<meta property="og:image" content="${url_header}${base_url}${social_img}">
+## --------------------------------------------------
+## meta update_date 設定 ※求人詳細のみ
+## --------------------------------------------------
+#if($page_id == $kyujin_d_type && $resultnum != 0)## --- 求人詳細の場合
+#* --- ◆パラメータ使用しないのでここも使用しない
+    #if ($item_array && $item_array.size() > 0)
+         #foreach ($item in $item_array)
+<meta property="article:section" content="$!item">
+         #end ## --- foreach ($item in $item_array)
+    #end ## --- if ($item_array && $item_array.size() > 0)
+--- *#
+    #if ($result.show_date_from != '' && $result.update_date != '')
+        #set ($show_date_from = $result.show_date_from.replace('/','-'))
+        #set ($update_date = $result.update_date.replace('/','-').substring(0,10) + 'T' + $result.update_date.substring(10,24))
+        #set ($update_date = $update_date.replace("&nbsp;",""))
+<meta property="article:published_time" content="${show_date_from}T00:00:00+00:00">
+<meta property="article:modified_time" content="${update_date}+00:00">
+<meta property="og:updated_time" content="${update_date}+00:00">
+    #end
+#end ## --- if($page_id == $kyujin_d_type && $resultnum != 0)
+## --------------------------------------------------
+## favicon 設定
+## --------------------------------------------------
+<link rel="shortcut icon" type="image/x-icon" href="${root_url}${favicon_img}">
+## --------------------------------------------------
+## apple-touch-icon 設定
+## --------------------------------------------------
+<link rel="apple-touch-icon" href="${root_url}${webclip_img}">
+## --------------------------------------------------
+## CSSファイル 設定
+## --------------------------------------------------
+<!-- CSS -->
+#if ($favorite_flag == 1 || $loadlist_flag == 1) ## お気に入り機能または最近見た求人有効
+<!-- お気に入り機能と閲覧履歴を使用する時 読み込ませるか記述を共通のcssに追加 -->
+<link rel="stylesheet" href="${root_url}css/customparts.css">
+<!-- お気に入り機能と閲覧履歴を使用する時 読み込ませるか記述を共通のcssに追加 -->
+#end ## --- if ($favorite_flag == 1 || $loadlist_flag == 1)
+
+<!-- font - common -->
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Martel:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- style - common -->
+<link rel="stylesheet" href="${root_url}js/vendor/swiper/swiper.min.css">
+<link rel="stylesheet" href="${root_url}css/kyujin.css">
+<link rel="stylesheet" href="${root_url}css/style.css">
+
+<link rel="stylesheet" href="${root_url}css/add.css?202106">
+<link rel="stylesheet" href="${root_url}css/add2022.css?202207">
+## --------------------------------------------------
+## JSON-LD
+## --------------------------------------------------
+#if ($page_type == $menu_index_type)
+<script type="application/ld+json">
+	{
+	  "@context": "http://schema.org",
+	  "@type": "WebSite",
+	  "url": "${menu_index_url}",
+	  "potentialAction": {
+		"@type": "SearchAction",
+		"target": "${menu_kyujin_url}&FTS={FTS}",
+		"query-input": "required name=FTS"
+	  }
+	}
+</script>
+
+#elseif ($page_style != 'detail')
+<script type="application/ld+json">
+	{
+	"@context": "http://schema.org",
+	"@type": "BreadcrumbList",
+	"itemListElement": [{
+	"@type": "ListItem",
+	"position": 1,
+	"item": {
+	"@id": "${menu_index_url}",
+	"name": "${site_title}"
+	    }
+  	  }]
+	}
+</script>
+#else
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "item": {
+      "@id": "${menu_index_url}",
+      "name": "${site_title}"
+    }
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "item": {
+      "@id": "${parent_url}",
+      "name": "${parent_title}"
+    }
+  }]
+}
+</script>
+#end
+## --------------------------------------------------
+## 前のページ/次のページ 設定
+## --------------------------------------------------
+#if ($page_style == 'list' && $page_type != $menu_index_type)
+    #if ($pagenum > 1)
+        #set ($this_url_array = $canonicalURL.split('&P='))
+        #set ($this_url = $this_url_array.get(0))
+    #else
+        #set ($this_url = $canonicalURL)
+    #end
+
+    #set ($prev_url = $this_url + $prev_param)
+    #set ($next_url = $this_url + $next_param)
+
+    #if($urlregFlg == true)## ページネーションに使用するURLを分岐します。正規化可能な場合とします。
+        #set($prevNo = $pagenum - 1)
+        #set($nextNo = $pagenum + 1)
+        #if ($pagenum != 1)
+            #set($prev_url = $canonicalURL.replace("{{pPrm}}","${prevNo}"))
+        #end
+        #if ($lastpagenum != $pagenum && $resultnum > $noi)
+            #set($next_url = $canonicalURL.replace("{{pPrm}}","${nextNo}"))
+        #end
+    #end
+
+    #if ($pagenum != 1)
+<link rel="prev" href="${prev_url}">
+    #end
+    #if ($lastpagenum != $pagenum && $resultnum > $noi)
+<link rel="next" href="${next_url}">
+    #end
+#end
+## --------------------------------------------------
+## jobposting 設定 ※求人詳細のみ
+## --------------------------------------------------
+## --- google for jobs用
+#if($page_id == $kyujin_d_type)## --- 求人詳細の場合
+	#if ($jobposting_flag == 1)
+		##----- jobposting -----##
+				#parse("/__common_config__/seo/jobposting_west.vm")
+		##--- end jobposting ---##
+	#end
+#end ## --- if($page_id == $kyujin_d_type)## --- 求人詳細の場合
+## --------------------------------------------------
+## 戻り先URL 設定 ※詳細の戻るボタン、パンくず（求人以外）用
+## --------------------------------------------------
+## --->> 一覧ページでなおかつ
+## --->> 詳細ページ（「$menu.num」の2文字目が「1」）が存在し、「$menu.parent_id」が設定されていて
+## --->> 「$page_id」と「$menu.parent_id」が一致したページに「$request.addCookie」記述追加
+## --->> または詳細ページはないけど新着一覧ページにも「$request.addCookie」記述追加
+#if ($page_style == 'list')
+    #foreach($menu in $menu_list)
+        #if ($menu.num.substring(1,2) == '1' && $menu.parent_id != '')
+            #if ($page_id == $menu.parent_id)
+                #set($list_name = $breadcrumbs_txt)
+                #set($list_url = $canonicalURL.replace("{{pPrm}}","1"))
+                $request.addCookie("list_name","${list_name}",1)
+                $request.addCookie("list_url","${list_url}",1)
+            #end ## --- if ($page_id == $menu.parent_id)
+        #elseif ($menu.id == $menu_whatsnew_type)
+            #set($list_name = $breadcrumbs_txt)
+            #set($list_url = $canonicalURL.replace("{{pPrm}}","1"))
+            $request.addCookie("list_name","${list_name}",1)
+            $request.addCookie("list_url","${list_url}",1)
+        #end
+    #end ## --- foreach($menu in $menu_list)
+#end ## --- if ($page_style == 'list')
+#* ---
+## 戻るボタンの場合：詳細ページに下記設定（タグ・クラス名は案件ごと）
+#if($request.getCookieValue("list_name") != "")
+<div class="page_back">
+    <a href="$request.getCookieValue("list_url")">前のページへ戻る</a>
+</div>
+#end ## --- if($request.getCookieValue("list_name") != "")
+## パンくずの場合：breadcrumb.htmに下記設定
+#if($request.getCookieValue("list_name") != "")
+<li>
+    <a href="$request.getCookieValue("list_url")"><span>$request.getCookieValue("list_name")</span></a>
+</li>
+#end
+--- *#
+
+##--- OneTrust Cookie ---##
+#set ($cookie_bnr_id = '7c1b82e3-702b-4450-86a9-64a09e3ffc06')
+#set ($parse_url = '/__common_config__/cookiebanner/onetrust.htm')
+#parse ($parse_url)
+##--- END OneTrust Cookie ---##

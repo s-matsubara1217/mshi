@@ -1,0 +1,114 @@
+## --- drawer menu --------------------------------------------------------- ##
+#define ($d_menu_area)
+<!-- drower common -->
+<div class="overlay overlay-menu_drower">
+    <div class="overlay_scroll fade-set">
+        <div class="overlay_inner">
+
+            <div class="overlay_logo fade-set-child">
+                <div class="o-site_id">
+                    <a href="$!{menu_list_map.get('00').url}">
+											<span class="image"><img src="${root_url}img/logo.png?202106" alt="$!{h1_txt}"></span>
+											<span class="text">RECRUIT</span>
+										</a>
+                </div>
+            </div>
+
+            <div class="overlay_navi">
+                <nav class="o-g_navi">
+                    <ul class="o-g_navi_list">
+                        #foreach($menu_key in $d_menu_key_list)
+                        #foreach($menu in $menu_list)
+                        #if ($menu_key == $menu.num)
+                        <li class="o-g_navi_list_item fade-set-child">
+                            <a href="$!{menu.url}">
+                                <span class="txt_jp">$!{menu.name}</span>
+                            </a>
+                        </li>
+                        #end
+                        #end
+                        #end
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="overlay_sns fade-set-child">
+                <div class="o-sns">
+                    <p class="o-sns_ttl">SHARE</p>
+                    ## --- sns_list
+                    #set ($sns_type = 'drawer')
+                    #set ($parse_file = $base_url + 'inc/sns_list.htm')
+                    #parse ($parse_file)
+                    ##
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- menu list-->
+<div class="o-toggle menu-toggle js-hello-opacity">
+    <span class="o-toggle_trigger">
+        <span class="o-toggle_trigger_ico"></span>
+        <span class="o-toggle_trigger_ico"></span>
+        <span class="o-toggle_trigger_ico"></span>
+    </span>
+</div>
+<!-- menu toggle -->
+<!-- / drower common -->
+#end ## --- define ($d_menu_area)
+
+## --- header menu --------------------------------------------------------- ##
+#define ($h_menu_area)
+<header class="l-header header js-hello-header" id="l-header">
+    <div class="header_inner">
+        <div class="header_logo">
+            <div class="o-site_id">
+                <a href="$!{menu_list_map.get('00').url}">
+                	##<img src="${root_url}img/logo.png" alt="$!{h1_txt}">
+									<span class="image"><img src="${root_url}img/logo.png?202106" alt="$!{h1_txt}"></span>
+									<span class="text">RECRUIT</span>
+								</a>
+            </div>
+        </div>
+        <div class="header_navi">
+            <nav class="o-g_navi">
+                <ul class="o-g_navi_list">
+                    #foreach($menu_key in $h_menu_key_list)
+                    #foreach($menu in $menu_list)
+                    #if ($menu_key == $menu.num)
+                    <li class="o-g_navi_list_item">
+                        <a href="$!{menu.url}">
+                            <span class="txt_jp">$!{menu.name}</span>
+                        </a>
+                    </li>
+                    #end
+                    #end
+                    #end
+                </ul>
+                <ul class="o-g_navi_listBtn">
+                    #foreach($menu_key in $h_menu_key_list_02)
+                    #foreach($menu in $menu_list)
+                    #if ($menu_key == $menu.num)
+                    #if ($menu.num == '30')## --- 説明会
+                    <li class="o-g_navi_listBtn_item o-g_navi_listBtn_item-info">
+                        <a href="$!{menu.url}">
+                            <span class="txt_jp">$!{menu.name}</span>
+                        </a>
+                    </li>
+                    #elseif ($menu.num == '10')## ---求人
+                    <li class="o-g_navi_listBtn_item o-g_navi_listBtn_item-recruit">
+                        <a href="$!{menu.url}">
+                            <span class="txt_jp">$!{menu.name}</span>
+                        </a>
+                    </li>
+                    #end
+                    #end
+                    #end
+                    #end
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+#end ## --- define ($h_menu_area)

@@ -1,0 +1,563 @@
+##
+## search_form.htm
+## created:Kimura
+## Ver:19.08.22
+## Ver:19.11.22
+##
+## ※各[#define]内のclass有無などは適宜追加変更を行ってください。
+## ※汎用項目は、チェックボックス/セレクトボックス内にある[汎用項目用　テンプレート]内の
+## 　各引数にsetting.hmtで設定した各変数を挿入して使用してください。
+##
+#########################################################################################
+##
+##      各検索用データを作成/格納
+##
+#########################################################################################
+## ------------------------------------------------------------------------------------------------------------ ##
+## 共通変数
+## ------------------------------------------------------------------------------------------------------------ ##
+#set ($checked_txt = ' checked="checked"')
+#set ($selected_txt = ' selected="selected"')
+#set ($after_word = 'を選ぶ')## --- 「を選ぶ」等
+#set ($cross_sub_title = true)##-- true or false「1.都道府県を選択」等表示有無
+## ------------------------------------------------------------------------------------------------------------ ##
+## 勤務地エリア表示変数
+## ------------------------------------------------------------------------------------------------------------ ##
+#set ($option_style = "font-weight: bold; background: #eee;")##-- エリア使用時の<option>タグのスタイル
+#set ($option_disabled_style = ' color: #999;')##-- エリア使用時、エリア内が1つで選択不可の場合の<option>タグ追加スタイル
+## ------------------------------------------------------------------------------------------------------------ ##
+
+## ------------------------------------------------------------------------------------------------------------ ##
+## 雇用形態
+## ------------------------------------------------------------------------------------------------------------ ##
+#set ($searchform_kkcd_list = []) ## 格納配列
+
+#set ($kkcd_list = $request.gets('_KKCD_')) ## 単一検索用
+#set ($kkcdSet_list = $request.gets('SET')) ## 複数検索用
+#foreach ($kkcd in $kkcd_key_list)
+    #set ($check = '')
+    #set ($select = '')
+    #if ($kkcdMap.containsKey($kkcd))
+        #if ($kkcd_list.contains($kkcd) || $kkcdSet_list.contains($kkcd))
+            #set ($check = $checked_txt)
+            #set ($select = $selected_txt)
+        #end ## --- if ($kkcd_list.contains($kkcd) || $kkcdSet_list.contains($kkcd))
+        
+        ## 格納
+        #set ($dummy = $searchform_kkcd_list.add({
+            "key"       :"${kkcd}",
+            "name"      :"${kkcdMap.get($kkcd)}",
+            "check"     :"${check}",
+            "select"    :"${select}"
+        }))
+
+    #end ## --- if ($kkcdMap.containsKey($kkcd))
+#end ## --- foreach ($kkcd in $kkcd_key_list)
+## ------------------------------------------------------------------------------------------------------------ ##
+
+## ------------------------------------------------------------------------------------------------------------ ##
+## 職種 
+## ------------------------------------------------------------------------------------------------------------ ##
+#set ($searchform_category_list = []) ## 格納配列
+
+#foreach ($category_key in $category_key_list)
+#foreach ($category in $category_list)
+#if ($category_key == $category.key)
+    #set ($check = '')
+    #set ($select = '')
+    #if ($request.gets("${cat_val}") != '')
+        #set ($category_array = [])
+        #set ($category_array = $request.gets("${cat_val}"))
+        #if ($category_array.size() > 0)
+        #foreach ($key in $category_array)
+            #if ($key == $category.key)
+                #set ($check = $checked_txt)
+                #set ($select = $selected_txt)
+                #break
+            #end ## --- if ($key == $category.key)
+        #end ## --- foreach ($key in $category_array)
+        #end ## --- if ($category_array.size() > 0)
+    #end ## --- if ($request.get("${cat_val.toUpperCase()}") != '')
+
+    ## 格納
+    #set ($dummy = $searchform_category_list.add({
+        "key"       :"${category.key}",
+        "name"      :"${category.name}",
+        "check"     :"${check}",
+        "select"    :"${select}"
+    }))
+
+#end ## --- if ($category_key == $category.key)
+#end ## --- foreach ($category in $category_list)
+#end ## --- foreach ($category_key in $category_key_list)
+## ------------------------------------------------------------------------------------------------------------ ##
+
+## ------------------------------------------------------------------------------------------------------------ ##
+## 勤務地 
+## ------------------------------------------------------------------------------------------------------------ ##
+#set ($searchform_location_list = []) ## 格納配列
+#foreach($a-code in $kinmuchi_array.area-codes)
+    #foreach($p-code in $kinmuchi_array.pref-codes.get($a-code))
+        #set ($PrefNum = $kinmuchi_array.pref-codes.get($a-code).size())## エリアの中に含まれる都道府県の数
+        #set ($check = '')
+        #set ($select = '')
+        #if($kinmuchi_search == 3) ## ドリル検索用
+            #if ($request.get("KCD_") != '' || $request.get("KCD") != '' || $request.get("PC") != '')
+                #set ($kcd_all = [])
+                #set ($kcd_all = [$request.gets("KCD_"),$request.gets("KCD"),$request.gets("PC")])
+                #if ($kcd_all.size() > 0)
+                    #foreach ($kcd_arry in $kcd_all)
+                        #foreach ($key in $kcd_arry)
+                            #if ($key.length() >= 2 && $key.length() < 5)## エリア検索時は$keyが5文字以上になるので除外する
+                                #set ($pref_key = $key.substring(0,2))
+                                #if ($pref_key == $p-code || $key == $kcd_city)
+                                    #set ($check = $checked_txt)
+                                    #set ($select = $selected_txt)
+                                    #break
+                                #end ## --- if ($pref_key == $p-code)
+                            #end ## --- if ($key.length() >= 2)
+                        #end ## --- foreach ($key in $kcd_arry)
+                        #if($check != '' || $select != '') ## データ一致していたら抜ける
+                            #break
+                        #end
+                    #end ## --- foreach ($kcd_arry in $kcd_all)
+                #end ## --- if ($kcd_all.size() > 0)
+            #end ## --- if ($request.get("KCD_") != '' || $request.get("KCD") != '' || $request.get("PC") != '')
+
+            ## 格納 "p-num":エリアの中に含まれる都道府県の数 "a-key":エリアコード "a-name":エリア名 "p-key":都道府県コード "key":勤務地コード "name":都道府県名
+            #set ($dummy = $searchform_location_list.add({
+                "p-num"     :"${PrefNum}",
+                "a-key"     :"${a-code}",
+                "a-name"    :"${master_ecd.get($a-code)}",
+                "p-key"     :"${p-code}",
+                "key"       :"${p-code}",
+                "name"      :"${master_pc.get($p-code)}",
+                "check"     :"${check}",
+                "select"    :"${select}"
+            }))
+        #else## 通常検索
+            #foreach($k-code in $kinmuchi_array.kcd-codes.get($p-code))
+                #set ($PrefNum = $kinmuchi_array.pref-codes.get($a-code).size())## エリアの中に含まれる都道府県の数
+                #set ($CityNum = $kinmuchi_array.kcd-codes.get($p-code).size())## 都道府県の中に含まれる市区町村の数
+                #set ($check = '')
+                #set ($select = '')
+                #if ($request.get("KCD_") != '' || $request.get("KCD") != '')
+                    #set ($location_array = [])
+                    #if ($request.get("KCD_") != '')
+                        #set ($location_array = $request.gets("KCD_"))
+                    #elseif ($request.get("KCD") != '')
+                        #set ($location_array = $request.gets("KCD"))
+                    #end
+                    #if ($location_array.size() > 0)
+                        #foreach ($key in $location_array)
+                            #if ($key == $k-code)
+                                #set ($check = $checked_txt)
+                                #set ($select = $selected_txt)
+                                #break
+                            #end ## --- 
+                        #end ## --- foreach ($key in $location_array)
+                    #end ## --- if ($location_array.size() > 0)
+                #end ## --- if ($request.get("KCD_") != '' || $request.get("KCD") != '')
+                #set ($kcd-name = $master_kcd.get($k-code))
+                #if ($k-code.length() == 2)## $k-codeが都道府県の場合、都道府県名表示
+                    #set ($kcd-name = $master_pc.get($k-code))
+                #end
+
+                ## 格納 "p-num":エリアの中に含まれる都道府県の数 "a-key":エリアコード "a-name":エリア名 "p-key":都道府県コード "p-name":都道府県名 "c-num":都道府県の中に含まれる市区町村の数 "key":勤務地コード "name":市区町村名
+                #set ($dummy = $searchform_location_list.add({
+                    "p-num"     :"${PrefNum}",
+                    "a-key"     :"${a-code}",
+                    "a-name"    :"${master_ecd.get($a-code)}",
+                    "p-key"     :"${p-code}",
+                    "p-name"    :"${master_pc.get($p-code)}",
+                    "c-num"     :"${CityNum}",
+                    "key"       :"${k-code}",
+                    "name"      :"${kcd-name}",
+                    "check"     :"${check}",
+                    "select"    :"${select}"
+                }))
+            #end ## --- foreach($k-code in $kinmuchi_array.kcd-codes.get($p-code))
+        #end ## --- if($kinmuchi_search == 3)
+    #end ## --- foreach($p-code in $kinmuchi_array.pref-codes.get($a-code))
+#end ## --- foreach($a-code in $kinmuchi_array.area-codes)
+## ------------------------------------------------------------------------------------------------------------ ##
+
+## ------------------------------------------------------------------------------------------------------------ ##
+## 汎用項目データ設定メソッド
+## ------------------------------------------------------------------------------------------------------------ ##
+## ※下記引数にsettingで設定した汎用項目の各変数を挿入して、この処理を実行してください。
+##
+## $argument_general_key_list   : キーリスト
+## $argument_general_list       : データリスト
+## $argument_general_val        : VAL名
+## $argument_general_label_name : チェックボックス用ラベル名
+## 
+## ------------------------------------------------------------------------------------------------------------ ##
+## ------------------------------------------------------ ##
+## 汎用項目データ設定 - 初期化→実行
+## ------------------------------------------------------ ##
+#define($set_generalData_initExe)
+    ## 初期化 --------------------------------------------
+    #set ($general_key_list   = [])
+    #set ($general_list       = [])
+    #set ($general_val        = '')
+    #set ($general_label_name = '')
+
+    ## 引数セット -----------------------------------------
+    #set ($general_key_list   = $argument_general_key_list)
+    #set ($general_list       = $argument_general_list)
+    #set ($general_val        = $argument_general_val)
+    #set ($general_label_name = $argument_general_label_name)
+
+    ## 処理実行 -------------------------------------------
+    #set ($return_generalSearch_list = []) ## 戻り値
+    #set ($temp_general_list = []) ## 一時格納配列
+
+    #foreach ($general_key in $general_key_list)
+    #foreach ($general in $general_list)
+    #if ($general_key == $general.key)
+        #set ($check = '')
+        #set ($select = '')
+        #if ($request.gets("${general_val}") != '')
+            #set ($general_array = [])
+            #set ($general_array = $request.gets("${general_val}"))
+            #if ($general_array.size() > 0)
+            #foreach ($key in $general_array)
+                #if ($key == $general.key)
+                    #set ($check = $checked_txt)
+                    #set ($select = $selected_txt)
+                    #break
+                #end ## --- if ($key == $general.key)
+            #end ## --- foreach ($key in $general_array)
+            #end ## --- if ($general_array.size() > 0)
+        #end ## --- if ($request.gets("${general_val.toUpperCase()}") != '')
+
+        ## 格納
+        #set ($dummy = $temp_general_list.add({
+            "key"           :"${general.key}",
+            "name"          :"${general.name}",
+            "check"         :"${check}",
+            "select"        :"${select}",
+            "val"           :"${general_val}",
+            "label_name"    :"${general_label_name}${general.key}"
+        }))
+
+    #end ## --- if ($general_key == $general.key)
+    #end ## --- foreach ($general in $general_list)
+    #end ## --- foreach ($general_key in $general_key_list)
+
+    #if($temp_general_list.size() > 0)
+        #set ($return_generalSearch_list = $temp_general_list)
+    #end
+
+#end ## --- define($set_generalData_initExe)
+## ------------------------------------------------------------------------------------------------------------ ##
+
+#########################################################################################
+##
+## 共通読み込み
+## 
+#########################################################################################
+## チェックボックス #######################################################################
+
+## 雇用形態
+#define($koyou_checkbox_program)
+    #foreach($kkcd_item in $searchform_kkcd_list)
+    <li>
+        <input type="checkbox" name="_KKCD_" id="kkcd${kkcd_item.key}" value="${kkcd_item.key}"${kkcd_item.check}>
+        <label for="kkcd${kkcd_item.key}">
+            #if ($kkcd_item.key.indexOf(':') != -1)
+            <a href="${menu_kyujin_url}&_KKCD_=${kkcd_item.key}">${kkcd_item.name}</a>            
+            #else
+            <a href="${menu_kyujin_l_url_reg.replace("all/","all/kk${kkcd_item.key}/")}">${kkcd_item.name}</a>            
+            #end
+        </label>
+    </li>
+    #end
+#end
+
+## 職種
+#define($syokusyu_checkbox_program)
+    #foreach($category_item in $searchform_category_list)
+    <li>
+        <input type="checkbox" name="${cat_val}" value="${category_item.key}" id="job${category_item.key}"${category_item.check}>
+        <label for="job${category_item.key}">
+            #set($categoryVal_reg = $cat_val.replaceAll('[a-zA-Z]',''))
+            <a href="$menu_kyujin_l_url_reg.replace("all/","all/v${categoryVal_reg}${category_item.key}/")">$!{category_item.name}</a>
+        </label>
+    </li>
+    #end
+#end
+    
+## 勤務地 
+#define($kinmuchi_checkbox_program)
+    #foreach($location_item in $searchform_location_list)
+    <li>
+        <input type="checkbox" name="KCD_" value="${location_item.key}" id="city${location_item.key}"${location_item.check}>
+        <label for="city${location_item.key}">
+            #if($a-code != '')
+                #set ($kcd_param = '')
+                #if ($location_item.key.length() == 5)
+                    #set ($kcd_param = 'k' + $location_item.key + '/')
+                #end
+            <a href="${menu_kyujin_l_url_reg.replace("all/","e${location_item.a-key}/p${location_item.p-key}/${kcd_param}")}">$!{location_item.name}</a>
+            #else
+            <a href="${menu_kyujin_url}&KCD_=${location_item.key}">$!{master_pc.get($p-code)}</a>
+            #end
+        </label>
+    </li>
+    #end
+#end
+
+#* ------------------------------------------------------------------
+## 汎用項目用　テンプレート
+#define($XXXXX_checkbox_program)
+
+    ## settingで設定した汎用項目の各変数を挿入してください。
+    #set ($argument_general_key_list   = $XXXXX_key_list) ## キーリスト
+    #set ($argument_general_list       = $XXXXX_list) ## データリスト
+    #set ($argument_general_val        = $XXXXX_val) ## VAL名
+    #set ($argument_general_val_reg    = $argument_general_val.replaceAll('[a-zA-Z]','')) ## 正規化VAL名
+    #set ($argument_general_label_name = 'XXXXX') ## チェックボックス用ラベル名
+    ## 実行
+    ${set_generalData_initExe}
+    
+    #foreach($return_generalSearch in $return_generalSearch_list)
+    <li>
+        <input type="checkbox" name="${argument_general_val}" value="${return_generalSearch.key}" id="${return_generalSearch.label_name}"${return_generalSearch.check}>
+        <label for="${return_generalSearch.label_name}">
+            <a href="$menu_kyujin_l_url_reg.replace("all/","all/v${argument_general_val_reg}${return_generalSearch.key}/")">$!{return_generalSearch.name}</a>
+        </label>
+    </li>
+    #end
+#end
+------------------------------------------------------------------ *#
+
+## チェックボックス ここまで #################################################################
+
+## セレクトボックス ########################################################################
+
+## 雇用形態
+#define($koyou_pulldown_program)
+    <select name="_KKCD_">
+    <option value="" selected="selected">雇用形態</option>
+    #foreach($kkcd_item in $searchform_kkcd_list)
+    <option value="${kkcd_item.key}"${kkcd_item.select}>${kkcd_item.name}</option>
+    #end
+    </select>
+#end
+
+## 職種
+#define($syokusyu_pulldown_program)
+    <select name="${cat_val}">
+    <option value="" selected="selected">職種</option>
+    #foreach($category_item in $searchform_category_list)
+    <option value="${category_item.key}"${category_item.select}>$!{category_item.name}</option>
+    #end
+    </select>
+#end
+
+## 勤務地
+#define($kinmuchi_pulldown_program)
+    <select name="KCD_">
+    <option value="" selected="selected">勤務地</option>
+    #set ($areaKey = '')## エリアグループ表示する場合の、エリアキー判別用変数
+    #set ($prefKey = '')## 都道府県グループ表示する場合の、都道府県キー判別用変数
+    #foreach($location_item in $searchform_location_list)
+        #if ($group_search_display_flg == 1)## エリアグループ表示する場合
+            #if ($areaKey != $location_item.a-key)
+                #set ($select_group = '')
+                #set ($able = '')
+                #set ($able_style = '')
+                #set ($area_kcd = '')
+                #foreach($a in $kinmuchi_array.pref-codes.get($location_item.a-key))
+                    #if ($area_kcd != '')
+                        #set ($area_kcd = $area_kcd + ':')
+                    #end
+                    #set ($area_kcd = $area_kcd + $a)
+                #end
+                ##パラメータ「KCD_」「KCD」と一致すれば選択状態にする
+                #if ($request.get("KCD_") == $area_kcd || $request.get("KCD") == $area_kcd)
+                #set ($select_group = ' selected="selected"')
+                #end
+                #if ($location_item.p-num == 1)##エリアの中が複数の場合のみエリアを選択可能
+                    #set ($able = ' disabled="disabled"')
+                    #set ($able_style = $option_disabled_style)
+                #end
+    <option value="$!{area_kcd}" style="$!{option_style}$!{able_style}"${select_group}${able}>${location_item.a-name}</option>
+            #end ## --- if ($areaKey != $location_item.a-key)
+            #set ($areaKey = $location_item.a-key)
+        #elseif ($group_search_display_flg == 2)## 都道府県グループ表示する場合
+            #set ($pref_key = $location_item.key.substring(0,2))
+            #if ($prefKey != $pref_key)
+                #set ($select_group = '')
+                #set ($able = '')
+                #set ($able_style = '')
+                #set ($pref_kcd = '')
+                #foreach($p in $kinmuchi_array.kcd-codes.get($location_item.p-key))
+                    #set ($pref_kcd = $p.substring(0,2))## 2桁の都道府県コードを取得してループ抜ける。
+                    #break
+                #end
+                ##パラメータ「KCD_」「KCD」と一致すれば選択状態にする
+                #if ($request.get("KCD_") == $pref_kcd || $request.get("KCD") == $pref_kcd)
+                #set ($select_group = ' selected="selected"')
+                #end
+                #if ($location_item.c-num == 1)##エリアの中が複数の場合のみエリアを選択可能
+                    #set ($able = ' disabled="disabled"')
+                    #set ($able_style = $option_disabled_style)
+                #end
+    <option value="$!{pref_kcd}" style="$!{option_style}$!{able_style}"${select_group}${able}>${location_item.p-name}</option>
+            #end ## --- if ($areaKey != $location_item.a-key)
+            #set ($prefKey = $pref_key)
+        #end ## --- if ($area_search_display_flg == 1)
+    <option value="${location_item.key}"${location_item.select}>$!{location_item.name}</option>
+    #end ## --- foreach($location_item in $searchform_location_list)
+    </select>
+#end ## --- 
+
+## ドリル検索用サンプル
+#define($kinmuchi_drill_program)
+    <div class="custom-form_parts">
+        <p class="parts_ttl">勤務地$!{after_word}</p>
+        <div class="form_parts_inner">
+            #if ($cross_sub_title == true)
+            <p class="form_parts_inner_ttl">1.都道府県を選択</p>
+            #end
+            <div class="pull-down">
+                <select id="search_pref" name="KCD_">
+                    <option value="" selected="selected">都道府県を選択</option>
+                    #set ($areaKey = '')## エリア表示する場合の、エリアキー判別用変数
+                    #foreach($location_item in $searchform_location_list)
+                        #if ($area_search_display_flg == 1)## エリア表示する場合
+                            #if ($areaKey != $location_item.a-key)
+                                #set ($select_group = '')
+                                #set ($able = '')
+                                #set ($able_style = '')
+                                #set ($area_kcd = '')
+                                #foreach($a in $kinmuchi_array.pref-codes.get($location_item.a-key))
+                                    #if ($area_kcd != '')
+                                        #set ($area_kcd = $area_kcd + ':')
+                                    #end
+                                    #set ($area_kcd = $area_kcd + $a)
+                                #end
+                                ##パラメータ「PC」と一致すれば選択状態にする（ドリル検索）
+                                #if ($request.get("KCD_") == $area_kcd || $request.get("KCD") == $area_kcd || $request.get("PC") == $area_kcd)
+                                #set ($select_group = ' selected="selected"')
+                                #end
+                                #if ($location_item.p-num == 1)##エリアの中が複数の場合のみエリアを選択可能
+                                    #set ($able = ' disabled="disabled"')
+                                    #set ($able_style = $option_disabled_style)
+                                #end
+                    <option value="$!{area_kcd}" style="$!{option_style}$!{able_style}"${select_group}${able}>${location_item.a-name}</option>
+                            #end ## --- if ($areaKey != $location_item.a-key)
+                            #set ($areaKey = $location_item.a-key)
+                        #end ## --- if ($area_search_display_flg == 1)
+                    <option value="${location_item.key}"${location_item.select}>$!{location_item.name}</option>
+                    #end ## --- foreach($location_item in $searchform_location_list)
+                </select>
+            </div>
+            #if ($cross_sub_title == true)
+            <p class="form_parts_inner_ttl">2.市区町村を選択<span>※複数可</span></p>
+            #end
+            <div id="search_city" class="check-box selCity-box">
+                <span class="selCity_alert city_default">上の都道府県を選択してください</span>
+            </div>
+        </div>
+    </div>
+#end
+
+#* ------------------------------------------------------------------
+## 汎用項目用　テンプレート
+## ※最初の[option]の名称を変更してください。
+
+#define($XXXXX_pulldown_program)
+    
+    ## settingで設定した汎用項目の各変数を挿入してください。
+    #set ($argument_general_key_list   = $XXXXX_key_list) ## キーリスト
+    #set ($argument_general_list       = $XXXXX_list) ## データリスト
+    #set ($argument_general_val        = $XXXXX_val) ## VAL名
+    #set ($argument_general_label_name = '') ## チェックボックス用ラベル名
+    ## 実行
+    ${set_generalData_initExe}
+
+######<select name="${argument_general_val.toUpperCase()}">
+    <select name="${argument_general_val}">
+    <option value="" selected="selected">テンプレート項目名</option>
+    #foreach($return_generalSearch in $return_generalSearch_list)
+    <option value="${return_generalSearch.key}"${return_generalSearch.select}>$!{return_generalSearch.name}</option>
+    #end
+    </select>
+#end
+------------------------------------------------------------------ *#
+
+## セレクトボックス ここまで ###############################################################
+
+## フリーワード
+#define($free_word_program)
+    #if ($request.get("FTS") != '')
+    <input class="searchWord" type="search" name="FTS" value="${util.htmlEscape($request.get('FTS'))}">
+    #else
+    <input class="searchWord" type="search" name="FTS" placeholder="勤務地、職種など" title="勤務地、職種など" onfocus="" onblur="">
+    #end
+#end
+
+#########################################################################################
+
+<form class="custom-form" action="${search_url}" id="search" name="search01">
+	<input type="hidden" name="L" value="BMSList" />
+	<input type="hidden" name="BCD" value="${baitai_cd_kyujin}" />
+	<input type="hidden" name="NOI" value="${kyujin_noi}" />
+	<input type="hidden" name="SF" value="1" />
+	<input type="hidden" name="SD" value="$util.urlDecode($sort_UD)" />
+    <input type="hidden" name="P" value="1">
+    
+    <div class="custom-form_inner">
+        <!-- 勤務地(cross search) -->
+        <div class="custom-form_parts">
+            <p class="parts_ttl">勤務地を選ぶ</p>
+            <div class="form_parts_inner">
+                <ul class="category_list">
+                    ${kinmuchi_checkbox_program}
+                </ul>
+            </div>
+        </div>
+        <!-- //勤務地(cross search) -->
+        <!-- 職種 -->
+        <div class="custom-form_parts">
+            <p class="parts_ttl">職種を選ぶ</p>
+            <div class="form_parts_inner">
+                <ul class="category_list">
+                    ${syokusyu_checkbox_program}
+                </ul>
+            </div>
+        </div>
+        <!-- 職種 -->
+        <!-- 雇用形態 -->
+        <div class="custom-form_parts">
+            <p class="parts_ttl">雇用形態を選ぶ</p>
+            <div class="form_parts_inner">
+                <ul class="category_list">
+                    ${koyou_checkbox_program}
+                </ul>
+            </div>
+        </div>
+        <!-- //雇用形態 -->
+        <!-- キーワード -->
+        <div class="custom-form_parts">
+            <p class="parts_ttl">フリーワード</p>
+            <div class="form_parts_inner">
+                ${free_word_program}
+            </div>
+        </div>
+        <!-- //キーワード -->
+    </div>
+    #set ($addClass_drill = '')
+    #if ($kinmuchi_search == 3)
+        #set ($addClass_drill = ' class="submit_btn"')
+    #end
+    <div class="custom-form_searth_btn">
+        <span class="btn_cover">
+            <input type="submit" value="条件で検索"$!{addClass_drill}>
+        </span>
+    </div>
+</form>

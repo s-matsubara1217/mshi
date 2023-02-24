@@ -1,0 +1,129 @@
+###### URLのパラメータを取得し求人一覧の正規化URLを定義（求人一覧ページのパンくずに使用します） インクルードさせて使ってください ######
+    #set($breadcrumbs_kinmuchi_url = $menu_kyujin_l_url_reg)##正規化全件検索のURLを定義
+    #set($breadcrumbs_area_string = '')
+    #set($breadcrumbs_pref_string = '')
+    #set($breadcrumbs_city_string = '')
+    #set($breadcrumbs_area_url = '')
+    #set($breadcrumbs_pref_url = '')
+    #set($breadcrumbs_city_url = '')
+    ## 勤務地の処理
+        #if($request.get('PC').matches("area[0-9]{2}"))## PC=area{数字2桁}と付く場合（フォームを使用してエリアのみ選択した検索の場合）、パラメータ'area'の値を拾ってエリアコードとして使用
+            #if($request.gets('area').size() == 1 || $request.get('area').length() == 2)
+                #set($breadcrumbs_area_string = $master_ecd.get($request.get('area')))
+                #set($breadcrumbs_area_url = $breadcrumbs_kinmuchi_url.replace("all/","e${util.htmlEscape($request.get('area'))}/"))
+            #end
+        #else## パラメータ'area'がない場合
+            #set($kcdPrmLengs5 = 0)## 数字5桁のKCD（KCD_）パラメータの数を調べる
+            #set($kcdPrmLengs2 = 0)## 数字2桁のKCD（KCD_）パラメータの数を調べる
+            #set($kcdPrm = '')
+            #set($kcdPrmHeadArray = [])
+            #set($kcdPrm5lengthArray = [])
+            #set($ecdArray = [])
+            #foreach($prm in $request.gets('KCD_'))
+                #if($prm.matches("[0-9]{5}"))
+                    #set($kcdPrmLengs5 = $kcdPrmLengs5 + 1)
+                    #set($kcdPrm = $prm)
+                    #set($kcdPrm5length = $prm)
+                    #set($Array = $kcdPrmHeadArray.add($prm.substring(0,2)))
+                    #set($Array = $kcdPrm5lengthArray.add($prm))
+                    #set($Array = $ecdArray.add($pc_to_ecd.get($prm.substring(0,2))))
+                #end
+                #if($prm.matches("[0-9]{2}"))
+                    #set($kcdPrmLengs2 = $kcdPrmLengs2 + 1)
+                    #set($kcdPrm = $prm)
+                    #set($Array = $kcdPrmHeadArray.add($prm.substring(0,2)))
+                    #set($Array = $ecdArray.add($pc_to_ecd.get($prm.substring(0,2))))
+                #end
+            #end
+            #foreach($prm in $request.gets('KCD'))
+                #if($prm.matches("[0-9]{5}"))
+                    #set($kcdPrmLengs5 = $kcdPrmLengs5 + 1)
+                    #set($kcdPrm = $prm)
+                    #set($kcdPrm5length = $prm)
+                    #set($Array = $kcdPrmHeadArray.add($prm.substring(0,2)))
+                    #set($Array = $kcdPrm5lengthArray.add($prm))
+                    #set($Array = $ecdArray.add($pc_to_ecd.get($prm.substring(0,2))))
+                #end
+            #end
+            #if($request.get('KCD_').indexOf(':') != -1)## 勤務地グルーピング
+                #foreach($prm in $request.get('KCD_').split(':'))
+                    #if($prm.matches("[0-9]{5}"))
+                        #set($kcdPrmLengs5 = $kcdPrmLengs5 + 1)
+                        #set($kcdPrm = $prm)
+                        #set($kcdPrm5length = $prm)
+                        #set($Array = $kcdPrmHeadArray.add($prm.substring(0,2)))
+                        #set($Array = $kcdPrm5lengthArray.add($prm))
+                        #set($Array = $ecdArray.add($pc_to_ecd.get($prm.substring(0,2))))
+                    #end
+                    #if($prm.matches("[0-9]{2}"))
+                        #set($kcdPrmLengs2 = $kcdPrmLengs2 + 1)
+                        #set($kcdPrm = $prm)
+                        #set($Array = $kcdPrmHeadArray.add($prm.substring(0,2)))
+                        #set($Array = $ecdArray.add($pc_to_ecd.get($prm.substring(0,2))))
+                    #end
+                #end
+            #end
+            #set($prmCheck = '')
+            #set($kcdPrmHeadFlg = true)
+            #foreach($prm in $kcdPrmHeadArray)
+                #if($velocityCount == 1)
+                    #set($prmCheck = $prm)
+                #end
+                #if($prmCheck != $prm)
+                    #set($kcdPrmHeadFlg = false)
+                #end
+                #set($prmCheck = $prm)
+            #end
+            #set($kcdPrm5lengthFlg = true)
+            #foreach($prm in $kcdPrm5lengthArray)
+                #if($velocityCount == 1)
+                    #set($prmCheck = $prm)
+                #end
+                #if($prmCheck != $prm)
+                    #set($kcdPrm5lengthFlg = false)
+                #end
+                #set($prmCheck = $prm)
+            #end
+            #set($ecdFlg = true)
+            #foreach($prm in $ecdArray)
+                #if($velocityCount == 1)
+                    #set($prmCheck = $prm)
+                #end
+                #if($prmCheck != $prm)
+                    #set($ecdFlg = false)
+                #end
+                #set($prmCheck = $prm)
+            #end
+            #if($kcdPrmHeadArray.size() == 0)## KCD（KCD_）パラメータの値に2桁数字、5桁数字のものがひとつもない
+                #if($request.gets('ECD').size() == 1 && $request.get('ECD').matches("[0-9]{2}"))## パラメータにECDがひとつで数字2文字
+                    #if($master_ecd.containsKey($request.get('ECD')))
+                        #set($breadcrumbs_area_string = $master_ecd.get($request.get('ECD')))
+                        #set($breadcrumbs_area_url = $breadcrumbs_kinmuchi_url.replace("all/","e${util.htmlEscape($request.get('ECD'))}/"))
+                    #end
+                #end
+            #elseif($kcdPrmHeadArray.size() > 0)## KCD（KCD_）パラメータの値に5桁数字、2桁数字のものがひとつ以上ある
+                #if($ecdFlg == true)## KCD（KCD_）パラメータがすべて同じエリア
+                    #if($master_pc.containsKey($kcdPrm.substring(0,2)))
+                        #set($breadcrumbs_area_string = $master_ecd.get($pc_to_ecd.get($kcdPrm.substring(0,2))))
+                        #set($breadcrumbs_area_url = $breadcrumbs_kinmuchi_url.replace("all/","e${pc_to_ecd.get($kcdPrm.substring(0,2))}/"))
+                    #end
+                #end
+                #if($kcdPrmHeadFlg == true)## KCD（KCD_）パラメータの頭2桁がすべて同じ
+                    #if($master_pc.containsKey($kcdPrm.substring(0,2)))
+                        #set($breadcrumbs_pref_string = $master_pc.get($kcdPrm.substring(0,2)))
+                        #set($breadcrumbs_pref_url = $breadcrumbs_kinmuchi_url.replace("all/","e${pc_to_ecd.get($kcdPrm.substring(0,2))}/p${kcdPrm.substring(0,2)}/"))
+                    #end
+                    #if($kcdPrm5lengthFlg == true)## さらに、KCD（KCD_）パラメータ5桁がすべて同じ
+                        #if($master_kcd.containsKey($kcdPrm5length))
+                            #set($breadcrumbs_city_string = $master_kcd.get($kcdPrm5length))
+                            #set($breadcrumbs_city_url = $breadcrumbs_kinmuchi_url.replace("all/","e${pc_to_ecd.get($kcdPrm5length.substring(0,2))}/p${kcdPrm5length.substring(0,2)}/k${kcdPrm5length}/"))
+                        #end
+                    #end
+                #end
+            #end
+        #end
+#*
+<p style="font-size: 150%; color: #F00;">えりあ $breadcrumbs_area_string（$breadcrumbs_area_url）</p>
+<p style="font-size: 150%; color: #F00;">けん $breadcrumbs_pref_string（$breadcrumbs_pref_url）</p>
+<p style="font-size: 150%; color: #F00;">しくちょうそん$breadcrumbs_city_string（$breadcrumbs_city_url）</p>
+*#

@@ -1,0 +1,78 @@
+## --- list-breadcrumbs 
+#set ($parse_file = $base_url + 'inc/list-breadcrumbs.htm')
+#parse ($parse_file)
+##
+## クラス設定
+#set ($tag_cls_div = ' class="breadcrumb"')## <div>
+#set ($tag_cls_ol = ' class="breadcrumb_list"')## <ol>
+#set ($tag_cls_li = ' class="breadcrumb_list_item"')## <li>
+#set ($tag_cls_a = '')## <a>
+<div$!{tag_cls_div}>
+    <ol$!{tag_cls_ol}>
+        <li$!{tag_cls_li}>
+            <a href="${menu_index_url}"$!{tag_cls_a}><span>$!{site_title} ${menu_index_string}</span></a>
+        </li>
+        
+        #if ($page_id == $kyujin_l_type)
+            #if($breadcrumbs_area_string != '' || $breadcrumbs_area_url != '')
+        <li$!{tag_cls_li}><a href="${breadcrumbs_area_url}"$!{tag_cls_a}>${breadcrumbs_area_string}</a></li>
+            #end
+            #if($breadcrumbs_pref_string != '' || $breadcrumbs_pref_url != '')
+        <li$!{tag_cls_li}><a href="${breadcrumbs_pref_url}"$!{tag_cls_a}>${breadcrumbs_pref_string}</a></li>
+            #end
+            #if($breadcrumbs_city_string != '' || $breadcrumbs_city_url != '')
+        <li$!{tag_cls_li}><a href="${breadcrumbs_city_url}"$!{tag_cls_a}>${breadcrumbs_city_string}</a></li>
+            #end
+        #elseif ($page_id == $kyujin_d_type)
+            #if ($result.kinmuchi_code != '')
+        <li$!{tag_cls_li}><a href="$!{menu_kyujin_l_url_reg.replace("all/","e${pc_to_ecd.get($result.kinmuchi_code.substring(0,2))}/")}"$!{tag_cls_a}>$!{master_ecd.get($pc_to_ecd.get($result.kinmuchi_code.substring(0,2)))}</a></li>
+        <li$!{tag_cls_li}><a href="$!{menu_kyujin_l_url_reg.replace("all/","e${pc_to_ecd.get($result.kinmuchi_code.substring(0,2))}/p${result.kinmuchi_code.substring(0,2)}/")}"$!{tag_cls_a}>$!{master_pc.get($result.kinmuchi_code.substring(0,2))}</a></li>
+        <li$!{tag_cls_li}><a href="$!{menu_kyujin_l_url_reg.replace("all/","e${pc_to_ecd.get($result.kinmuchi_code.substring(0,2))}/p${result.kinmuchi_code.substring(0,2)}/k${result.kinmuchi_code}/")}"$!{tag_cls_a}>$!{master_kcd.get($result.kinmuchi_code)}</a></li>
+            #end
+        <li$!{tag_cls_li}>
+            ## 雇用形態
+            #foreach ( $code in $util.split($result.koyoukeitai_code) )
+                #if( $velocityHasNext )
+                    $master_kkcd.get($code)・
+                #else
+                    $master_kkcd.get($code)
+                #end
+            #end
+        </li>
+        #elseif($page_style == 'detail')
+#*
+        <li>
+            <a href="${backUrl}"><span>${backStr}</span></a>
+        </li>
+*#
+#if($request.getCookieValue("list_name") != "")
+<li$!{tag_cls_li}>
+<a href="$request.getCookieValue("list_url")"$!{tag_cls_a}><span>$request.getCookieValue("list_name")</span></a>
+</li>
+#end
+        #end
+        
+        #if ($page_id == $kyujin_d_type)
+            #set ($syokusyuArray = $util.split($result.syokusyu_code))
+        <li$!{tag_cls_li}>
+            #set ($syokusyu_name = $result.val02.replace("<br>"," "))
+            #if ($company_name_display_flg == 1)
+            $result.company_name / $syokusyu_name
+            #else
+            $result.kyuujin_title / $syokusyu_name
+            #end
+#*
+            #foreach($code in $syokusyuArray)
+                #if ($!master_scd.get($code))
+                    $master_scd.get($code)
+                #end
+            #end
+*#
+            の$page_string
+        </li>
+        #else
+        <li$!{tag_cls_li}>$!{breadcrumbs_txt}</li>
+        #end
+        
+    </ol>
+</div>

@@ -1,0 +1,26 @@
+#*
+#####################################################
+
+求人詳細ページURLの正規化
+
+- Create:	2018/01/24 K. Tsuda
+- Ver. 20.01.21 kimura
+
+######################################################
+*#
+
+## ■URL構造
+
+## http://(ドメイン)
+## /(媒体識別子)
+## /(仕事情報ID)
+## /(媒体モードか採促モードか M or C)D(詳細テンプレート名)
+## --------------------------------------------------------------
+## ex. https://stg.job-gear.net/misdodebaito2/A80123034773/MDkyujin_d.htm
+
+## ■求人詳細URL生成
+#if ($detail-url-normalized-mode == true)
+	#set ($kyujin_d_url = $menu_kyujin_d_url.replace("{{job_offer_id}}",$anken.job_offer_id))
+#else
+	#set ($kyujin_d_url = $menu_kyujin_d_url + '&ID=' + $anken.job_offer_id)
+#end

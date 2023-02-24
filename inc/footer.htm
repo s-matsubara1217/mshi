@@ -1,0 +1,173 @@
+## --- joinus ----------------------------------------------------------- ##
+#define ($joinus_area)
+<!-- kyujin_l , _d　以外　common -->
+<section class="joinus">
+    <div class="joinus_inner l-container scroll-reveal">
+
+        <div class="joinusWrap scroll-reveal">
+
+            <div class="joinus_ttl animate animate-up">
+                <div class="joinus_ttl_inner">
+                    <p class="txt_en">JOIN SHIGA MK</p>
+                    <p class="txt_jp">ドライバー積極採用中！あなたも一流を目指しませんか？</p>
+                </div>
+            </div>
+
+            <div class="joinus_btnList">
+                <ul class="joinusList">
+                    <li class="joinusList_item joinusList_item-info animate animate-up">
+                        <a href="$!{menu_list_map.get('30').url}" class="">
+                            <span class="txt_en">$!{menu_list_map.get('30').en}</span>
+                            <span class="txt_jp">$!{menu_list_map.get('30').name}</span>
+                            <span class="ico"></span>
+                        </a>
+                    </li>
+                    <li class="joinusList_item joinusList_item-recruit animate animate-up">
+                        <a href="$!{menu_list_map.get('10').url}" class="">
+                            <span class="txt_en">$!{menu_list_map.get('10').en}</span>
+                            <span class="txt_jp">$!{menu_list_map.get('10').name}</span>
+                            <span class="ico"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+<!-- / join common -->
+<!-- / kyujin_l , _d　以外　common -->
+#end ## --- define ($joinus_area)
+
+## --- footer ----------------------------------------------------------- ##
+#define ($f_menu_area)
+<footer class="l-footer footer scroll-reveal">
+    <div class="footer_inner l-container animate">
+
+        <div class="footer_block footer_block-1">
+            <div class="footer_block-1_inner">
+                <div class="footer_logo">
+                    <div class="o-site_id">
+                        <a href="$!{menu_list_map.get('00').url}">
+                        	##<img src="${root_url}img/logo.png" alt="$!{h1_txt}" class="lazyimg">
+													<span class="image"><img src="${root_url}img/logo.png?202106" alt="$!{h1_txt}"></span>
+													<span class="text">RECRUIT</span>
+												</a>
+                    </div>
+                </div>
+                <div class="footer_navi">
+                    <nav class="o-g_navi">
+                        <ul class="o-g_navi_list">
+                            #foreach($f_menu in $f_menu_key_list)
+                            #foreach($menu in $menu_list)
+                            #if ($f_menu == $menu.num)
+                            <li class="o-g_navi_list_item">
+                                <a href="$!{menu.url}">
+                                    <span class="txt_jp">$!{menu.name}</span>
+                                </a>
+                            </li>
+                            #end
+                            #end
+                            #end
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer_block footer_block-2">
+            <div class="footer_block-2_inner">
+
+                <div class="footer_block-2_left">
+                    #if ($corporate_url != '')
+                    <div class="footer_corpLink">
+                        <ul class="corpLinkList">
+                            <li class="corpLinkList_item"><a href="$!{corporate_url}" target="_blank" class="o-link o-link-external">$!{corporate_txt}</a></li>
+                        </ul>
+                    </div>
+                    #end
+                    <div class="footer_copyright">
+                        <p class="copyright">$!{copyright_string}</p>
+                    </div>
+                </div>
+
+                <div class="footer_block-2_right">
+                    <div class="footer_sns">
+                        <div class="o-sns">
+                            <p class="o-sns_ttl">SHARE</p>
+                            ## --- sns_list
+                            #set ($sns_type = 'footer')
+                            #set ($parse_file = $base_url + 'inc/sns_list.htm')
+                            #parse ($parse_file)
+                            ##
+                        </div>
+                    </div>
+                    #if ($google_analytics_about_url != '')
+                    <div class="footer_ga">
+                        <a class="ga-pdf" href="$!{google_analytics_about_url}" target="_blank">$!{google_analytics_about_txt}</a>
+                    </div>
+                    #end
+                </div>
+
+                #*21.06.01 remove kimura
+                <!--
+                <div class="o-page_top">
+                    <a href="#l-header" class="page_top_trigger anchor"><span class="ico"></span><span class="text">Page Top</span></a>
+                </div>
+                -->
+                *#
+
+            </div>
+
+        </div>
+
+    </div>
+</footer>
+<!-- / footer common -->
+#end ## --- define ($f_menu_area)
+
+## --- floating --------------------------------------------------------- ##
+#define ($floating_area)
+#set ($floating_briefing_url = $menu_list_map.get('30').url)## 説明会Url
+#if ($page_type == $menu_list_map.get('30').type)## 説明会ページのとき、ページ内でジャンプ
+    #set ($floating_briefing_url = '#section-location')
+#end
+<!-- kyujin_l , _d　以外　common -->
+<div class="floating js-hello-convertion">
+
+    <ul class="convertionList">
+        <li class="convertionList_item l-blockWidth-m">
+            <a href="$!{floating_briefing_url}" class="o-btn o-btn-m o-btn-txtPrimary o-btn-radius o-btn-arrowAfter o-btn-color-white o-btn-border-primary"><span class="text">$!{menu_list_map.get('30').name}</span><span class="ico -primary"></span></a>
+        </li>
+        <li class="convertionList_item l-blockWidth-m">
+            <a href="$!{menu_list_map.get('10').url}" class="o-btn o-btn-m o-btn-txtSecondary o-btn-radius o-btn-arrowAfter o-btn-color-white o-btn-border-secondary"><span class="text">$!{menu_list_map.get('10').name}を見て応募</span><span class="ico -secondary"></span></a>
+        </li>
+    </ul>
+
+</div>
+<!-- / kyujin_l , _d　以外　common -->
+#end ## --- define ($floating_area)
+
+
+
+#if ($favorite_flag == 1) ## お気に入り機能有効
+
+##お気に入り用（求人一覧・詳細・新着）
+#if ($page_type == $menu_kyujin_type || $page_type == $menu_whatsnew_type)
+
+## --- common_favoriteLimit
+${common_favoriteLimit}
+
+## --- common_favoriteFloat
+${common_favoriteFloat}
+##
+#end
+
+##お気に入り用（お気に入り）
+#if ($page_type == $menu_keeplist_type)
+
+${common_keeplist_modal}
+
+#end
+#end ## --- #if ($favorite_flag == 1)

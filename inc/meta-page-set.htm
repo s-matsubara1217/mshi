@@ -1,0 +1,281 @@
+## ---------------------------------------------------------------- ##
+## meta-page-set.htm
+## Ver. 19.11.13 kimura
+## ---------------------------------------------------------------- ##
+
+###########################################################################################################
+##
+##  [title] [keyword] [description] [h1] base/共通 設定
+##
+###########################################################################################################
+
+## --- title ----------------------------------------------------------------------------------------------
+#set ($page_title_txt_base1 = $!{title_keyword})
+#set ($page_title_txt_base2 = '')
+#set ($page_title_txt_base3 = '')
+
+## --- keyword --------------------------------------------------------------------------------------------
+#set ($meta_keyword_txt_base1 = $!{meta_keyword})
+#set ($meta_keyword_txt_base2 = '')
+#set ($meta_keyword_txt_base3 = '')
+
+## 検索結果複数の場合の区切り「京都府 / 滋賀県 | 設計・・・」など
+#set ($search_separation1 = ' / ')## 同一検索検索項目内の区切り
+#set ($search_separation2 = ' | ')## 異なる検索項目の区切り
+
+## --- description ----------------------------------------------------------------------------------------
+#set ($meta_description_txt_base1 = $!{meta_description})
+#set ($meta_description_txt_base2 = '')
+#set ($meta_description_txt_base3 = '')
+
+## --- h1 -------------------------------------------------------------------------------------------------
+#set ($h1_txt_base1 = $!{site_title})
+#set ($h1_txt_base2 = '')
+#set ($h1_txt_base3 = '')
+
+###########################################################################################################
+##
+##  カスタム 設定
+##
+###########################################################################################################
+
+## ブランドがあるとき --- ブランド名取得（詳細用[求人／インタビュー]）
+#set ($seo_brand_name = '')
+#if ($resultnum > 0)
+	#foreach($seo_brand in $brand_key_list)
+		#if ($seo_brand.key == $result.get($brand_val))
+			#set ($seo_brand_name = $seo_brand.name)
+		#end
+	#end
+#end
+## $brand_valはsetting.htmで設定
+## key／nameはsetting.htmで設定
+## $seo_brand_nameを表示させたいところへ設置
+
+## 勤務地取得 --- 求人詳細用
+#if ($page_id == $kyujin_d_type)
+	#set ($todofuken = '')## 都道府県
+	#set ($shichoson = '')## 市町村
+	#set ($kinmuchi = '')## 都道府県 + 市町村
+	#set ($kinmuchi_str_set = '')## 勤務地表示用
+	#if ($resultnum > 0)
+		#if ($result.kinmuchi_code != '')
+			#if ($master_pc.containsKey($result.kinmuchi_code))
+				#set ($todofuken = $master_pc.get($result.kinmuchi_code))
+			#end
+			#if ($master_kcd.containsKey($result.kinmuchi_code))
+				#set ($shichoson = $master_kcd.get($result.kinmuchi_code))
+			#end
+			#set ($kinmuchi = $todofuken + $shichoson)
+		#end
+	#end
+	#if ($kinmuchi != '')
+		#set ($kinmuchi_str_set = '［' + $!{kinmuchi} + '］')
+	#end
+#end
+
+###########################################################################################################
+##
+## 変数設定
+##
+###########################################################################################################
+
+## --- デフォルト ------------------------------------------------------------------------------------------------
+#set ($page_title 		= $!{page_string} + '｜' + $!{page_title_txt_base1})
+#set ($meta_keyword 	= $!{meta_keyword_txt_base1} + ','  + $!{page_string})
+#set ($meta_description = $!{site_title} + 'の' + $!{page_string} + 'ページです。' + $!{meta_description_txt_base1})
+#set ($h1_txt 			= $!{h1_txt_base1})
+#set ($breadcrumbs_txt 	= $!{page_string})
+
+## --- TOP -----------------------------------------------------------------------------------------------------
+#if($page_id == $menu_index_type)
+
+	## --- [title]設定 -----------------------------------------------------------------------------------------
+	#set ($page_title = $!{page_title_txt_base1})
+
+	## --- [keyword]設定 ---------------------------------------------------------------------------------------
+	#set ($meta_keyword	= $!{meta_keyword_txt_base1})
+
+	## --- [description]設定 ------------------------------------------------------------------------------------
+	#set ($meta_description = $!{meta_description_txt_base1})
+
+	## --- [h1]設定 --------------------------------------------------------------------------------------------
+	#set ($h1_txt = $!{h1_txt_base1})
+
+	## --- [breadcrumbs]設定 ------------------------------------------------------------------------------------
+	#set ($breadcrumbs_txt = '')
+
+
+## --- 求人一覧/新着求人一覧 --------------------------------------------------------------------------------------
+#elseif($page_id == $kyujin_l_type || $page_id == $menu_whatsnew_type)
+
+	## --- [title]設定 -----------------------------------------------------------------------------------------
+	#if ($search_result != '')
+		#set ($page_title = $search_result + 'の' + $!{page_string} + '一覧 | ' + $!{page_title_txt_base1})
+	#else
+		#set ($page_title = $!{page_string} + '一覧 | ' + $!{page_title_txt_base1})
+	#end
+
+	## --- [keyword]設定 ---------------------------------------------------------------------------------------
+	#if ($search_result != '')
+		#set ($meta_keyword = $!{search_result.replace($search_separation1,",").replace($search_separation2,",")} + ',' + $!{meta_keyword_txt_base1} + ',' + $!{page_string})
+	#else
+		#set ($meta_keyword	= $!{meta_keyword_txt_base1} + ',' + $!{page_string})
+	#end
+
+	## --- [description]設定 ------------------------------------------------------------------------------------
+	#if ($search_result != '')
+		#set ($meta_description = $!{search_result} + 'の' + $!{page_string} + '一覧です。' + $!{meta_description_txt_base1})
+	#else
+		#set ($meta_description	= $!{page_string} + '一覧です。' + $!{meta_description_txt_base1})
+	#end
+
+	## --- [h1]設定  --------------------------------------------------------------------------------------------
+	#if ($search_result != '')
+		#set ($h1_txt = $!{h1_txt_base1})
+	#else
+		#set ($h1_txt = $!{h1_txt_base1})
+	#end
+
+	## --- [breadcrumbs]設定 ------------------------------------------------------------------------------------
+	#if ($search_result != '')
+		#set ($breadcrumbs_txt = $!{search_result} + 'の' + $!{page_string} + '一覧')
+	#else
+		#set ($breadcrumbs_txt = $!{page_string} + '一覧')
+	#end
+
+## --- 求人詳細 -------------------------------------------------------------------------------------------------
+#elseif($page_id == $kyujin_d_type)
+
+#set ($variable_title_val = '')
+#set ($variable_page_title = '')
+#set ($variable_meta_keyword = '')
+#set ($variable_meta_description = '')
+#if ($resultnum > 0)
+    #if ($company_name_display_flg == 1)
+        #set ($variable_title_val = $result.company_name)
+        #set ($variable_page_title = $variable_title_val + $kinmuchi_str_set + 'の' + $!{title_add_word} + ' - ' + $!{page_string} + '詳細 | ' + $page_title_txt_base1)
+        #set ($variable_meta_keyword = $!{meta_keyword_txt_base1} + ',' + $!{kinmuchi})
+        #set ($variable_meta_description = $variable_title_val + 'の' + $!{page_string} + '詳細です。勤務地は' + $!{kinmuchi} + 'になります。' + $!{meta_description_txt_base1})
+    #else
+        #set ($variable_title_val = $result.kyuujin_title)
+        #set ($title_add_word = '')## settingで設定している$title_add_wordの中身を強制的に空にする
+        #set ($variable_page_title = $variable_title_val + $kinmuchi_str_set + ' - ' + $!{page_string} + '詳細 | ' + $page_title_txt_base1)
+        #set ($variable_meta_keyword = $!{meta_keyword_txt_base1} + ',' + $!{kinmuchi})
+        #set ($variable_meta_description = $variable_title_val + ' - ' + $!{page_string} + '詳細です。勤務地は' + $!{kinmuchi} + 'になります。' + $!{meta_description_txt_base1})
+    #end
+#end
+
+	## --- [title]設定 -----------------------------------------------------------------------------------------
+	#set ($page_title = $variable_page_title)
+
+	## --- [keyword]設定 ---------------------------------------------------------------------------------------
+	#set ($meta_keyword = $variable_meta_keyword)
+
+	## --- [description]設定 ------------------------------------------------------------------------------------
+	#set ($meta_description = $variable_meta_description)
+
+	## --- [h1]設定  --------------------------------------------------------------------------------------------
+	#set ($h1_txt = $!{h1_txt_base1})
+
+	## --- [breadcrumbs]設定 ------------------------------------------------------------------------------------
+	#if ($variable_title_val != '')
+		#set ($breadcrumbs_txt= $!{variable_title_val} + $!{kinmuchi_str_set} + $!{title_add_word} + ' - ' + $!{page_string} + '詳細')
+	#end
+
+## --- その他の一覧/詳細があるページ ------------------------------------------------------------------------------------------
+#else
+    #set ($pageSet_otherPage_flg = 0) ## その他の一覧/詳細設定　実行フラグ
+    
+    ## 一覧詳細用変数(デフォルト)
+    #set ($main_detail_title = '') ## 詳細ページの詳細用タイトル(スタッフ名など)
+
+    ## 一覧詳細用変数(カスタム)
+    #set ($pageSet_custum_page_title = '')
+    #set ($pageSet_custum_meta_keyword = '')
+    #set ($pageSet_custum_meta_description = '')
+    #set ($pageSet_custum_h1_txt = '')
+    #set ($pageSet_custum_breadcrumbs_txt = '')
+
+    ## 一覧/詳細用設定実行メソッド start -------------------------------------------------------------------------------------------
+    #define ($pageSet_otherPage)
+        ## デフォルト一覧/詳細設定
+        ## 詳細ページ ------------------------------------------------------------------------------------------
+        #if ($page_style == 'detail')
+		
+		#if ($main_detail_title != '')
+            ## --- [title]設定
+            #set ($page_title = ${main_detail_title} + 'の' + $!{page_string} + '｜' + $!{page_title_txt_base1})
+
+            ## --- [description]設定
+            #set ($meta_description	= $!{site_title} + ' - ' + ${main_detail_title} + 'の' + $!{page_string} + 'です。' + $!{meta_description_txt_base1})
+
+            ## --- [breadcrumbs]設定
+            #set ($breadcrumbs_txt= ${main_detail_title} + 'の' + $!{page_string})
+
+		#else
+			## --- [title]設定
+			#set ($page_title = $!{page_string} + '｜' + $!{page_title_txt_base1})
+
+			## --- [description]設定
+			#set ($meta_description	= $!{site_title} + ' - ' + $!{page_string} + 'です。' + $!{meta_description_txt_base1})
+
+			## --- [breadcrumbs]設定
+			#set ($breadcrumbs_txt= $!{page_string})
+
+		#end
+		
+        ## 一覧ページ ------------------------------------------------------------------------------------------
+        #else
+
+        #end ## --- if ($page_style == 'detail')
+
+        ## カスタム変数にデータがあるとき上書き
+        ## --- [title]設定
+        #if ($pageSet_custum_page_title != '')
+            #set ($page_title = $pageSet_custum_page_title)
+        #end
+        ## --- [keyword]設定
+        #if ($pageSet_custum_meta_keyword != '')
+            #set ($meta_keyword = $pageSet_custum_meta_keyword)
+        #end
+        ## --- [description]設定
+        #if ($pageSet_custum_meta_description != '')
+            #set ($meta_description = $pageSet_custum_meta_description)
+        #end
+        ## --- [h1]設定
+        #if ($pageSet_custum_h1_txt != '')
+            #set ($h1_txt = $pageSet_custum_h1_txt)
+        #end
+        ## --- [breadcrumbs]設定
+        #if ($pageSet_custum_breadcrumbs_txt != '')
+            #set ($breadcrumbs_txt = $pageSet_custum_breadcrumbs_txt)
+        #end
+        
+    #end ## --- define ($pageSet_otherPage)
+
+    ## 一覧/詳細用設定実行メソッド end ---------------------------------------------------------------------------------------------
+
+    #set ($pageSet_otherPage_flg = 1)
+    #if ($page_style == 'detail') ## 詳細            
+		#if ($result.kyuujin_title != '')
+		#set ($main_detail_title = $result.kyuujin_title)
+		#elseif ($result.company_name != '')
+		#set ($main_detail_title = $result.company_name)
+		#end
+    #else ## 一覧
+        ## 検索結果があるとき
+        #if ($search_result != '')
+            #set ($pageSet_custum_page_title = $search_result + 'の' + $!{page_string} + '一覧 | ' + $!{page_title_txt_base1})
+            #set ($pageSet_custum_meta_keyword = $!{search_result.replace($search_separation1,",").replace($search_separation2,",")} + ',' + $!{meta_keyword_txt_base1} + ',' + $!{page_string})
+            #set ($pageSet_custum_meta_description = $!{search_result} + 'の' + $!{page_string} + '一覧です。' + $!{meta_description_txt_base1})
+            #set ($pageSet_custum_breadcrumbs_txt = $!{page_string} + '［ ' + $!{search_result} + ' ］')
+        #end ## if ($search_result != '')
+    #end
+
+    ## 実行
+    #if ($pageSet_otherPage_flg == 1)
+        $pageSet_otherPage
+    #end
+
+#end ## --- if($page_id == $menu_index_type)

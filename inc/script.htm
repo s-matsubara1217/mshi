@@ -1,0 +1,252 @@
+## 21.06.02 add　　footer.htm　に　記述したかったけど、ややこしそうなのでここに書きました。
+<div class="o-page_top">
+	<a href="#luxy" class="page_top_trigger anchor"><span class="ico"></span><span class="text">Page Top</span></a>
+</div>
+
+
+
+<!-- js - common -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="${root_url}js/vendor/jquery-3.4.1.min.js"><\/script>');</script>
+<script src="${root_url}js/vendor/modernizr-custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/picturefill/3.0.2/picturefill.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver,Object.assign"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/object-fit-images/3.2.3/ofi.js"></script>
+<script src="${root_url}js/vendor/lazyload.min.js"></script>
+<script src="${root_url}js/vendor/gsap.min.js"></script>
+<script src="${root_url}js/vendor/swiper/swiper.min.js"></script>
+<script src="${root_url}js/vendor/luxy.js"></script>
+<script src="${root_url}js/common.js"></script>
+<!-- font cache  -->
+<script>
+    window.WebFontConfig = {
+        custom: { 
+            families: ['Noto Sans CJK JP Subset','Noto Serif CJK JP Subset'],
+            urls: ['${root_url}fonts/noto-fonts/noto.css','${root_url}fonts/noto-serif/noto.css']
+        },
+        active: function() {
+            sessionStorage.fonts = true;
+        }
+    };
+    (function() {
+        var wf = document.createElement('script');
+        wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+    })();
+</script>
+
+#if ($page_type == $menu_list_map.get('00').type)## TOP
+<!-- this page js -->
+<script>
+    jQuery(function() {
+        jQuery.ajax({
+            type: 'GET',
+            url: '$!{interview_index_url}&time=' + (new Date).getTime(),
+            success: function(data) {
+
+                $('.top_career').after(data);
+
+                // staff slider
+                var staffSwiper = [];
+                var staffSwiperElm = $('.staff_swiper');
+                staffSwiperElm.each(function () {
+
+                    var itemNum = $(this).find('.swiper-slide').length;
+
+                    staffSwiper = new Swiper($(this), {
+                        loop: itemNum > 1,
+                        slideToClickedSlide: true,
+                        centeredSlides: true,
+                        speed: 500,
+                        slidesPerView: 'auto',
+                        watchOverflow: true,
+                        autoplay: {
+                            delay: 6000,
+                            stopOnLastSlide: false,
+                            disableOnInteraction: false,
+                            reverseDirection: false
+                        },
+                        pagination: {
+                            el: '.staff_swiper_nav .swiper-pagination',
+                            type: 'fraction',
+                        },
+                        navigation: {
+                            nextEl: '.staff_swiper_nav .swiper-button-next',
+                            prevEl: '.staff_swiper_nav .swiper-button-prev',
+                        },
+                    });
+
+                    staffSwiperElm.mouseenter(function(){
+                        staffSwiper.autoplay.stop();
+                        //				console.log('on');
+                    }).mouseleave(function(){
+                        staffSwiper.autoplay.start();
+                        //				console.log('leave');
+                    });
+
+                });
+
+                objectFitImages('.object-fit-img');
+
+                // ★ パララックス windows only
+                var ua = navigator.userAgent.toLowerCase();
+                if (ua.indexOf("windows nt") !== -1) {
+                    // windows用コード
+                    $("body").addClass("windows");
+                    var winW = $(window).innerWidth();
+                    if (winW > 768) {
+                        luxy.init({
+                            //以下すべてデフォルト値
+                            wrapper: '#luxy', //この要素の中身が慣性スクロールの対象になる
+                            targets: '.luxy-el', //パララックスの対象要素
+                            wrapperSpeed: 0.08 //慣性スクロールのスピード
+                        });
+                    }
+                }
+
+            }
+        });
+    });
+</script>
+<script src="${root_url}js/index.js"></script>
+#end
+#if ($page_type == $menu_list_map.get('10').type)## 求人
+<!-- this page js -->
+<script src="${root_url}js/kyujin.js"></script>
+#end
+#if ($page_id == $menu_list_map.get('21').id)## インタビュー詳細
+## 現在のIDをパラメータに追加
+#set ($addId = '&JID=' + $result.job_offer_id)
+<!-- this page js -->
+<script>
+	jQuery(function() {
+		jQuery.ajax({
+			type: 'GET',
+			url: '${ajax_interview_pager_url}${addId}&time=' + (new Date).getTime(),
+			success: function(data) {
+
+				$('.pageback_btn').before(data);
+				objectFitImages('.object-fit-img');
+
+			}
+		});
+	});
+</script>
+<script src="${root_url}js/interview.js"></script>
+#end
+#if ($page_type == $menu_list_map.get('50').type)## 会社紹介
+<!-- this page js -->
+<script src="${root_url}js/company.js"></script>
+#end
+
+## --------------------------------------------------
+## ↓↓↓ 以下 必要に応じてご使用ください。
+## --------------------------------------------------
+## --------------------------------------------------
+## ドリル検索
+## --------------------------------------------------
+#*
+#if ($kinmuchi_search == 3)## ドリル検索使用
+    #if ($page_id == $kyujin_l_type)##ページ分岐設定
+        ${common_drill_script}
+    #end
+#end
+*#
+
+## --------------------------------------------------
+## 関連求人（求人詳細）
+## --------------------------------------------------
+#if ($related_post_use_flg == 1)
+#if ($page_id == $kyujin_d_type)
+#set ($related_post_pref_cd	= $result.kinmuchi_code)
+#set ($seach_par = '&WLCD=' + $related_post_pref_cd)
+#set ($seach_par = $seach_par + '&KCD_=' + $related_post_pref_cd.substring(0,2))
+#set ($related_post_kyujin_url = $related_post_url + $result.job_offer_id + $seach_par)
+<script>
+        jQuery(function(){
+            jQuery.ajax({
+                type: 'GET',
+                url: '${related_post_kyujin_url}&time=' + (new Date).getTime(),
+                success: function(data) {
+                    //                console.log(data);
+                    $('${related_class}').append(data);
+                }
+            });
+        });
+</script>
+#end
+#end
+
+## --------------------------------------------------
+## お気に入り機能
+## --------------------------------------------------
+#if ($favorite_flag == 1) ## お気に入り機能有効
+<!-- お気に入り機能を使用する場合は読み込ませる -->
+${common_favorite_script}
+#end ## --- if ($favorite_flag == 1)
+
+## --------------------------------------------------
+## 最近見た求人 TOP
+## --------------------------------------------------
+#if ($loadlist_flag == 1)## 最近見た求人有効
+#if ($page_id == $menu_index_type)
+<script>
+	jQuery(function(){
+		jQuery.ajax({
+			type: 'GET',
+			url: '${loadlist_index_url}$!{add_id}&time=' + (new Date).getTime(),
+			success: function(data) {
+				$('.index_new').after(data);
+				$('.resent_job').slick({
+					autoplay: false,
+					dots: true,
+					fade: false,
+					speed: 1000,
+					slidesToShow: 4,
+					slidesToScroll: 1,
+					responsive: [
+						{
+							breakpoint: 1024,
+							settings: {
+								slidesToShow: 3,
+								infinite: true
+							}
+						},
+						{
+							breakpoint: 767,
+							settings: {
+								slidesToShow: 2
+							}
+						}
+					]
+				});
+				setTimeout( function(){
+					$('.resent_job').slick('play');
+				}, 500);
+			}
+		});
+	});
+</script>
+#end ## --- if ($page_id == $menu_index_type)
+
+## --------------------------------------------------
+## 最近見た求人 求人詳細
+## --------------------------------------------------
+#if ($page_id == $kyujin_d_type)
+#set ($add_id = '&JID=' + $result.job_offer_id)
+<script>
+        jQuery(function(){
+            jQuery.ajax({
+                type: 'GET',
+				url: '${loadlist_kyujin_d_url}$!{add_id}&time=' + (new Date).getTime(),
+                success: function(data) {
+                    $('.job').after(data);
+                }
+            });
+        });
+</script>
+#end
+#end ## --- if ($loadlist_flag == 1)

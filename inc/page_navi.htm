@@ -1,0 +1,166 @@
+#########################################################################################
+##
+##      基本設定/データ格納
+##
+#########################################################################################
+#* --- 以下setting.htmで設定
+#set($int   = 0)
+#set($noi   = 5)
+#set($pl    = 5)
+#if ($request.NOI != '')
+	#set($noi = $int.parseInt($request.NOI))
+#end
+--- *#
+## --- ページング番号最大数
+#if($urlregFlg == true && $request.RW != '')## 正規化URLの場合はPLの値が10になってしまいますので変更します。この値はサイトに合わせて変更してください。
+    #set($pl = 5)
+#elseif ($request.PL != '')
+    #set($pl = $int.parseInt($request.PL))
+#end
+
+## --- パラメータ追加
+#set($ADD_PARAM = '')
+#if ($page_style == 'list' && $page_id != $kyujin_l_type && $page_id != $menu_whatsnew_type)## 求人・新着以外の一覧ページ
+    #if ($parameter != '')
+        #set($ADD_PARAM = $parameter.replace("&","?"))
+    #end
+#end
+
+## ページャーに使用するURLを正規化時と非正規化時で分岐します。条件はURLにRWパラメータがあり正規化可能な場合とします。
+#if($urlregFlg == true && $request.RW != '')
+#set($pagingURL_first = $pagingURL.replace("{{pPrm}}","1") + $ADD_PARAM)
+#set($pagingURL_prev = $pagingURL.replace("{{pPrm}}","$prevNo") + $ADD_PARAM)
+#set($pagingURL_next = $pagingURL.replace("{{pPrm}}","$nextNo") + $ADD_PARAM)
+#set($pagingURL_last = $pagingURL.replace("{{pPrm}}","$lastpagenum") + $ADD_PARAM)
+#else
+#set($pagingURL_first = $paging.first.url)
+#set($pagingURL_prev = $paging.prev.url)
+#set($pagingURL_next = $paging.next.url)
+#set($pagingURL_last = $paging.last.url)
+#end
+##
+## ------------------------------------------------------ ##
+## 「次の●●件を表示」ボタン用
+## ------------------------------------------------------ ##
+#set ($next_page_btn_url = '') ## 次ページボタンURL
+#set ($next_page_btn_txt = '') ## 次ページボタンテキスト
+
+#if ($lastpagenum != $currentNo && $resultnum > $noi)
+    #set ($next_count = $noi)
+    #if (($lastpagenum == $pagenum + 1) && ($resultnum % $noi != 0))
+        #set ($next_count = $resultnum % $noi)
+    #end
+    ## データ格納
+    #set ($next_page_btn_url = $pagingURL_next)
+    #set ($next_page_btn_txt = '次の' + $next_count + '件を表示')
+#end
+##
+## ------------------------------------------------------ ##
+## 通常ページナビ用(ループ部分以外)
+## ------------------------------------------------------ ##
+#set ($first_btn_url = '')  ## 最初ページリンクURL
+#set ($last_btn_url = '')   ## 最終ページリンクURL
+#set ($prev_btn_url = '')   ## 前ページリンクURL
+#set ($next_btn_url = '')   ## 次ページリンクURL
+
+#if ($lastpagenum > $pl && $pagenum >= 3)
+    #set ($first_btn_url = $pagingURL_first)
+#end
+#if ($pagenum != 1)
+    #set ($prev_btn_url = $pagingURL_prev)
+#end
+#if ($lastpagenum != $pagenum)
+    #set ($next_btn_url = $pagingURL_next)
+#end
+#if ($lastpagenum > $pl && $lastpagenum - 2 >= $pagenum)
+    #set ($last_btn_url = $pagingURL_last)
+#end
+##
+
+#########################################################################################
+##
+## 表示
+##
+## ※ 「次の●●件を表示」ボタンを表示する場合は、このファイルを読み込む前に[$next_btn_flg = 1]をセットしてください。
+## 例)
+## ## --- page_navi
+## #set ($next_btn_flg = 1)
+## $common_parseFile_page_navi
+## ##
+## 
+#########################################################################################
+
+## --- デフォルトページナビ ---------------------------------------------- ##
+#define ($default_pagination)
+<div class="pagination">
+    <ul>
+        #if ($first_btn_url != '')
+        <li class="prev arrow"><a href="${first_btn_url}">≪</a></li>
+        #end
+        #if ($prev_btn_url != '')
+        <li class="prev arrow"><a href="${prev_btn_url}">&lt;</a></li>
+        #end
+        #set($count = 0)
+        ## 強制的に指定した件数以上表示しないようにする →正規化はPLが「10」固定なので設定した$pl分だけ表示する
+        #set( $max_cnt = $pl )
+        #if( $paging.pages.size() < $max_cnt )
+            #set( $max_cnt = $paging.pages.size() )
+        #end
+        #set( $paging_diff = $max_cnt / 2 )
+        #set( $pagenum_min = $pagenum - $paging_diff )
+        #set( $pagenum_max = $pagenum + $paging_diff )
+        #if( $pagenum_max < $max_cnt )
+            #set( $pagenum_max = $max_cnt )
+        #end
+        #set( $lastpagenum_diff = $lastpagenum - $pagenum + 1 )
+        #if( $lastpagenum - $paging_diff < $pagenum )
+            #set( $pagenum_min = $pagenum - $max_cnt + $lastpagenum_diff )
+        #end
+        #foreach ($page in $paging.pages)
+            #if( $pagenum_min <= $int.parseInt($page.no) && $int.parseInt($page.no) <= $pagenum_max )
+                #if ($page.no == $pagenum)
+        <li class="number current"><em>${page.no}</em></li>
+                #else
+                    #if($urlregFlg == true && $request.RW != '')
+        <li class="number"><a href="${pagingURL.replace('{{pPrm}}',$page.no)}${ADD_PARAM}">${page.no}</a></li>
+                    #else
+        <li class="number"><a href="${page.url}">${page.no}</a></li>
+                    #end
+                #end
+            #end ## --- if( $pagenum_min <= $int.parseInt($page.no) && $int.parseInt($page.no) <= $pagenum_max )
+        #end ## --- foreach ($page in $paging.pages)
+        #if ($next_btn_url != '')
+        <li class="next arrow"><a href="${next_btn_url}">&gt;</a></li>
+        #end
+        #if ($last_btn_url != '')
+        <li class="next arrow"><a href="${last_btn_url}">≫</a></li>
+        #end
+    </ul>
+</div>
+#end ## --- define ($default_pagination)
+## ------------------------------------------------------------------- ##
+
+## --- 表示 ----------------------------------------------------------- ##
+#if ($next_btn_flg && $next_btn_flg == 1 && $resultnum > $noi) ## 「次の●●件を表示」ボタンフラグ
+<div class="job_count_pager contents_bottom">
+    #if($next_page_btn_url != '')
+    <div class="pager_next">
+        <a href="${next_page_btn_url}" class="btn">${next_page_btn_txt}</a>
+    </div>
+    #end
+	${default_pagination}
+</div>
+#elseif ($next_btn_flg && $next_btn_flg == 0) ## 表示No＋ページナビ
+<div class="job_count_pager contents_top">
+    ## --- display_number
+    #set ($parse_file = $base_url + 'inc/display_number.htm')
+    #parse ($parse_file)
+    ##
+    #if ($resultnum > $noi)
+    ${default_pagination}
+    #end
+</div>
+#elseif ($resultnum > $noi)
+${default_pagination}
+#end ## --- if ($next_btn_flg && $next_btn_flg == 1 && $resultnum > $noi)
+## ------------------------------------------------------------------- ##

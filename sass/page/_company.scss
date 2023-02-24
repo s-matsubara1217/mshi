@@ -1,0 +1,1111 @@
+@charset "utf-8";
+
+@import '../foundation/mixins';
+
+$useCode: false;
+@if $useCode {}
+@include mq-up(md) {}
+@include mq-down(xl) {}
+@include mq-down(lg) {}
+@include mq-down(md) {}
+@include mq-down(sm) {}
+//background: rgba(0,0,0,.1);
+
+.lower-company {
+	.pageIntro {
+		&_ttl {
+			margin-bottom: 10px;
+		}
+		&_read {
+			@include mq-up(sm) {
+				text-align: center;
+			}
+		}
+		&_anchor {
+			position: relative;
+			z-index: 990;
+			margin-top: 30px;
+			@include mq-down(md) {
+				margin-top: 15px;
+			}
+			@include mq-down(sm) {
+				margin-top: 0;
+				position: fixed;
+				top: 60px;
+				//bottom: 72px;
+				left: 0;
+				width: 100%;
+				&:before ,
+				&:after {
+					content: "";
+					display: block;
+					position: absolute;
+					z-index: 5;
+					top: 0;
+					width: 20px;
+					height: 100%;
+					pointer-events: none;
+				}
+				&:before {
+					left: 0;
+					background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+				}
+				&:after {
+					right: 0;
+					background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+				}
+			}
+		}
+	}
+	.anchorList {
+		display: flex;
+		justify-content: center;
+		margin-top: 20px;
+		@include mq-down(sm) {
+			margin-top: 0;
+		}
+	}
+	.underLine {
+		&.-pink {
+			box-shadow: 0 -0.3em 0 0 rgba($secondary-color , 0.1) inset;
+		}
+		&.-orange {
+			box-shadow: 0 -0.3em 0 0 rgba($primary-color , 0.1) inset;
+		}
+	}
+	.lower-pageHeader {
+		@include mq-down(sm) {
+			padding-top: 130px;
+		}
+	}
+}
+$useCode: false;
+@if $useCode {
+.company_block {
+	position: relative;
+	&:before {
+		content: "";
+		display: block;
+		position: relative;
+		z-index: -100;
+		pointer-events: none;
+//		background: rgba(0,0,0,0.1);
+		@include mq-down(md) {
+			margin-top: -60px;
+			height: 60px;
+		}
+		@include mq-down(sm) {
+			margin-top: -130px;
+			height: 130px;
+		}
+	}
+}
+}
+
+.company_charm {
+	position: relative;
+	margin-top: 100px;
+	@include mq-down(md) {
+		margin-top: 50px;
+	}
+	&_block1 {
+		@include mq-up(md) {
+			display: flex;
+		}
+		&_text {
+			position: relative;
+			flex: 1 1 55%;
+		}
+		&_img {
+			position: relative;
+			max-width: 500px;
+			flex: 1 1 45%;
+			@include mq-up(md) {
+				margin-left: 5%;
+			}
+			@include mq-down(md) {
+				margin-top: 30px;
+				margin-left: auto;
+				margin-right: auto;
+				float: right;
+				width: 50%;
+			}
+		}
+		.copy {
+			font-size: 30px;
+			font-weight: bold;
+			@include noto-serif;
+			margin-top: 30px;
+			@include mq-down(md) {
+				font-size: 24px;
+				margin-top: 20px;
+			}
+		}
+		.read {
+			margin-top: 30px;
+			@include mq-down(md) {
+				margin-top: 15px;
+			}
+		}
+		.img {
+			position: relative;
+			border-radius: 0 20px 20px 0;
+			overflow: hidden;
+			@include mq-down(md) {
+				border-radius: 10px;
+			}
+			&:before {
+				content: "";
+				display: block;
+				padding-top: calc((320/500)*100%);
+			}
+			img {
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+		}
+	}
+	&_block2 {
+		margin-top: 70px;
+		@include mq-up(md) {
+			display: flex;
+		}
+		@include mq-down(md) {
+			margin-top: 30px;
+		}
+		&_text {
+			clear: both;
+			flex: 1 1 55%;
+			width: 100%;
+			@include mq-up(md) {
+				max-width: 600px;
+				margin-left: auto;
+			//margin-right: auto;
+			}
+			@include mq-down(md) {
+				margin-top: 50px;
+			}
+			> div {
+				&:not(:first-child) {
+					margin-top: 30px;
+					@include mq-down(md) {
+						margin-top: 20px;
+					}
+				}
+			}
+			.tableList {
+				margin-top: 10px;
+			}
+		}
+		&_img {
+			position: relative;
+			max-width: 500px;
+			flex: 1 1 45%;
+			height: 100%;
+			@include mq-up(md) {
+				margin-right: 5%;
+			}
+			@include mq-down(md) {
+				max-width: 45%;
+			}
+			&:before ,
+			&:after {
+				content: "";
+				display: block;
+				position: absolute;
+				z-index: -1;
+				bottom: -50px;
+				right: 0;
+				width: 3000px;
+				height: 150px;
+				@include mq-down(md) {
+					bottom: -30px;
+					height: 40%;
+					max-height: 100px;
+				}
+			}
+			&:before {
+				background: $secondary-color;
+				right: 50%;
+				@include mq-down(md) {
+					right: auto;
+					left: 50%;
+				}
+			}
+			&:after {
+				background: url(../img/bg-dot-pink.png) repeat right 0;
+				@include mq-down(md) {
+					background-size: 410px *0.7;
+				}
+			}
+		}
+		.img {
+			position: relative;
+			z-index: 1;
+			border-radius: 20px 0 0 20px;
+			overflow: hidden;
+			@include mq-down(md) {
+				border-radius: 10px;
+			}
+			&:before {
+				content: "";
+				display: block;
+				padding-top: calc((600/500)*100%);
+			}
+			img {
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+		}
+	}
+	&_block3 {
+		margin-top: 80px;
+		position: relative;
+		border: 7px solid rgba($secondary-color , 0.1);
+		border-radius: 10px;
+		padding: 30px;
+		@include mq-down(md) {
+			margin-top: 40px;
+			padding: 10px 5%;
+		}
+		.o-ttl-jp-m {
+			position: absolute;
+			top: 0;
+			left: 50%;
+			transform: translate(-50% , -50%);
+			margin-top: -0.3em;
+			background: #fff;
+			padding-left: 1em;
+			padding-right: 1em;
+		}
+	}
+	.tableList {
+		&_item {
+			@include mq-up(sm) {
+				display: flex;
+			}
+			padding-top: 15px;
+			padding-bottom: 15px;
+			@include mq-down(md) {
+				padding-top: 10px;
+				padding-bottom: 10px;
+			}
+			&:nth-child(odd) {
+				background: #F5F5F5;
+			}
+			.hd {
+				display: block;
+				font-weight: bold;
+				color: $secondary-color;
+				margin-right: 10px;
+				padding-left: 15px;
+				padding-right: 15px;
+				@include mq-up(sm) {
+					border-right: 1px solid;
+					flex: 0 0 170px;
+					width: 170px;
+					text-align: center;
+				}
+				@include mq-down(md) {
+					margin-right: 10px;
+				}
+			}
+			.text {
+				display: block;
+				padding-left: 15px;
+				padding-right: 15px;
+			}
+		}
+	}
+	.businessList {
+		@include mq-up(sm) {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+		&_item {
+			flex: 0 0 25%;
+			max-width: 25%;
+			padding: 20px 30px;
+			@include mq-down(md) {
+				flex-basis: 50%;
+				max-width: 50%;
+				padding: 10px 20px;
+			}
+			@include mq-down(sm) {
+				flex-basis: 100%;
+				max-width: 100%;
+				padding: 10px 0;
+			}
+			
+			// pc border control
+			border-right: 1px solid rgba($secondary-color , 0.2);
+			@include mq-up(md) {
+				&:nth-child(n+1):nth-child(-n+4) ,
+				&:nth-child(n+9):nth-child(-n+12),
+				&:nth-child(n+17):nth-child(-n+20),
+				&:nth-child(n+25):nth-child(-n+28){
+					border-bottom: 1px solid rgba($secondary-color , 0.2);
+				}
+				&:nth-child(4n) {
+					border-right: none;
+				}
+			}
+			
+			// tab border control
+			@include mq-down(md) {
+				border-bottom: 1px solid rgba($secondary-color , 0.2);
+				&:nth-child(even) {
+					border-right: none;
+				}
+				&:nth-last-child(-n+2) {
+					border-bottom: none;
+				}
+			}
+			// sp border control
+			@include mq-down(sm) {
+				&:nth-child(odd) {
+					border-right: none;
+				}
+				&:nth-last-child(-n+2) {
+					border-bottom: 1px solid rgba($secondary-color , 0.2);
+				}
+				&:nth-last-child(-n+1) {
+					border-bottom: none;
+				}
+			}
+			
+		}
+		.hd {
+			color: $secondary-color;
+		}
+		.text {
+			margin-top: 5px;
+		}
+	}
+	
+	&_obj {
+		position: absolute;
+		z-index: 2;
+		&-1 {
+			z-index: -1;
+			top: 40px;
+			left: 190px;
+			@include mq-down(md) {
+				top: 0;
+				left: auto;
+				right: 0;
+				max-width: 60%;
+			}
+		}
+		&-2 {
+			z-index: -1;
+			bottom: -90px;
+		  	right: -220px;
+			@include mq-down(md) {
+				bottom: 70%;
+		  		right: -70px;
+			}
+			.entity {
+				width: 320px;
+				height: 320px;
+				border-radius: 50%;
+				background: rgba($secondary-color, 0.15);
+				//animation-direction: alternate-reverse;
+				@include mq-down(md) {
+					width: 320px *.5;
+					height: 320px *.5;
+				}
+			}
+		}
+	}
+}
+
+.company_feature {
+	margin-top: 100px;
+	@include mq-down(md) {
+		margin-top: 50px;
+	}
+	&_block1 {
+		position: relative;
+		display: flex;
+		@include mq-up(sm) {
+		}
+		&_text {
+			flex: 0 0 360px;
+			position: relative;
+			z-index: 3;
+			display: flex;
+			align-items: center;
+			@include mq-down(md) {
+				flex-basis: 200px;
+			}
+			&:before {
+				content: "";
+				display: block;
+				position: absolute;
+				z-index: -1;
+				top: 0;
+				right: 0;
+				transform: scale(1, 1.3);
+				background: #fff;
+				width: 3000px;
+				height: 100%;
+			}
+		}
+		&_img {
+			flex: 0 1 100%;
+		}
+	}
+	&_block2 {
+		margin-top: 60px;
+		@include mq-down(md) {
+			margin-top: 30px;
+		}
+	}
+	
+	.tickerSwiper {
+		overflow: visible;
+		.swiper-wrapper {
+			transition-timing-function: linear !important;
+		}
+		.swiper-slide {
+			position: relative;
+			z-index: 1;
+			max-width: 360px;
+			width: 100%;
+			@include mq-up(md) {
+				border-radius: 10px;
+				overflow: hidden;
+			}
+			@include mq-down(md) {
+				max-width: 240px;
+			}
+			&:before {
+				content: "";
+				display: block;
+				padding-top: calc((240/360)*100%);
+			}
+			img {
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+		}
+	}
+	.featureList {
+		counter-reset: number-feature;
+		@include mq-up(md) {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			margin: -30px;
+		}
+		&_item {
+			@include mq-up(md) {
+				flex: 0 1 50%;
+				max-width: 50%;
+				padding: 30px;
+			}
+			@include mq-down(md) {
+				&:not(:first-child) {
+					margin-top: 30px;
+				}
+			}
+			&_ttl {
+				display: flex;
+				margin-bottom: 20px;
+				@include mq-down(md) {
+					margin-bottom: 10px;
+				}
+			}
+			.num {
+				flex: 0 0 30px;
+				position: relative;
+				display: block;
+				top: 0.6em;
+				background: $primary-color;
+				width: 32px;
+				height: 32px;
+				margin-right: 20px;
+				@include mq-down(md) {
+					flex: 0 0 24px;
+					width: 24px;
+					height: 24px;
+					top: 0.2em;
+					margin-right: 15px;
+				}
+				&:before {
+					content: "";
+					@include martel;
+					font-size: 16px;
+					counter-increment: number-feature;
+					content: counter(number-feature,decimal-leading-zero);
+					display: block;
+					position: absolute;
+					z-index: 1;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%,-50%);
+					color: #fff;
+					line-height: 1;
+					@include mq-down(md) {
+						font-size: 12px;
+						font-weight: bold;
+					}
+				}
+				&.-orange {
+					background: $primary-color;
+				}
+				&.-pink {
+					background: $secondary-color;
+				}
+			}
+			.hd {
+				font-size: 30px;
+				font-weight: bold;
+				line-height: 1.6;
+				@include noto-serif;
+				@include mq-down(md) {
+					font-size: 18px;
+				}
+			}
+			&_text {
+				margin-top: 10px;
+				@include mq-down(md) {
+					margin-top: 5px;
+				}
+			}
+		}
+	}
+	
+	&_obj {
+		position: absolute;
+		z-index: 2;
+		&-1 {
+			z-index: -1;
+			top: -90px;
+		  	left: -250px;
+			@include mq-down(md) {
+			}
+			.entity {
+				width: 320px;
+				height: 320px;
+				border-radius: 50%;
+				background: rgba($primary-color, 0.15);
+				animation-direction: alternate-reverse;
+				@include mq-down(md) {
+					width: 320px *.7;
+					height: 320px *.7;
+				}
+			}
+		}
+	}
+}
+
+.company_training {
+	margin-top: 100px;
+	@include mq-down(md) {
+		margin-top: 50px;
+	}
+	&_block1 {
+		position: relative;
+		padding-top: 60px;
+		padding-bottom: 60px;
+		color: #fff;
+		@include mq-up(md) {
+			display: flex;
+			//flex-wrap: wrap;
+			justify-content: space-between;
+		}
+		@include mq-down(md) {
+			padding-top: 30px;
+			padding-bottom: 30px;
+		}
+		&:before ,
+		&:after {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 0;
+			height: calc(100% + 220px);
+			@include mq-down(md) {
+				height: calc(100% + 100px);
+			}
+		}
+		&:before {
+			z-index: -2;
+			left: 50%;
+			transform: translateX(-50%);
+			background: $secondary-color;
+			width: 5000px;
+		}
+		&:after {
+			z-index: -1;
+			right: 100%;
+			margin-right: -50px;
+			background: url(../img/bg-dot-white.png) repeat right 0;
+			width: 3000px;
+			opacity: 0.2;
+			@include mq-down(md) {
+				left: 100%;
+				right: auto;
+				margin-left: -50px;
+				margin-right: 0;
+				background-size: 410px *0.7;
+			}
+		}
+		.o-ttl-xl {
+			flex: 0 0 480px;
+			padding-right: 50px;
+		}
+		.read {
+			flex: 0 1 100%;
+			max-width: 675px;
+			@include mq-down(md) {
+				max-width: 100%;
+				margin-top: 20px;
+			}
+		}
+	}
+	&_block2 {
+		position: relative;
+		padding-top: 30px;
+		padding-left: 50px;
+		padding-right: 50px;
+		@include mq-down(md) {
+			padding-left: 0;
+			padding-right: 5%;
+		}
+		&:before {
+			content: "";
+			z-index: -1;
+			position: absolute;
+			top: 0;
+			right: 0;
+			background: #fff;
+			width: 5000px;
+			height: 100%;
+			border-radius: 0 10px 0 0;
+		}
+	}
+	
+	.trainingList {
+		@include mq-up(md) {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			margin: 0 -20px -30px -20px;
+		}
+		@include mq-down(md) {
+			margin-top: 20px;
+		}
+		&_item {
+			@include mq-up(md) {
+				flex: 0 1 33.33%;
+				max-width: 33.33%;
+				padding: 30px 20px;
+			}
+			@include mq-down(md) {
+				display: flex;
+				margin-top: 30px;
+			}
+			@include mq-down(sm) {
+				display: block;
+			}
+			&_img {
+				@include mq-up(md) {
+					margin-bottom: 10px;
+				}
+				@include mq-down(md) {
+					flex: 0 1 30%;
+					margin-right: 5%;
+				}
+				@include mq-down(sm) {
+					margin-right: 0;
+					margin-bottom: 15px;
+				}
+			}
+			&_text {
+				flex: 1 1 70%;
+			}
+		}
+		.img {
+			position: relative;
+			z-index: 1;
+			border-radius: 10px;
+			overflow: hidden;
+			@include mq-down(md) {
+				border-radius: 5px;
+			}
+			&:before {
+				content: "";
+				display: block;
+				padding-top: calc((200/300)*100%);
+			}
+			img {
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+		}
+		.o-ttl-jp-m {
+			margin-bottom: 5px;
+			@include mq-down(md) {
+				text-align: left;
+			}
+			.txt_jp {
+				@include mq-up(md) {
+					font-size: 22px;
+				}
+			}
+		}
+	}
+	.point {
+		position: relative;
+		border: 1px solid $secondary-color;
+		border-radius: 5px;
+		margin-top: 50px;
+		padding: 30px;
+		@include mq-down(md) {
+			margin-top: 20px;
+			padding: 20px 20px 15px;
+		}
+		.hd {
+			position: absolute;
+			top: 0;
+			left: 50%;
+			transform: translate(-50%,-50%);
+			background: #fff;
+			padding-left: 2em;
+			padding-right: 2em;
+			color: $secondary-color;
+			font-size: 16px;
+			font-weight: bold;
+			white-space: nowrap;
+		}
+		.read {
+			display: flex;
+			justify-content: center;
+			span {
+				max-width: 900px;
+			}
+		}
+	}
+}
+
+.company_welfare {
+	position: relative;
+	margin-top: 100px;
+	padding-top: 80px;
+	@include mq-down(md) {
+		margin-top: 50px;
+		padding-top: 40px;
+	}
+	&:before ,
+	&:after {
+		content: "";
+		display: block;
+		position: absolute;
+		z-index: -2;
+		top: 0;
+		width: 5000px;
+		height: 180px;
+	}
+	&:before {
+		background: $primary-color;
+		left: 85%;
+	}
+	&:after {
+		background: url(../img/bg-dot-orange.png) repeat center 0;
+		right: 15%;
+		@include mq-down(md) {
+			background-size: 410px *0.7;
+		}
+	}
+	&_block1 {
+		position: relative;
+		padding-top: 50px;
+		padding-right: 50px;
+		@include mq-up(md) {
+			display: flex;
+			//flex-wrap: wrap;
+			justify-content: space-between;
+		}
+		@include mq-down(md) {
+			padding-top: 20px;
+			padding-right: 20px;
+		}
+		&:before {
+			content: "";
+			z-index: -1;
+			position: absolute;
+			top: 0;
+			right: 0;
+			background: #fff;
+			width: 5000px;
+			height: 100%;
+			border-radius: 0 10px 0 0;
+		}
+		.o-ttl-xl {
+			flex: 0 0 380px;
+			padding-right: 50px;
+		}
+		.read {
+			flex: 0 1 100%;
+			max-width: 760px;
+			@include mq-down(md) {
+				max-width: 100%;
+				margin-top: 20px;
+			}
+		}
+	}
+	&_block2 {
+		margin-top: 50px;
+		@include mq-down(md) {
+			margin-top: 20px;
+		}
+	}
+	
+	.welfareList {
+		counter-reset: number-welfare;
+		@include mq-up(sm) {
+			display: flex;
+			flex-wrap: wrap;
+		}
+		&_item {
+			position: relative;
+			flex: 0 1 50%;
+			max-width: 50%;
+			padding: 40px;
+			@include mq-down(md) {
+				padding: 20px;
+			}
+			@include mq-down(sm) {
+				max-width: 100%;
+			}
+			@include mq-up(sm) {
+				&:nth-child(n+1):nth-child(-n+2) ,
+				&:nth-child(n+5):nth-child(-n+6) ,
+				&:nth-child(n+9):nth-child(-n+10) ,
+				&:nth-child(n+13):nth-child(-n+14) ,
+				&:nth-child(n+17):nth-child(-n+18) {
+					background: rgba($primary-color , 0.1);
+				}
+			}
+			@include mq-down(sm) {
+				&:nth-child(odd) {
+					background: rgba($primary-color , 0.1);
+				}
+			}
+			&:nth-child(2n) {
+				&:before {
+					content: "";
+					display: block;
+					position: absolute;
+					top: 50%;
+					left: 0;
+					transform: translateY(-50%);
+					width: 1px;
+					height: calc(100% - 70px);
+					background: rgba($primary-color , 0.4);
+					@include mq-down(md) {
+						height: calc(100% - 30px);
+					}
+					@include mq-down(sm) {
+						content: none;
+					}
+				}
+			}
+			&_inner {
+				position: relative;
+			}
+			&_block1 {
+				position: relative;
+				padding-right: 70px;
+			}
+		}
+		.label {
+			color: $primary-color;
+			font-size: 14px;
+			font-weight: bold;
+			@include martel;
+			@include mq-down(md) {
+				font-size: 12px;
+			}
+			.text {}
+			.num {
+				position: relative;
+				margin-left: 10px;
+				&:before {
+					counter-increment: number-welfare;
+					content: counter(number-welfare,decimal-leading-zero);
+					font-size: 1.2em;
+					display: inline-block;
+					line-height: 1;
+				}
+			}
+		}
+		.hd {
+			font-size: 24px;
+			font-weight: bold;
+			line-height: 1.6;
+			@include noto-serif;
+			@include mq-down(md) {
+				font-size: 16px;
+			}
+		}
+		.ico {
+			position: absolute;
+			top: 5px;
+			right: 0;
+			width: 60px;
+			height: 60px;
+			//display: flex;
+			//justify-content: center;
+			//align-items: center;
+			@include mq-down(md) {
+				top: 12px;
+				width: 60px *0.7;
+				height: 60px *0.7;
+			}
+			img {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%,-50%);
+			}
+		}
+		.read {
+			margin-top: 15px;
+			@include mq-down(md) {
+				margin-top: 7px;
+			}
+		}
+	}
+}
+
+.company_message {
+	position: relative;
+	margin-top: 100px;
+	@include mq-down(md) {
+		margin-top: 50px;
+		padding-top: 40px;
+		padding-bottom: 40px;
+		&:after {
+			content: "";
+			display: block;
+			position: absolute;
+			z-index: -1;
+			//top: 100px;
+			top: 0;
+			left: 0;
+			right: 0;
+			//height: calc(100% - 100px);
+			height: 100%;
+			background: $secondary-color;
+		}
+	}
+	&_inner {
+		@include mq-up(md) {
+			display: flex;
+		}
+	}
+	&_block1 {
+		flex: 0 1 40%;
+		max-width: 480px;
+		@include mq-down(md) {
+			margin-bottom: 20px;
+		}
+		.img {
+			position: relative;
+			z-index: 1;
+			border-radius: 20px 0 0 20px;
+			overflow: hidden;
+			@include mq-down(md) {
+				border-radius: 10px;
+			}
+			&:before {
+				content: "";
+				display: block;
+				padding-top: calc((320/480)*100%);
+			}
+			img {
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+		}
+	}
+	&_block2 {
+		flex: 1 1 60%;
+		@include mq-up(md) {
+			padding-left: 7%;
+		}
+	}
+	.o-ttl-xl {
+		@include mq-down(md) {
+			color: #fff;
+			.txt_en:first-letter {
+				color: #fff;
+			}
+		}
+	}
+	.read {
+		position: relative;
+		margin-top: 40px;
+		color: #fff;
+		@include mq-up(md) {
+			padding-top: 40px;
+			padding-bottom: 40px;
+		}
+		@include mq-down(md) {
+			margin-top: 20px;
+		}
+		&:before ,
+		&:after {
+			display: block;
+			position: absolute;
+			z-index: -2;
+			top: 0;
+			width: 5000px;
+			height: 100%;
+			@include mq-up(md) {
+				content: "";
+			}
+		}
+		&:before {
+			background: $secondary-color;
+			left: -52%;
+		}
+		&:after {
+			background: url(../img/bg-dot-pink.png) repeat center 0;
+			right: 100%;
+		}
+	}
+	
+	&_obj {
+		position: absolute;
+		z-index: 2;
+		&-1 {
+			z-index: -1;
+			top: -90px;
+		  	right: -100px;
+			@include mq-down(md) {
+			}
+			.entity {
+				width: 300px;
+				height: 300px;
+				border-radius: 50%;
+				background: rgba($secondary-color, 0.15);
+				//animation-direction: alternate-reverse;
+				@include mq-down(md) {
+					width: 300px *.7;
+					height: 300px *.7;
+				}
+			}
+		}
+	}
+}

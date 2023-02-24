@@ -1,0 +1,28 @@
+@font-face {
+	font-family: 'Noto Serif CJK JP Subset';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Noto Serif CJK JP'),
+		local('NotoSerifCJKjp-Regular'),
+		local('NotoSerifJP-Regular'),
+		url('NotoSerifCJKjp-Regular.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Noto Serif CJK JP Subset';
+	font-style: normal;
+	font-weight: 500;
+	src: local('NotoSerifCJKjp-Midium'),
+		local('NotoSerifCJKjp-Midium'),
+		local('NotoSerifJP-Midium'),
+		url('NotoSerifCJKjp-Midium.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Noto Serif CJK JP Subset';
+	font-style: normal;
+	font-weight: 700;
+	src: local('NotoSerifCJKjp-Bold'),
+		local('NotoSerifJP-Bold'),
+		url('NotoSerifCJKjp-Bold.woff') format('woff');
+}

@@ -1,0 +1,113 @@
+##
+## common_method_exe.htm
+## created:Kimura
+## Ver:19.11.25
+## Ver:20.01.15
+## 
+## 
+## ※複数回同じ処理を行う場合、このファイルに記載または既にある処理を実行して使用してください。
+## ※不要な箇所は削除してくださって構いません。
+##
+#########################################################################################
+##
+##      汎用処理実行メソッド一覧
+##
+#########################################################################################
+## ------------------------------------------------------ ##
+## 複数の文字列を連結
+## ------------------------------------------------------ ##
+##　■使い方
+## [$join_text_separator]に結合文字列間のセパレータ文字列を挿入して実行してください。
+## [$join_text_ArrayList]に連結する文字列を挿入して実行してください。
+## [$join_text_return]に結合された文字列が入ります。
+##
+## 実行例)
+## ## --- join_text_exe(文字列結合)
+## #set ($join_text_return = '')         ## 戻り値
+## #set ($join_text_separator = ' / ')   ## 結合セパレータ
+## #set ($join_text_ArrayList = [$anken.val02, $anken.val05]) ## 結合文字リスト
+## ${join_text_exe}
+## ## -------------------------------------------------
+##
+## 戻り値)
+## $join_text_return : 連結された文字列
+## ------------------------------------------------------ ##
+#set ($join_text_separator = '')    ## 結合文字列間のセパレータ文字列
+#set ($join_text_ArrayList = [])    ## 連結する文字列格納配列
+#define ($join_text_exe)
+    #set ($join_text_return = '') ## 戻り値
+    #foreach($text in $join_text_ArrayList)
+    #if($text != '')
+        #if($join_text_return != '')
+            #set ($join_text_return = $join_text_return + $join_text_separator)
+        #end
+        #set ($join_text_return = $join_text_return + $text)
+    #end
+    #end
+#end
+##
+##
+## ------------------------------------------------------ ##
+## ブログ/更新情報の表示日時取得（年月日分割）
+## ------------------------------------------------------ ##
+##　■使い方
+## [$XXXXX.oshigoto_id]に入った[yyyy/mm/dd] or [yyyymmdd]を挿入して実行してください。
+##
+## 実行例)
+## ## --- get_infoDate_exe(ブログ/更新情報の表示日時取得)
+## ${get_infoDate_exe}
+## ## -------------------------------------------------
+##
+## 戻り値)
+## $return_date_year    : 年
+## $return_date_month   : 月
+## $return_date_day     : 日
+## ------------------------------------------------------ ##
+#define ($get_infoDate_exe)
+    #set ($infomation_temp_dateTxt = '') ## 日時テキスト
+    #if ($page_style == 'detail') ## 詳細ページの場合
+        #set ($infomation_temp_dateTxt = $result.oshigoto_id) 
+    #else ## 一覧ページの場合
+        #set ($infomation_temp_dateTxt = $anken.oshigoto_id) 
+    #end
+
+    ## 日時取得
+    #set ($ttl_date_arr = [])
+    #set ($ttl_date = '')
+    #set ($return_date_year = '')   ## 戻り値(年)
+    #set ($return_date_month = '')  ## 戻り値(月)
+    #set ($return_date_day = '')    ## 戻り値(日)
+
+    ## [/]の有無確認
+    #set($ttl_date_arr = $infomation_temp_dateTxt.split('/'))
+    #if($ttl_date_arr.size() > 1) ## [/]あり
+        #foreach($item in $ttl_date_arr)
+            #if($velocityCount == 1) ## 1回目（年）
+                #set ($return_date_year = $item)
+            #else
+                #set($temp_data = $item)
+                #if($temp_data.length() == 1)
+                    #set($temp_data = '0' + $item)
+                #end
+                #if($velocityCount == 2) ## 2回目（月）
+                    #set ($return_date_month = $temp_data)
+                #else  ## 3回目（日）
+                    #set ($return_date_day = $temp_data)
+                #end
+            #end
+        #end
+
+    #else ## [/]なし
+        #if($infomation_temp_dateTxt.length() >= 4)
+            #set ($return_date_year = $infomation_temp_dateTxt.substring(0,4))
+        #end
+        #if($infomation_temp_dateTxt.length() >= 6)
+            #set ($return_date_month = $infomation_temp_dateTxt.substring(4,6))
+        #end
+        #if($infomation_temp_dateTxt.length() >= 8)
+            #set ($return_date_day = $infomation_temp_dateTxt.substring(6,8))
+        #end
+    #end
+
+#end
+##

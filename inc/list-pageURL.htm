@@ -1,0 +1,331 @@
+###### 現在URLを使用して正規化URLのベースを作成 インクルードさせて使ってください ######
+    ##現在のファイル名
+    #set ($getUrl = $request.getRequestedUrl())
+    #set ($getUrlArr = $getUrl.split("[?]"))## URLを「?」で分割
+    #set($nowListPath = $getUrlArr.get(0))## $getUrlArrの1つめを取得
+    #set($fileCount = $nowListPath.split("/").size() - 1)
+    #set($nowListFileName = $nowListPath.split("/").get($fileCount))##
+    ##現在のディレクトリのパス　※要修正。URLから取得するように書き換えること
+    #set($nowListDirectory = $nowListPath.replace($nowListFileName,""))
+    ## 求人以外の$list-typeを採促モード「C」にする
+    #if ($page_type != $menu_kyujin_type && $page_type != $menu_whatsnew_type)
+        #set ($list-type = 'C')
+    #end
+    ##フリーval設定 ※setting.htmで設定に変更
+    ## #set($freeval = [])
+    ## #set($freeval = ["val91","val92","val93","val94","val95","val96","val97","val98","val99"])
+
+    ## 正規化可能かどうかの判断フラグを定義
+    #set($urlregFlg = true)
+    #set($otherPrm = '')
+    #set($areaPrm = '')
+    #set($canonicalURL = '')
+    #set($pagingURL = '')
+
+    ##勤務地
+        #set($ecdVal = '')
+        #set($pcVal = '')
+        #set($kcdVal = '')
+        ##パラメータ'ECD'の総数
+           #set($ecdPrmSize = $request.gets('ECD').size())
+        ##パラメータ'PC'の総数
+           #set($pcPrmSize = $request.gets('PC').size())
+        ##パラメータ'KCD'の総数
+           #set($kcdPrmSize = $request.gets('KCD').size() + $request.gets('KCD_').size())
+        ##エリアコードと県コードのひもづけ
+            #* setting.htmで設定に変更
+            #set($ecdList = ['01','02','03','04','05','06','07'])
+            #set($prefMap = {
+                "01":['13','14','12','11','08','09','10'],
+                "02":['27','28','26','25','29','30'],
+                "03":['23','22','21','24'],
+                "04":['01','02','03','04','05','06','07'],
+                "05":['15','16','17','18','19','20'],
+                "06":['31','32','33','34','35','38','36','37','39'],
+                "07":['40','41','42','43','44','45','46','47']
+            })## 個社対応：サイトに順番を合わせています。
+            *#
+        ##パラメータ'KCD'は完全一致か前方一致か ※混在する場合は対応しない
+            #set($kcdPrm = '')
+            #if($request.gets('KCD').size() > 0)
+               #set($kcdPrm = 'KCD')
+            #elseif($request.gets('KCD_').size() > 0)
+               #set($kcdPrm = 'KCD_')
+            #end
+        #if(($kcdPrmSize == 0 || $request.get($kcdPrm) == '') && $ecdPrmSize == 0)## KCD(KCD_)パラメータもECDパラメータもない
+        #elseif($kcdPrmSize == 0 && $ecdPrmSize == 1)## KCD(KCD_)パラメータがない、かつECDパラメータが1つ
+            #set($ecdVal = $util.htmlEscape($request.get('ECD')))## ECDの値を定義
+        #elseif($request.get($kcdPrm).indexOf(':') != -1 && $ecdPrmSize == 0)## 個社対応：勤務地コードのグルーピングによるエリア検索に対応
+            ## #set($kcdGroupingList = [])
+            ## #foreach($value in $request.get($kcdPrm).split(':'))
+            ## #set($list = $kcdGroupingList.add($value))
+            ## #end
+            ## #foreach($ecode in $ecdList)
+            ## #if($kcdGroupingList == $kinmuchi_array.pref-codes.get($ecode))
+            ## #set($ecdVal = $ecode)
+            ## #end
+            ## #end
+            #set($urlregFlg = false)## 正規化不可とする
+        #elseif($kcdPrmSize == 1 && $ecdPrmSize <= 1)## KCD(KCD_)パラメータが1つ、かつECDパラメータが1つ以下
+            #if($request.get($kcdPrm).length() == 2 || $request.get($kcdPrm).length() == 5)## KCD(KCD_)パラメータの値が2桁もしくは5桁の場合
+                #foreach($pc_list in $ecdList)
+                   #foreach($pc_code in $prefMap.get($pc_list))
+                       #if($pc_code == $request.get($kcdPrm).substring(0,2))
+                           #set($ecdVal = $pc_list)## ECDの値を定義
+                       #end
+                   #end
+                #end
+                #set($pcVal = $util.htmlEscape($request.get($kcdPrm).substring(0,2)))## PCの値を定義
+                #if($request.get($kcdPrm).length() == 5)## KCD(KCD_)パラメータの値が5桁の場合
+                    #set($kcdVal = $util.htmlEscape($request.get($kcdPrm)))## KCDの値を定義
+                #end
+            #else
+                #set($urlregFlg = false)## 正規化不可とする
+            #end
+        #elseif($kcdPrmSize >= 2 && $ecdPrmSize == 0)## KCD(KCD_)パラメータが2つ以上、かつECDパラメータがない
+            #set($kcdPrms = []) ## KCD(KCD_)パラメータを配列に定義
+            #foreach($val in $request.gets('KCD'))
+                #set ($vals = $kcdPrms.add($val))
+            #end
+            #foreach($val in $request.gets('KCD_'))
+                #set ($vals = $kcdPrms.add($val))
+            #end
+            #if($request.get('PC').matches("area[0-9]{2}"))## PC=area{数字2桁}と付く場合、パラメータ'area'の値を拾ってエリアコードを取得
+                #foreach($code in ${request.gets('area')})
+                    #set($ecdVal = $code)
+                #end
+            #else
+                #set($urlregFlg = false)## 正規化不可とする
+            #end
+            #*
+            #set($urlregFlg = false)## 前提として、正規化不可とする
+            #foreach($ecd_code in $ecdList)
+                #set($matchFlg = true)
+                #if($kcdPrms.size() == $prefMap.get($ecd_code).size())
+                    #foreach($vals in $kcdPrms)
+                        #if($prefMap.get($ecd_code).indexOf($vals) == -1)
+                           #set($matchFlg = false)
+                           #break
+                        #end
+                    #end
+                #else
+                    #set($matchFlg = false)
+                #end
+                #if($matchFlg == true)
+                    #set($ecdVal = $ecd_code)
+                    #set($urlregFlg = true)## 正規化可能とする
+                    #break
+                #end ## KCD(KCD_)パラメータがエリアの中の県コードを過不足なく満たしていたら、そのエリアのエリアコードを取得
+            #end
+            *#
+        #else
+           #set($urlregFlg = false)## 正規化不可とする
+        #end
+        #if($ecdVal != '')
+            #set($areaPrm = $areaPrm + 'e' + $util.htmlEscape($ecdVal) + '/')
+        #end
+        #if($pcVal != '')
+            #set($areaPrm = $areaPrm + 'p' + $util.htmlEscape($pcVal) + '/')
+        #end
+        #if($kcdVal != '')
+            #set($areaPrm = $areaPrm + 'k' + $util.htmlEscape($kcdVal) + '/')
+        #end
+        #if($areaPrm == '')
+            #set($areaPrm = 'all/')
+        #end
+    ##職種 ※正規化可能なのは、前方一致（1~6桁）の場合と完全一致（6桁のみ）の場合（厳密には中間一致と後方一致も6桁ならOKなのですが、通常使用せずきりがないので省きます）
+        #if($urlregFlg != false)## ここまでの処理で正規化不可となっていない場合
+            #set($scdPrms = [])## SCD(SCD_)パラメータを配列に定義
+            #foreach($val in $request.gets('SCD_'))
+                #if($val.length() > 0 && $val.length() <= 6)
+                    #set ($vals = $scdPrms.add($val))
+                #end
+            #end
+            #foreach($val in $request.gets('SCD'))
+                #if($val.length() == 6)
+                    #set ($vals = $scdPrms.add($val))
+                #end
+            #end
+            #if($scdPrms.size() == 0)
+            #elseif($scdPrms.size() == 1)
+                #if($request.get('SCD_') != '')
+                    #set($otherPrm = $otherPrm + 'j' + $util.htmlEscape($request.get('SCD_')))
+                #elseif($request.get('SCD') != '')
+                    #set($otherPrm = $otherPrm + 'j' + $util.htmlEscape($request.get('SCD')))
+                #end
+            #else
+                #set($urlregFlg = false)## 正規化不可とする
+            #end
+        #end
+
+    ##雇用形態 ※正規化可能なのは、中間一致（2桁のみ）の場合と完全一致（2桁のみ）の場合（厳密には前方一致と後方一致も2桁ならOKなのですが、通常使用せずきりがないので省きます）
+        #if($urlregFlg != false) ## ここまでの処理で正規化不可となっていない場合
+            #set($kkcdPrms = []) ## _KKCD_(KKCD)パラメータを配列に定義
+            #foreach($val in $request.gets('_KKCD_'))
+                #if($val.length() == 2)
+                    #set ($vals = $kkcdPrms.add($val))
+                #end
+            #end
+            #foreach($val in $request.gets('KKCD'))
+                #if($val.length() == 2)
+                    #set ($vals = $kkcdPrms.add($val))
+                #end
+            #end
+            #if($kkcdPrms.size() == 0)
+            #elseif($kkcdPrms.size() == 1)
+                #if($request.get('_KKCD_') != '')
+                    #if($otherPrm == '')
+                        #set($otherPrm = $otherPrm + 'kk' + $util.htmlEscape($request.get('_KKCD_')))
+                    #elseif($otherPrm != '')
+                        #set($otherPrm = $otherPrm + '_kk' + $util.htmlEscape($request.get('_KKCD_')))
+                    #end
+                #elseif($request.get('KKCD') != '')
+                    #if($otherPrm == '')
+                        #set($otherPrm = $otherPrm + 'kk' + $util.htmlEscape($request.get('KKCD')))
+                    #elseif($otherPrm != '')
+                        #set($otherPrm = $otherPrm + '_kk' + $util.htmlEscape($request.get('KKCD')))
+                    #end
+                #end
+            #else
+                #set($urlregFlg = false)## 正規化不可とする
+            #end
+        #end
+
+    ##はたらくスタイル ※正規化可能なのは、完全一致（値は'1'）の場合（厳密には値が1であれば前方一致、後方一致、中間一致もOKなのですが、通常使用せずきりがないので省きます）
+        #if($urlregFlg != false) ## ここまでの処理で正規化不可となっていない場合
+            #set($stylePrms = []) ## 働くスタイルパラメータを配列に定義
+            #set($styleList =['val57','val58','val59','val60','val61','val62','val30','val64','val56','val65','val66','val67','val63','val68','val69','val70','val71','val72','val73','val74','val75','val76','val77','val78','val46','val47','val49','val50','val51','val52','val55'])
+            #foreach($styleVal in $styleList)
+                #if($request.get($styleVal) == '1')
+                    #set ($vals = $stylePrms.add($styleVal))
+                #end
+                #if($stylePrms.size() > 1)
+                    #set($urlregFlg = false)## 正規化不可とする
+                    #break
+                #end
+            #end ## はたらくスタイルのパラメータの数を調べ、2つ以上ある場合は正規化不可とする
+            #if($stylePrms.size() == 1)
+                #if($otherPrm == '')
+                    #set($otherPrm = $otherPrm + 's' + $stylePrms.get(0).replace('val',''))
+                #elseif($otherPrm != '')
+                    #set($otherPrm = $otherPrm + '_s' + $stylePrms.get(0).replace('val',''))
+                #end
+            #end
+        #end
+
+    ##フリーval ※正規化可能なのは、中間一致（値は1桁以上）の場合（厳密には値の桁数が合っていれば前方一致、後方一致、完全一致もOKなのですが、通常使用せずきりがないので省きます）
+        #if($urlregFlg != false) ## ここまでの処理で正規化不可となっていない場合
+            #if($freeval.size() > 0) ## フリーval使用している場合
+                #set($freevalPrms = []) ## フリーvalのパラメータを配列に定義
+                #foreach($val in $freeval)
+                    #if($request.get($val) != '')
+                        #set ($vals = $freevalPrms.add($val))
+                    #end
+                    #if($freevalPrms.size() > 1)
+                        #set($urlregFlg = false)## 正規化不可とする
+                        #break
+                    #end
+                #end ## フリーvalのパラメータの数を調べ、2つ以上ある場合は正規化不可とする(/識別子2/system/bootstrap.htm内、配列$freeval使用)
+                #if($freevalPrms.size() == 1 && $request.gets($freevalPrms.get(0)).size() > 1)
+                    #set($urlregFlg = false)
+                #end## フリーvalのパラメータの種類が一つだった場合も、そのフリーvalがURLに複数あった場合は正規化不可とする
+                #if($freevalPrms.size() == 1)
+                    #if($otherPrm == '')
+                        #set($otherPrm = $otherPrm + 'v' + $freevalPrms.get(0).replace('val','') + $util.htmlEscape($request.get($freevalPrms.get(0))))
+                    #elseif($otherPrm != '')
+                        #set($otherPrm = $otherPrm + '_v' + $freevalPrms.get(0).replace('val','') + $util.htmlEscape($request.get($freevalPrms.get(0))))
+                    #end
+                #end
+            #end
+        #end
+
+    ##フリーワード 正規化不可
+        #if($urlregFlg != false) ## ここまでの処理で正規化不可となっていない場合
+#*
+            #if($request.gets('FTS').size() != 0)
+                #set($urlregFlg = false)
+            #end## フリーワードのパラメータ数が1つ以上あれば正規化不可とする
+*#
+            #if($request.get('FTS') != '')
+                #set($urlregFlg = false)
+            #end
+        #end
+    #if($otherPrm != '')
+        #set($otherPrm = $otherPrm + '/')
+    #end
+
+    ## BCD NOI P などの情報を取得して全件正規化URLの定義
+    #if($urlregFlg != false) ## 正規化不可でない場合
+        #set($listPrm = '')
+        #set($bcdPrm = '')
+        #set($noiPrm = '')
+        #set($pPrm = '')
+        #set($saPrm = '')
+        #set($sdPrm = '')
+        #set($list_order_canonical = '')
+        #set($list_sort_canonical = '')
+        #if($request.gets('L').size() == 1 && $request.get('L') != '')
+            #set($listPrm = $util.htmlEscape($request.get('L')))
+        #else
+            #set($urlregFlg = false)## 正規化不可とする
+        #end
+        #if($request.gets('BCD').size() == 1 && $request.get('BCD') != '' && $urlregFlg != false)
+            #set($bcdPrm = $util.htmlEscape($request.get('BCD')))
+        #else
+            #set($urlregFlg = false)## 正規化不可とする
+        #end
+        #if($request.gets('NOI').size() == 1 && $request.get('NOI') != '' && $urlregFlg != false)
+            #set($noiPrm = $util.htmlEscape($request.get('NOI')))
+        #else
+            #set($urlregFlg = false)## 正規化不可とする
+        #end
+        #if($request.gets('P').size() == 1 && $request.get('P') != '' && $urlregFlg != false)
+            #set($pPrm = $util.htmlEscape($request.get('P')))
+        #else
+            #set($urlregFlg = false)## 正規化不可とする
+        #end
+
+        #if($request.gets('SA').size() == 1 && $request.get('SA') != '' && $request.gets('SD').size() == 0 && $urlregFlg != false)
+            #set($saPrm = $util.htmlEscape($util.urlEncode($util.urlDecode($request.get('SA')))))
+        #elseif($request.gets('SD').size() == 1 && $request.get('SD') != '' && $request.gets('SA').size() == 0 && $urlregFlg != false)
+            #set($sdPrm = $util.htmlEscape($util.urlEncode($util.urlDecode($request.get('SD')))))
+        #else
+            #set($urlregFlg = false)## 正規化不可とする
+        #end
+        #if($saPrm != '')
+            #set($list_order_canonical = 'SA')
+            #set($list_sort_canonical = $saPrm)
+        #elseif($sdPrm != '')
+            #set($list_order_canonical = 'SD')
+            #set($list_sort_canonical = $sdPrm)
+        #else
+            #set($urlregFlg = false)## 正規化不可とする
+        #end
+        #if($urlregFlg != false) ## 正規化不可でない場合
+            #if($list_order_canonical != '')
+                #set($list_order_canonical = $list_order_canonical.substring(1,2))
+            #end
+            #set($baseURL_reg = 'all/' + $bcdPrm + '_{{pPrm}}_' + $noiPrm + '_' + $list_order_canonical + $list_sort_canonical + '/' + $list-type + 'L' + $nowListFileName)
+        #end
+    #end
+    ## 正規化可能な場合とそうでない場合のcanonicalURLをそれぞれ定義
+        #if($urlregFlg == true)## 正規化可能な場合
+            #set($regPrm = $areaPrm + $otherPrm)
+            ## canonicalURL定義
+            #set($canonicalURL = $nowListDirectory + $baseURL_reg.replace('all/',$regPrm))
+            ## pagingURL定義
+            #set($prevNo = $pagenum - 1)
+            #set($nextNo = $pagenum + 1)
+            #set($pagingURL = $nowListDirectory + $baseURL_reg.replace('all/',$regPrm))
+            ## 個社対応
+            #if($request.F != '')
+            #set($pagingURL = $pagingURL + '?F=' + $request.F)
+            #end
+        #else## 正規化不可能な場合(/識別子2/system/originurl.htm内、$originUrl使用)
+            #set($canonicalURL = $getUrl)
+        #end
+        #*
+        ## canonicalURLを使ってalternateURLを定義
+        #set($alternateURL = $canonicalURL.replace('.htm','.spn.htm'))
+        *#
+###### end/現在URLを使用して正規化URLのベースを作成 インクルードさせて使ってください ######

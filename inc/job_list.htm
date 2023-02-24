@@ -1,0 +1,244 @@
+<div class="job_list#if ($page_id == 'whatsnew') job_list-type-a#end">
+
+    #foreach($anken in $result)
+    ## --- detail_url
+    #set ($parse_file = $base_url + 'inc/detail_url.htm')
+    #parse ($parse_file)
+    ##
+    ## --- str_upper_limit
+    #set ($parse_file = $base_url + 'inc/str_upper_limit.htm')
+    #parse ($parse_file)
+    ##
+    ## --- koyoukeitai
+    #set ($parse_file = $base_url + 'inc/koyoukeitai.htm')
+    #parse ($parse_file)
+    ##
+    #if ($page_id != $menu_whatsnew_type)##新着以外
+  <article class="job data-for-aidemlog" data-id="${anken.job_offer_id}">
+        <header class="job_head">
+            <div class="job_head_meta">
+                <div class="job_head_meta_inner">
+                    <div class="job_post_date">
+                        <span class="job_post_date_ttl">更新日</span>
+                        <time class="job_post_date_txt">$!{anken.update_date.replace('/','-').substring(0,10)}</time>
+                    </div>
+                    #*21.06.01 remove kimura
+                    <!--
+                    <div class="job_post_validthrough">
+                        <span class="job_post_validthrough_ttl">掲載期間</span>
+                        <time class="job_post_validthrough_txt">$!{anken.show_date_from.replace('/','-')}～$!{anken.show_date_to.replace('/','-')}</time>
+                    </div>
+                    -->
+                    *#
+                </div>
+                <div class="job_employmenttype">
+                    <ul class="job_employmenttype_list">
+                        ${koyoIco}
+                    </ul>
+                </div>
+            </div>
+            #if ($anken.kyuujin_title != '' || $favorite_flag == 1)
+            ##<!-- 20.03add -->
+            <div class="job_head_ttl">
+                #if ($anken.kyuujin_title != '')
+                <h2 class="job_ttl">
+					<a href="${kyujin_d_url}" class="job_link">
+                        ${title}
+                    </a>
+                </h2>
+                #end
+                #if ($favorite_flag == 1) ## お気に入り機能有効
+                    ## --- お気に入りボタン
+                    #if ($page_id == $kyujin_l_type)
+                    ## --- common_favoriteBtn
+                    ${common_favoriteBtn}
+                    #end
+                    #if ($page_id == $menu_keeplist_type)
+                        ## --- common_favoriteDelBtn
+                        ${common_favoriteDelBtn}
+                    #end
+                    ## --- / お気に入りボタン
+                #end ## --- if ($favorite_flag == 1)
+            </div>
+            ##<!-- 20.03add -->
+            #end ## --- if ($anken.kyuujin_title != '' || $favorite_flag == 1)
+            #if ($anken.company_name != '')
+            <div class="job_workplace">
+                <span class="job_workplace_ttl">就業先</span>
+                <span class="job_workplace_txt">${anken.company_name}</span>
+            </div>
+            #end
+        </header>
+        <div class="job_body">
+            <div class="job_body_head job_body_block">
+                <div class="job_body_head_img is_pc">
+                    <a href="${kyujin_d_url}" class="job_link">
+                        <figure class="job_img">
+                            #if ($anken.img01_https_url != '')
+                            <img src="${anken.img01_https_url}" alt="$!{anken.company_name.replace('　',' ')}" class="object-fit-img">
+                            #else
+                            <img  src="${root_url}${no_img}" alt="no image" class="object-fit-img">
+                            #end
+                        </figure>
+                    </a>
+                </div>
+                <div class="job_body_head_txt">
+                    #if ($anken.val02 != '')
+                  ##21.6.3 remove  <h3 class="job_occupations is_pc">${syokusyu}</h3>
+                    #end
+                    <div class="job_body_head_txt_inner">
+                        <ul class="job_outline job_outline-head">
+                           
+                            ## 21.6.3 add
+                            <li class="job_outline_item">
+                                <div class="job_outline_item_ttl"><span>職種</span></div>
+                                <div class="job_outline_item_txt">
+                                    ${syokusyu}
+                                </div>
+                            </li>
+                            ## 21.6.3 add
+                           
+                           
+                            ## --- job_table_list
+                            #set ($parse_file = $base_url + 'inc/job_table_list.htm')
+                            #parse ($parse_file)
+                            ##
+                            #foreach ($job_table_key in $job_table_KeyList_list)
+                                #foreach ($job_table in $job_table_list)
+                                    #if ($job_table_key == $job_table.key && $job_table.anken != '')
+                            <li class="job_outline_item">
+                                <div class="job_outline_item_ttl"><span>${job_table.item}</span></div>
+                                <div class="job_outline_item_txt">
+                                    ${job_table.lmt_txt}
+                                    #if ($job_table.key == '10')
+                                        #if ($anken.get($googlemap_val) != '')
+                                            #set ($map_url = $anken.get($googlemap_val))
+                                        #else
+                                            #set ($map_url_base = $job_table.anken.replace("<br>","").replace('&nbsp;',' '))
+                                            #set ($map_url = 'https://maps.google.co.jp/maps?q=' + $util.urlEncode($map_url_base,"UTF-8"))
+                                        #end
+                                        （ <a href="${map_url}" class="gMap_link" target="_blank">Google Map</a> ）
+                                    #end
+                                </div>
+                            </li>
+                                    #end ## --- if ($job_table_key == $job_table.key && $job_table.anken != '')
+                                #end ## --- foreach ($job_table in $job_table_list)
+                            #end ## --- foreach ($job_table_key in $job_table_KeyList_list)
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="job_foot job_convertion">
+            <div class="job_convertion_inner">
+                <a class="btn btn_secondary" href="${kyujin_d_url}">詳しく見る</a>
+            </div>
+            #if ($anken.oubo_type == 2)
+                #set ($linkUrl = '#')
+                #set ($target = '')
+                #if ($display_oubo_flag == 0)
+                    ## --- getEntryUrl
+                    #set ($parse_file = $base_url + 'inc/getEntryUrl.htm')
+                    #parse ($parse_file)
+                    ##
+                    #set ($linkUrl = $entryUrl)
+                    #set ($target = ' target="_blank"')
+                #end
+            <div class="job_convertion_inner">
+                <a class="btn btn_external" href="${linkUrl}"${target}>応募する</a>
+            </div>
+            #end
+        </div>
+        #if ($favorite_flag == 1) ## お気に入り機能有効
+		## --- お気に入り削除用チェックボックス
+		#if ($page_id == $menu_keeplist_type)
+		<div class="keep_checkbox">
+			<div class="keep_checkbox_inner">
+				<input id="check_${anken.job_offer_id}" type="checkbox" value="${anken.job_offer_id}">
+				<label for="check_${anken.job_offer_id}"></label>
+			</div>
+		</div>
+		#end
+		## --- / お気に入り削除用チェックボックス
+        #end ## --- if ($favorite_flag == 1)
+    </article>
+    #else##新着
+  <article class="job data-for-aidemlog" data-id="${anken.job_offer_id}">
+        <div class="job_inner">
+            <div class="job_wrap">
+                ##<!-- 20.03add  -->
+                <div class="job_img_wrap job_block">
+                    <a href="${kyujin_d_url}">
+                        <figure class="job_img">
+                            #if ($anken.img01_https_url != '')
+                            <img src="${anken.img01_https_url}" alt="$!{anken.company_name.replace('　',' ').replace('．','.')}" class="object-fit-img">
+                            #else
+                            <img  src="${root_url}${no_img}" alt="no image" class="object-fit-img">
+                            #end
+                        </figure>
+                    </a>
+                </div>
+                ##<!-- 20.03add  -->
+
+                <div class="job_txt_wrap job_block">
+                    #if ($anken.kyuujin_title != '' || $favorite_flag == 1)
+                    ##<!-- 20.03add  -->
+                    <div class="job_wrap_ttl">
+                        #if ($anken.kyuujin_title != '')
+                        <h2 class="job_ttl">
+                            <a href="${kyujin_d_url}">
+                                ${title}
+                            </a>
+                        </h2>
+                        #end
+                        #if ($favorite_flag == 1) ## お気に入り機能有効
+                        ## --- common_favoriteBtn
+                        ${common_favoriteBtn}
+                        ##
+                        #end
+                    </div>
+                    ##<!-- 20.03add  -->
+                    #end ## --- if ($anken.kyuujin_title != '' || $favorite_flag == 1)
+                    <ul class="job_outline">
+                        ## --- job_table_list
+                        #set ($parse_file = $base_url + 'inc/job_table_list.htm')
+                        #parse ($parse_file)
+                        ##
+                        #foreach ($job_table_key in $job_table_KeyList_list)
+                            #foreach ($job_table in $job_table_list)
+                                #if ($job_table_key == $job_table.key && $job_table.anken != '')
+                        <li class="job_outline_item">
+                            <div class="job_outline_item_ttl"><span>${job_table.item}</span></div>
+                            <div class="job_outline_item_txt">
+                                ${job_table.lmt_txt}
+                            </div>
+                        </li>
+                                #end ## --- if ($job_table_key == $job_table.key && $job_table.anken != '')
+                            #end ## --- foreach ($job_table in $job_table_list)
+                        #end ## --- foreach ($job_table_key in $job_table_KeyList_list)
+                    </ul>
+                    <div class="job_txt_wrap_meta">
+                        <div class="job_txt_wrap_meta_inner">
+                            <div class="job_post_date">
+                                <span class="job_post_date_ttl">更新日</span>
+                                <time class="job_post_date_txt">$!{anken.update_date.replace('/','-').substring(0,10)}</time>
+                            </div>
+                            <div class="job_post_validthrough">
+                                <span class="job_post_validthrough_ttl">掲載期間</span>
+                                <time class="job_post_validthrough_txt">$!{anken.show_date_from.replace('/','-')}～$!{anken.show_date_to.replace('/','-')}</time>
+                            </div>
+                        </div>
+                        <div class="job_employmenttype">
+                            <ul class="job_employmenttype_list">
+                                ${koyoIco}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+    #end ## --- if ($page_id != menu_whatsnew_type)
+    #end ## --- foreach($anken in $result)
+
+</div>

@@ -1,0 +1,37 @@
+<svg id="ico_calender-orange" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19">
+  <g id="グループ_7" data-name="グループ 7" transform="translate(4.75 8.55)">
+    <g id="グループ_6" data-name="グループ 6">
+      <rect id="長方形_9" data-name="長方形 9" width="1.9" height="1.9" fill="#efaf38"/>
+    </g>
+  </g>
+  <g id="グループ_9" data-name="グループ 9" transform="translate(8.55 8.55)">
+    <g id="グループ_8" data-name="グループ 8">
+      <rect id="長方形_10" data-name="長方形 10" width="1.9" height="1.9" fill="#efaf38"/>
+    </g>
+  </g>
+  <g id="グループ_11" data-name="グループ 11" transform="translate(12.35 8.55)">
+    <g id="グループ_10" data-name="グループ 10">
+      <rect id="長方形_11" data-name="長方形 11" width="1.9" height="1.9" fill="#efaf38"/>
+    </g>
+  </g>
+  <g id="グループ_13" data-name="グループ 13" transform="translate(4.75 12.35)">
+    <g id="グループ_12" data-name="グループ 12">
+      <rect id="長方形_12" data-name="長方形 12" width="1.9" height="1.9" fill="#efaf38"/>
+    </g>
+  </g>
+  <g id="グループ_15" data-name="グループ 15" transform="translate(8.55 12.35)">
+    <g id="グループ_14" data-name="グループ 14">
+      <rect id="長方形_13" data-name="長方形 13" width="1.9" height="1.9" fill="#efaf38"/>
+    </g>
+  </g>
+  <g id="グループ_17" data-name="グループ 17" transform="translate(12.35 12.35)">
+    <g id="グループ_16" data-name="グループ 16">
+      <rect id="長方形_14" data-name="長方形 14" width="1.9" height="1.9" fill="#efaf38"/>
+    </g>
+  </g>
+  <g id="グループ_19" data-name="グループ 19">
+    <g id="グループ_18" data-name="グループ 18">
+      <path id="パス_1" data-name="パス 1" d="M18.05,1.9h-1.9V.95a.95.95,0,1,0-1.9,0V1.9H4.75V.95A.9.9,0,0,0,3.8,0a.9.9,0,0,0-.95.95V1.9H.95A.9.9,0,0,0,0,2.85v15.2A.9.9,0,0,0,.95,19h17.1a.952.952,0,0,0,.95-.95V2.85A.952.952,0,0,0,18.05,1.9ZM17.1,17.1H1.9V5.7H17.1V17.1Z" fill="#efaf38"/>
+    </g>
+  </g>
+</svg>

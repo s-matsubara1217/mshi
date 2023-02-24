@@ -1,0 +1,28 @@
+## --- BCSList/Detail判別
+#if ($url.indexOf('L=BMSList') > 0 || $url.indexOf('L=BCSList') > 0 || $url.indexOf('L=ExaminationList') > 0 || $url.indexOf('L=BrowsingHistory') > 0)
+#set($koyoukeitai_code = $anken.koyoukeitai_code)
+#elseif ($url.indexOf('L=BMSDetail') >0 || $url.indexOf('L=BCSDetail') > 0)
+#set($koyoukeitai_code = $result.koyoukeitai_code)
+#end
+
+#set($koyoIco = '')##アイコン生成
+#set($koyoTxt = '' )##テキスト生成
+
+#if($util.splitCount($koyoukeitai_code) >= 1)
+	#set($koyoukeitaiArray = [])
+	#set($koyoukeitaiArray = $util.split("$koyoukeitai_code"))
+		#foreach($koyoukeitai in $koyoukeitaiArray)
+
+            ## --- アイコン生成
+            #set($ico_add_class = '')
+            #set($ico_add_class = ' class="job_employmenttype_list_item"')## ページでclassが違う場合はここで条件分岐
+            #set ($koyoIco = $koyoIco + '<li' + $ico_add_class + '>' + $kkcdMap.get($koyoukeitai) + '</li>')
+            ## --- テキスト生成
+			#if($velocityHasNext) ## --- $koyoukeitaiに次の値がある場合$koyoTxtの後ろに句読点をつける
+				#set($koyoTxt = $koyoTxt + ${kkcdMap.get($koyoukeitai)} + " / ")
+			#else
+				#set($koyoTxt = $koyoTxt + ${kkcdMap.get($koyoukeitai)})
+			#end
+
+		#end ## ----- foreach($koyoukeitai in $koyoukeitaiArray)
+#end ## ----- if($util.splitCount($koyoukeitai_code) >= 1)

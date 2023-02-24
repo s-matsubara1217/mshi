@@ -1,0 +1,31 @@
+@charset "utf-8";
+
+@import 'foundation/normalize';
+@import 'foundation/mixins';
+@import 'foundation/base';
+
+@import 'layout/layout';
+
+@import 'object/object';
+
+@import 'layout/header';
+@import 'layout/footer';
+
+
+@import 'page/index';
+@import 'page/recruitAdd';
+@import 'page/briefing';
+@import 'page/interview';
+@import 'page/company';
+@import 'page/career';
+
+
+
+$useCode: false;
+@if $useCode {}
+// breakpoint
+@include mq-up(md) {}
+@include mq-down(xl) {}
+@include mq-down(lg) {}
+@include mq-down(md) {}
+@include mq-down(sm) {}

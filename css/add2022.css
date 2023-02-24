@@ -1,0 +1,225 @@
+.top_movie {
+  position: relative;
+  z-index: 3;
+}
+.top_movie::before {
+  content: '';
+  position: absolute;
+  right: -100px;
+  top: 60px;
+  z-index: 1;
+  width: 375px;
+  height: 375px;
+  border-radius: 50%;
+  background: rgba(239, 175, 56, 0.1);
+  animation: bound 3s ease infinite alternate;
+  animation-direction: alternate-reverse;
+  pointer-events: none;
+}
+@media screen and (max-width: 834px) {
+  .top_movie::before {
+    right: -110px;
+    top: 30px;
+    width: 183.75px;
+    height: 183.75px;
+  }
+}
+.top_movie_inner {
+  position: relative;
+  padding-top: 100px;
+}
+@media screen and (max-width: 834px) {
+  .top_movie_inner {
+    padding-top: 50px;
+  }
+}
+.top_movie_inner::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5000px;
+  height: 100%;
+  background: #fff;
+}
+@media screen and (min-width: 835px) {
+  .top_movie_inner::before {
+    border-top-right-radius: 30px;
+  }
+}
+.top_movie_body {
+  position: relative;
+  z-index: 1;
+  margin-top: 60px;
+}
+@media screen and (max-width: 834px) {
+  .top_movie_body {
+    margin-top: 30px;
+  }
+}
+.top_movie_body .movie {
+  position: relative;
+  z-index: 1;
+  width: 800px;
+  margin: 0 auto;
+}
+@media screen and (max-width: 834px) {
+  .top_movie_body .movie {
+    width: 100%;
+    max-width: 640px;
+  }
+}
+.top_movie_body .movie::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  width: 400px;
+  height: 200px;
+  background: url(../img/bg-dot-orange.png) no-repeat 0 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+@media screen and (max-width: 834px) {
+  .top_movie_body .movie::before {
+    width: 160px;
+    height: 154px;
+    background-size: 287px;
+    transform: translate(-70%, -40%);
+  }
+}
+.top_movie_body .movie::after {
+  content: '';
+  display: block;
+  width: 100%;
+  padding-top: 56.25%;
+}
+.top_movie_body .movie iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.career_path_block3 {
+  position: relative;
+  margin-top: 50px;
+}
+@media screen and (max-width: 834px) {
+  .career_path_block3 {
+    margin-top: 30px;
+  }
+}
+.career_path .movieList {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+@media screen and (max-width: 834px) {
+  .career_path .movieList {
+    display: block;
+  }
+}
+.career_path .movieList_item {
+  flex: 0 0 48%;
+  max-width: 48%;
+  counter-increment: movieCounter;
+}
+@media screen and (max-width: 834px) {
+  .career_path .movieList_item {
+    max-width: inherit;
+    margin-bottom: 30px;
+  }
+  .career_path .movieList_item:last-child {
+    margin-bottom: 0;
+  }
+}
+.career_path .movieList_item .hd {
+  text-align: center;
+  font-family: 'Noto Serif JP', 'Noto Serif CJK JP', 'Noto Serif CJK JP Subset', serif;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.5;
+}
+@media screen and (max-width: 834px) {
+  .career_path .movieList_item .hd {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+}
+.career_path .movieList_item .hd::before {
+  content: 'Movie ' counter(movieCounter, decimal-leading-zero);
+  display: block;
+  text-align: center;
+  font-family: 'Martel', serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: #F36178;
+  margin-bottom: 8px;
+}
+@media screen and (max-width: 834px) {
+  .career_path .movieList_item .hd::before {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+}
+.career_path .movieList_item .movie {
+  position: relative;
+  z-index: 1;
+  margin-top: 24px;
+}
+@media screen and (max-width: 834px) {
+  .career_path .movieList_item .movie {
+    margin-top: 16px;
+  }
+}
+.career_path .movieList_item .movie::before {
+  content: '';
+  display: block;
+  width: 100%;
+  padding-top: 56.25%;
+}
+.career_path .movieList_item .movie iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.kyujin_movie {
+  margin-top: 30px;
+}
+@media screen and (max-width: 834px) {
+  .kyujin_movie {
+    margin: 30px 0;
+    margin-left: calc(-7% + 5px);
+    margin-right: calc(-7% + 5px);
+  }
+}
+.kyujin_movie .movie {
+  position: relative;
+  z-index: 1;
+}
+.kyujin_movie .movie::before {
+  content: '';
+  display: block;
+  width: 100%;
+  padding-top: 56.25%;
+}
+.kyujin_movie .movie iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+@media screen and (max-width: 834px) {
+  .lower-kyujin_d #ot-sdk-btn-floating.ot-floating-button {
+    bottom: 72.39px;
+  }
+  .lower-career #ot-sdk-btn-floating.ot-floating-button {
+    bottom: 82.8px;
+  }
+}

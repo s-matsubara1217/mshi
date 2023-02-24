@@ -1,0 +1,224 @@
+@charset "utf-8";
+@import 'variables';
+//========================================
+
+// mixins
+
+//========================================
+// Typography
+$fontfamilys: (
+  'sans1': '"ヒラギノ角ゴ Pro W3", Hiragino Kaku Gothic Pro," メイリオ", Meiryo, Osaka," ＭＳ Ｐゴシック", MS PGothic," sans-serif"',
+  'sans2': '"游ゴシック" , "Yu Gothic" , "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", "Meiryo" , sans-serif',
+  'sans3': 'Avenir , "Open Sans" , "Helvetica Neue" , Helvetica , Arial , Verdana , Roboto , "游ゴシック" , "Yu Gothic" , "游ゴシック体" , "YuGothic" , "ヒラギノ角ゴ Pro W3" , "Hiragino Kaku Gothic Pro" , "Meiryo UI" , "メイリオ" , Meiryo , "ＭＳ Ｐゴシック" , "MS PGothic" , sans-serif;',
+  'sans4': 'Lato , "Noto Sans JP", "游ゴシック" , "Yu Gothic" , "游ゴシック体" , "YuGothic" , "ヒラギノ角ゴ Pro W3" , "Hiragino Kaku Gothic Pro" , "Meiryo UI" , "メイリオ" , Meiryo , "ＭＳ Ｐゴシック" , "MS PGothic" , sans-serif;',
+  'sans5': '"Noto Sans", "Noto Sans CJK JP", "Noto Sans CJK JP Subset", "游ゴシック" , "Yu Gothic" , "游ゴシック体" , "YuGothic" , "ヒラギノ角ゴ Pro W3" , "Hiragino Kaku Gothic Pro" , "Meiryo UI" , "メイリオ" , Meiryo , "ＭＳ Ｐゴシック" , "MS PGothic" , sans-serif;',
+
+  'serif1': '"Roboto Slab" , Garamond , "Times New Roman" , "游明朝" , "Yu Mincho" , "游明朝体" , "YuMincho" , "ヒラギノ明朝 Pro W3" , "Hiragino Mincho Pro" , "HiraMinProN-W3" , "HGS明朝E" , "ＭＳ Ｐ明朝" , "MS PMincho" , serif;',
+  'serif2': '"Noto Serif JP" , Garamond , "Times New Roman" , "游明朝" , "Yu Mincho" , "游明朝体" , "YuMincho" , "ヒラギノ明朝 Pro W3" , "Hiragino Mincho Pro" , "HiraMinProN-W3" , "HGS明朝E" , "ＭＳ Ｐ明朝" , "MS PMincho" , serif;',
+	
+	
+	'round1': '"ヒラギノ丸ゴ Pro W4","Hiragino Maru Gothic Pro", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "Noto Sans", "Noto Sans CJK JP","メイリオ","Meiryo","ＭＳ Ｐゴシック", "MS P Gothic","Osaka", Verdana, Arial, Helvetica, sans-serif;',
+	
+) !default;
+
+@mixin family($fontfamily: sans1) {
+  font-family: #{map-get($fontfamilys, $fontfamily)} {}
+}
+
+
+@mixin noto-sans {
+//	font-family: 'Noto Sans JP', sans-serif;
+	font-family: 'Noto Sans JP', 'Noto Sans CJK JP', 'Noto Sans CJK JP Subset', sans-serif;
+}
+@mixin noto-serif {
+//	font-family: 'Noto Serif JP', serif;
+	font-family: 'Noto Serif JP', 'Noto Serif CJK JP', 'Noto Serif CJK JP Subset', serif;
+}
+@mixin lato {
+	font-family: 'Lato', sans-serif;
+}
+@mixin martel {
+	font-family: 'Martel', serif;
+}
+
+
+// min-width
+$breakpoint-up: (
+  'sm': 'screen and (min-width: 481px)',
+  'md': 'screen and (min-width: 835px)',
+  'lg': 'screen and (min-width: 1025px)',
+  'xl': 'screen and (min-width: 1201px)',
+) !default;
+
+// max-width
+$breakpoint-down: (
+  'sm': 'screen and (max-width: 480px)',
+  'md': 'screen and (max-width: 834px)',
+  'lg': 'screen and (max-width: 1024px)',
+  'xl': 'screen and (max-width: 1200px)',
+) !default;
+
+@mixin mq-up($breakpoint: md) {
+  @media #{map-get($breakpoint-up, $breakpoint)} {
+    @content;
+  }
+}
+
+@mixin mq-down($breakpoint: md) {
+  @media #{map-get($breakpoint-down, $breakpoint)} {
+    @content;
+  }
+}
+
+
+
+//border-radius
+@mixin border-radius ($radius: 10px) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  border-radius: $radius;
+}
+
+
+//refrect
+@mixin refrectX {
+  -webkit-transform: scaleX(-1);
+  -moz-transform: scaleX(-1);
+  -ms-transform: scaleX(-1);
+  transform: scaleX(-1);
+  filter: FlipW;
+}
+
+@mixin refrectY {
+  -webkit-transform: scaleY(-1);
+  -moz-transform: scaleY(-1);
+  -ms-transform: scaleY(-1);
+  transform: scaleY(-1);
+  filter: FlipH;
+}
+
+//clearfix
+@mixin clfix {
+  &:after {
+    content: "";
+    display: block;
+    height: 0;
+    font-size: 0;
+    clear: both;
+    visibility: hidden;
+  }
+}
+
+
+//animation speed
+@mixin transition($spd: .3s) {
+  -webkit-transition: all $spd;
+  -moz-transition: all $spd;
+  -ms-transition: all $spd;
+  transition: all $spd;
+}
+
+
+//text
+@mixin vertical-txt-rl {
+  -webkit-writing-mode: vertical-rl;
+  -ms-writing-mode: tb-rl;
+  writing-mode: vertical-rl;
+}
+
+@mixin horizontal-txt-lr {
+  -webkit-writing-mode: horizontal-tb;
+  -ms-writing-mode: lr-tb;
+  writing-mode: horizontal-tb;
+}
+
+
+//box shadow
+@mixin box-shadow() {
+  box-shadow: 0px 29px 35px -25px rgba(0, 0, 0, 0.3);
+}
+
+@mixin box-circle() {
+	display: block;
+	border-radius: 50%;
+	box-shadow:
+		0px 0px 0px 10px #8cc220 inset,
+		0px 0px 0px 20px #a89922 inset,
+		0px 0px 0px 30px #c37025 inset,
+		0px 0px 0px 40px #df4727 inset;
+	opacity: .23;
+	//	box-shadow:
+//		0px 0px 0px 10px #df4727 inset,
+//		0px 0px 0px 20px #c37025 inset,
+//		0px 0px 0px 30px #a89922 inset,
+//		0px 0px 0px 40px #8cc220 inset;
+}
+@mixin box-circle-bold() {
+	display: block;
+	border-radius: 50%;
+	box-shadow:
+		0px 0px 0px 15px #8cc220 inset,
+		0px 0px 0px 30px #a89922 inset,
+		0px 0px 0px 45px #c37025 inset,
+		0px 0px 0px 60px #df4727 inset;
+	opacity: .23;
+	//	box-shadow:
+//		0px 0px 0px 10px #df4727 inset,
+//		0px 0px 0px 20px #c37025 inset,
+//		0px 0px 0px 30px #a89922 inset,
+//		0px 0px 0px 40px #8cc220 inset;
+}
+
+//object fit image
+@mixin img-fit-contain() {
+  font-family: 'object-fit: contain;';
+  object-fit: contain;
+}
+
+@mixin img-fit-cover() {
+  font-family: 'object-fit: cover;';
+  object-fit: cover;
+}
+
+@mixin keepAspect($persentage){
+	position: relative;
+	z-index: 1;
+	&:before{
+		content: '';
+		display: block;
+		padding-top: $persentage;
+	}
+	img{
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+}
+
+//.trimThumbnail_image {
+//    position: relative;
+//    border: 1px solid #ddd;
+//    &:before {
+//        content: "";
+//        display: block;
+//        padding-top: 60%;
+//    }
+//    img {
+//        .img-fit-contain();
+//        position: absolute;
+//        top: 0;
+//        left: 0;
+//        width: 100%;
+//        height: 100%;
+//
+//        //padding ver
+//        top: 50%;
+//        left: 50%;
+//        transform: translate(-50%,-50%);
+//        width: calc(~"100% - 10px");
+//        height: calc(~"100% - 10px");
+//    }
+//}

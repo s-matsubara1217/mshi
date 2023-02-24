@@ -1,0 +1,73 @@
+################################################################################################
+##
+##		■文字数制限表示用ファイル　※制限文字数を超えると「…」表示　※対象…TOP・求人/新着一覧
+##
+##		01.setting.htmで制限文字数を設定
+##		02.該当ファイル（TOP・求人一覧・新着一覧）にこのファイルをインクルード
+##		03.該当ファイル（TOP・求人一覧・新着一覧）の文字表示場所に変数（$title、$copy...）を指定
+##
+################################################################################################
+##
+## ---  制限文字数変数設定
+
+#if ($page_type == $menu_index_type)## --- TOPの場合
+
+#set ($title_str_upper_limit	= 50)## --- TOP 新着求人タイトル表示文字数上限
+#set ($copy_str_upper_limit		= 20)## --- TOP 新着コピー表示文字数上限
+#set ($syokusyu_str_upper_limit = 30)## --- TOP 新着職種表示文字数上限
+#set ($kyuyo_str_upper_limit 	= 25)## --- TOP 新着給与表示文字数上限
+#set ($kinmuchi_str_upper_limit = 30)## --- TOP 新着勤務地表示文字数上限
+#set ($jikan_str_upper_limit	= 30)## --- TOP 新着時間表示文字数上限
+#set ($shigoto_str_upper_limit	= 70)## --- TOP 新着仕事内容表示文字数上限
+#set ($access_str_upper_limit	= 30)## --- TOP 新着交通アクセス表示文字数上限
+
+#elseif ($page_type == $menu_whatsnew_type)## --- 新着一覧の場合
+
+#set ($title_str_upper_limit	= 50)## --- 新着一覧 求人タイトル表示文字数上限
+#set ($copy_str_upper_limit		= 50)## --- 新着一覧 コピー表示文字数上限
+#set ($syokusyu_str_upper_limit = 50)## --- 新着一覧 職種表示文字数上限
+#set ($kyuyo_str_upper_limit 	= 50)## --- 新着一覧 給与表示文字数上限
+#set ($kinmuchi_str_upper_limit	= 50)## --- 新着一覧 勤務地表示文字数上限
+#set ($jikan_str_upper_limit	= 50)## --- 新着一覧 仕事内容表示文字数上限
+#set ($shigoto_str_upper_limit	= 50)## --- 新着一覧 仕事内容表示文字数上限
+#set ($access_str_upper_limit	= 50)## --- 新着一覧 交通アクセス表示文字数上限
+
+#elseif ($page_id == $kyujin_l_type || $page_id == $menu_keeplist_type)## --- 求人一覧・お気に入りの場合
+
+#set ($title_str_upper_limit	= 50)## --- 求人一覧 求人タイトル表示文字数上限
+#set ($copy_str_upper_limit		= 150)## --- 求人一覧 コピー表示文字数上限
+#set ($syokusyu_str_upper_limit = 100)## --- 求人一覧 職種表示文字数上限
+#set ($kyuyo_str_upper_limit 	= 75)## --- 求人一覧 給与表示文字数上限
+#set ($kinmuchi_str_upper_limit	= 75)## --- 求人一覧 勤務地表示文字数上限
+#set ($jikan_str_upper_limit	= 75)## --- 求人一覧 時間表示文字数上限
+#set ($shigoto_str_upper_limit	= 75)## --- 求人一覧 仕事内容表示文字数上限
+#set ($access_str_upper_limit	= 75)## --- 求人一覧 交通アクセス表示文字数上限
+
+#end
+
+## ---  制限文字数を超えた場合の「…」表示設定
+
+## --- 求人タイトル
+#set($title = $util.cutZenkakuLen($anken.kyuujin_title.replace('&nbsp;',' ').replace('<br>',' '),$title_str_upper_limit,'…'))
+
+## --- ボディコピー	
+#set($copy = $util.cutZenkakuLen($anken.val34.replace('&nbsp;',' ').replace('<br>',' '),$copy_str_upper_limit,'…'))
+
+## --- 職種
+#set($syokusyu = $util.cutZenkakuLen($anken.val02.replace('&nbsp;',' ').replace('<br>',' '),$syokusyu_str_upper_limit,'…'))
+
+## --- 給与
+#set($kyuyo = $util.cutZenkakuLen($anken.val04.replace('&nbsp;',' ').replace('<br>',' '),$kyuyo_str_upper_limit,'…'))
+
+## --- 勤務地
+#set($kinmuchi = $util.cutZenkakuLen($anken.val10.replace('&nbsp;',' ').replace('<br>',' '),$kinmuchi_str_upper_limit,'…'))
+
+## --- 勤務時間
+#set($jikan = $util.cutZenkakuLen($anken.val25.replace('&nbsp;',' ').replace('<br>',' '),$jikan_str_upper_limit,'…'))
+
+## --- 仕事内容
+#set($shigoto = $util.cutZenkakuLen($anken.val03.replace('&nbsp;',' ').replace('<br>',' '),$shigoto_str_upper_limit,'…'))
+
+## --- 交通アクセス
+#set($traffic_access = $util.cutZenkakuLen($anken.val13.replace('&nbsp;',' ').replace('<br>',' '),$access_str_upper_limit,'…'))
+

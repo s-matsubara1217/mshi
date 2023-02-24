@@ -1,0 +1,47 @@
+@charset "utf-8";
+
+// ========================================
+
+// variable
+
+// ========================================
+// color set
+//背景カラー（英: Background）
+//プライマリー・カラー（英: Primary Color）
+//セカンダリー・カラー（英: Secondary Color）
+//警告カラー（英: Error Color）
+//成功カラー（英: Success Color）
+
+$primary-color: #EFAF38;
+$gray-color: #f2f2f2;
+
+$secondary-color: #F36178;
+$third-color: #fab5a0;
+$fourth-color: #000;
+$accent-color: $secondary-color;
+$txt-color: #333;
+
+
+// Typography
+//@import url(http//fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,700,700italic);
+//@import url(http//fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700);
+
+// YakuHanJP：ゴシック体（約物全部入り）
+//$fonts: YakuHanJP, "Hiragino Sans", Meiryo, "Yu Gothic Medium", sans-serif;
+
+// YakuHanMP：明朝体（約物全部入り）
+//$fonts_serif: YakuHanMP, "Hiragino Mincho ProN", "Yu Mincho", YuMincho, serif;
+
+// Italianno
+// font-family: 'Italianno', cursive;
+//$Italianno: 'Italianno', cursive;
+
+// Spectral
+// font-family: 'Spectral', serif;
+//$Spectral: 'Spectral', serif;
+
+
+
+// short stack
+//font-family: 'Short Stack', cursive;
+//$shortStack: 'Short Stack', cursive;
